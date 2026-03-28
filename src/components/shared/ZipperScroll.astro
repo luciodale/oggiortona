@@ -1,0 +1,27 @@
+---
+// Zipper scroll: CSS + spacer only.
+// Logic lives in useZipperScroll hook (runs inside React lifecycle, no hydration mismatch).
+---
+
+<style is:global>
+  .zipper-card:not([data-zip-ready]) {
+    opacity: 0;
+  }
+
+  .zipper-card {
+    --zip-x: 0px;
+    --zip-scale: 1;
+    --zip-blur: 0px;
+    transform: translateX(var(--zip-x)) scale(var(--zip-scale));
+    filter: blur(var(--zip-blur));
+    will-change: transform, filter;
+    transform-origin: center center;
+  }
+
+  .zipper-spacer {
+    height: 20vh;
+    pointer-events: none;
+  }
+</style>
+
+<div class="zipper-spacer" aria-hidden="true"></div>

@@ -1,0 +1,14 @@
+---
+type Props = {
+  title: string;
+  subtitle?: string;
+  color?: string;
+};
+
+const { title, subtitle, color = "text-primary" } = Astro.props;
+---
+
+<div class="mb-6">
+  <h1 class:list={["text-2xl font-bold", color]}>{title}</h1>
+  {subtitle && <p class="mt-1 text-sm text-muted">{subtitle}</p>}
+</div>

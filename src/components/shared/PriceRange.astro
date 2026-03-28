@@ -1,0 +1,17 @@
+---
+type Props = {
+  level: number;
+};
+
+const { level } = Astro.props;
+---
+
+<span class="text-sm" aria-label={`Fascia di prezzo: ${level} su 3`}>
+  {
+    [1, 2, 3].map((i) => (
+      <span class:list={[i <= level ? "text-primary" : "text-border"]}>
+        &euro;
+      </span>
+    ))
+  }
+</span>

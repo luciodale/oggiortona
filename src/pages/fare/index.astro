@@ -1,0 +1,31 @@
+---
+import AppWrapper from "../../building-blocks/AppWrapper.astro";
+import ZipperScroll from "../../components/shared/ZipperScroll.astro";
+import { EventList } from "../../components/fare/EventList";
+import type { D1Database } from "@cloudflare/workers-types";
+import type { EventRow } from "../../types/database";
+
+const db = Astro.locals.runtime.env.DB as D1Database;
+
+const eventsResult = await db
+  .prepare("SELECT * FROM events WHERE date_start >= date('now') ORDER BY date_start ASC, time_start ASC")
+  .all<EventRow>();
+---
+
+<AppWrapper
+  title="Fare"
+  description="Eventi, sagre, concerti e attivita a Ortona."
+  bodyClass="page-fare"
+>
+  <div class="mb-6 animate-fade-up">
+    <h1 class="font-[family-name:var(--font-family-display)] text-3xl font-medium tracking-tight text-primary">
+      Fare
+    </h1>
+    <p class="mt-1 text-sm text-muted">
+      Eventi e appuntamenti a Ortona
+    </p>
+  </div>
+
+  <EventList client:load events={eventsResult.results} />
+  <ZipperScroll />
+</AppWrapper>

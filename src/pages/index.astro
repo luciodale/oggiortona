@@ -1,0 +1,187 @@
+---
+import AppWrapper from "../building-blocks/AppWrapper.astro";
+import { siteConfig } from "../config/site";
+import { CupIcon } from "../icons/CupIcon";
+import { CalendarIcon } from "../icons/CalendarIcon";
+import { ChevronRightIcon } from "../icons/ChevronRightIcon";
+import { StarIcon } from "../icons/StarIcon";
+import { ClockIcon } from "../icons/ClockIcon";
+import { TagIcon } from "../icons/TagIcon";
+import type { D1Database } from "@cloudflare/workers-types";
+import { getTodayISO } from "../utils/date";
+
+const db = Astro.locals.runtime.env.DB as D1Database;
+const today = getTodayISO();
+const now = new Date().toISOString();
+
+const [restaurantCount, specialCount, dealCount, todayEventCount, upcomingEventCount] = await Promise.all([
+  db.prepare("SELECT COUNT(*) as count FROM restaurants WHERE active = 1").first<{ count: number }>(),
+  db.prepare(
+    `SELECT COUNT(*) as count FROM daily_specials ds
+     JOIN restaurants r ON r.id = ds.restaurant_id
+     WHERE ds.date = ? AND r.active = 1`
+  ).bind(today).first<{ count: number }>(),
+  db.prepare(
+    `SELECT COUNT(*) as count FROM deals d
+     JOIN restaurants r ON r.id = d.restaurant_id
+     WHERE d.valid_until > ? AND d.valid_from <= ? AND r.active = 1`
+  ).bind(now, now).first<{ count: number }>(),
+  db.prepare(
+    "SELECT COUNT(*) as count FROM events WHERE date_start = ?"
+  ).bind(today).first<{ count: number }>(),
+  db.prepare(
+    "SELECT COUNT(*) as count FROM events WHERE date_start > ?"
+  ).bind(today).first<{ count: number }>(),
+]);
+
+const specials = specialCount?.count ?? 0;
+const deals = dealCount?.count ?? 0;
+const todayEvents = todayEventCount?.count ?? 0;
+const upcomingEvents = upcomingEventCount?.count ?? 0;
+
+const hour = new Date().getHours();
+let greeting = "Buongiorno";
+if (hour >= 13 && hour < 18) greeting = "Buon pomeriggio";
+else if (hour >= 18) greeting = "Buonasera";
+
+const dayNames = ["Domenica", "Lunedi", "Martedi", "Mercoledi", "Giovedi", "Venerdi", "Sabato"];
+const monthNames = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"];
+const d = new Date();
+const dateString = `${dayNames[d.getDay()]} ${d.getDate()} ${monthNames[d.getMonth()]}`;
+---
+
+<AppWrapper title={siteConfig.title} description={siteConfig.description} bodyClass="bg-surface">
+  <div class="flex flex-col py-6">
+    <!-- Hero -->
+    <div class="animate-fade-up">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p class="text-sm font-medium text-muted">{greeting}, Ortona</p>
+          <h1 class="mt-1 font-[family-name:var(--font-family-display)] text-[2.25rem] font-medium leading-[1.1] tracking-tight text-primary">
+            Cosa succede<br /><em class="text-accent">oggi?</em>
+          </h1>
+        </div>
+        <div class="shrink-0 rounded-2xl bg-surface-warm px-4 py-3 text-right">
+          <p class="font-[family-name:var(--font-family-display)] text-[2rem] font-semibold leading-none text-primary">
+            {d.getDate()}
+          </p>
+          <p class="mt-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-muted">
+            {monthNames[d.getMonth()]}
+          </p>
+          <p class="text-[10px] capitalize text-muted/60">
+            {dayNames[d.getDay()]}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Two section entries -->
+    <nav class="flex flex-col gap-4 pt-10 stagger-children" aria-label="Sezioni principali">
+      <!-- Mangiare -->
+      <a
+        href="/mangiare"
+        class="group relative overflow-hidden rounded-2xl bg-mangiare-light p-5 no-underline transition-all active:scale-[0.98]"
+      >
+        <div class="absolute right-4 top-4 font-[family-name:var(--font-family-display)] text-[4rem] font-bold leading-none text-mangiare/[0.06]" aria-hidden="true">
+          M
+        </div>
+        <span class="text-[10px] font-semibold uppercase tracking-[0.15em] text-mangiare/60">
+          Dove mangiare
+        </span>
+        <h2 class="mt-1 font-[family-name:var(--font-family-display)] text-2xl font-medium text-primary">
+          Mangiare
+        </h2>
+        <p class="mt-1.5 text-sm text-muted">
+          {restaurantCount?.count ?? 0} locali a Ortona
+        </p>
+
+        {(specials > 0 || deals > 0) && (
+          <div class="mt-4 flex flex-wrap gap-2">
+            {specials > 0 && (
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-mangiare/10 px-2.5 py-1 text-xs font-medium text-mangiare">
+                <StarIcon className="h-3 w-3" strokeWidth={2.5} />
+                {specials} {specials === 1 ? "piatto" : "piatti"} del giorno
+              </span>
+            )}
+            {deals > 0 && (
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-mangiare/10 px-2.5 py-1 text-xs font-medium text-mangiare">
+                <TagIcon className="h-3 w-3" strokeWidth={2.5} />
+                {deals} {deals === 1 ? "offerta" : "offerte"} attive
+              </span>
+            )}
+          </div>
+        )}
+
+        <div class="mt-3 flex items-center gap-1 text-xs font-medium text-mangiare">
+          Esplora
+          <ChevronRightIcon className="h-3 w-3 transition-transform group-hover:translate-x-1" strokeWidth={2.5} />
+        </div>
+      </a>
+
+      <!-- Fare -->
+      <a
+        href="/fare"
+        class="group relative overflow-hidden rounded-2xl bg-fare-light p-5 no-underline transition-all active:scale-[0.98]"
+      >
+        <div class="absolute right-4 top-4 font-[family-name:var(--font-family-display)] text-[4rem] font-bold leading-none text-fare/[0.06]" aria-hidden="true">
+          F
+        </div>
+        <span class="text-[10px] font-semibold uppercase tracking-[0.15em] text-fare/60">
+          Cosa fare
+        </span>
+        <h2 class="mt-1 font-[family-name:var(--font-family-display)] text-2xl font-medium text-primary">
+          Fare
+        </h2>
+
+        {todayEvents > 0 ? (
+          <div class="mt-3 flex flex-wrap gap-2">
+            <span class="inline-flex items-center gap-1.5 rounded-full bg-fare/10 px-2.5 py-1 text-xs font-medium text-fare">
+              <ClockIcon className="h-3 w-3" strokeWidth={2.5} />
+              {todayEvents} {todayEvents === 1 ? "evento" : "eventi"} oggi
+            </span>
+          </div>
+        ) : (
+          <div class="mt-3 flex flex-wrap gap-2">
+            <span class="inline-flex items-center gap-1.5 rounded-full bg-fare/10 px-2.5 py-1 text-xs font-medium text-fare">
+              <CalendarIcon className="h-3 w-3" strokeWidth={2.5} />
+              {upcomingEvents > 0
+                ? `${upcomingEvents} ${upcomingEvents === 1 ? "evento" : "eventi"} in programma`
+                : "Scopri gli eventi"}
+            </span>
+          </div>
+        )}
+
+        <div class="mt-3 flex items-center gap-1 text-xs font-medium text-fare">
+          Scopri
+          <ChevronRightIcon className="h-3 w-3 transition-transform group-hover:translate-x-1" strokeWidth={2.5} />
+        </div>
+      </a>
+
+      <!-- Add entry -->
+      <div class="rounded-2xl border-2 border-dashed border-border bg-white p-5">
+        <p class="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted">
+          Hai un locale o un evento?
+        </p>
+        <p class="mt-1 font-[family-name:var(--font-family-display)] text-lg font-medium text-primary">
+          Aggiungi a Ortona
+        </p>
+        <div class="mt-5 flex gap-3">
+          <a
+            href="/aggiungi/locale"
+            class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-mangiare py-3 text-[13px] font-semibold text-white no-underline transition-all hover:bg-mangiare/90 active:scale-[0.98]"
+          >
+            <CupIcon className="h-4 w-4" />
+            Locale
+          </a>
+          <a
+            href="/aggiungi/evento"
+            class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-fare py-3 text-[13px] font-semibold text-white no-underline transition-all hover:bg-fare/90 active:scale-[0.98]"
+          >
+            <CalendarIcon className="h-4 w-4" />
+            Evento
+          </a>
+        </div>
+      </div>
+    </nav>
+  </div>
+</AppWrapper>

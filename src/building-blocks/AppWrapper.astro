@@ -1,0 +1,42 @@
+---
+import AppHead from "./AppHead.astro";
+import BottomNav from "./BottomNav.astro";
+import Layout from "./Layout.astro";
+import "../styles/global.css";
+
+type Props = {
+  title: string;
+  description: string;
+  hideNav?: boolean;
+  bodyClass?: string;
+  layoutClass?: string;
+};
+
+const {
+  title,
+  description,
+  hideNav = false,
+  bodyClass = "",
+  layoutClass = "",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="it">
+  <head>
+    <AppHead title={title} description={description} />
+  </head>
+  <body class:list={["min-h-dvh", bodyClass]}>
+    <Layout class={layoutClass}>
+      <slot />
+    </Layout>
+    {!hideNav && <BottomNav />}
+    {import.meta.env.PROD && (
+      <script is:inline>
+        if ("serviceWorker" in navigator) {
+          navigator.serviceWorker.register("/sw.js");
+        }
+      </script>
+    )}
+  </body>
+</html>
