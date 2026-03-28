@@ -5,7 +5,7 @@
   "description": "Mangiare e fare a Ortona",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && cp public/.assetsignore dist/.assetsignore",
     "preview": "bun run build && wrangler dev",
     "deploy": "bun run build && wrangler deploy",
     "cf-typegen": "wrangler types",

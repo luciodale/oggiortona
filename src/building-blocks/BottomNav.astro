@@ -50,7 +50,7 @@ function getActiveColor(section: string) {
           <a
             href={item.href}
             class:list={[
-              "flex flex-col items-center gap-0.5 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.06em] no-underline transition-all",
+              "flex min-h-[44px] min-w-[44px] flex-col items-center justify-center gap-0.5 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.06em] no-underline transition-all",
               active ? getActiveColor(item.section) : "text-muted/50",
             ]}
             aria-current={active ? "page" : undefined}
