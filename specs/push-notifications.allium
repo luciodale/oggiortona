@@ -1,0 +1,186 @@
+-- Oggi a Ortona: Admin Push Notifications domain
+-- Web Push (RFC 8291/8292) for admin alerts on new content.
+
+use "./auth.allium" as auth
+
+-- ---------------------------------------------------------------
+-- Architecture
+-- ---------------------------------------------------------------
+
+-- The system uses the W3C Push API and Web Push protocol to deliver
+-- real-time notifications to the admin, even when the app is closed.
+--
+-- Three participants:
+--   1. Browser (client)    — subscribes via PushManager, receives via ServiceWorker
+--   2. Application server  — Cloudflare Worker (your API routes)
+--   3. Push service        — browser vendor (FCM for Chrome, Mozilla for Firefox, APNs for Safari)
+--
+-- Flow:
+--   Browser --subscribe--> Push Service  (returns endpoint + keys)
+--   Browser --POST-------> /api/admin/push/subscribe  (stores subscription in D1)
+--   User creates content -> POST /api/restaurants or /api/events
+--   Worker encrypts payload + signs VAPID JWT
+--   Worker --POST-------> Push Service endpoint  (delivers encrypted payload)
+--   Push Service --------> ServiceWorker push event  (even if app closed)
+--   ServiceWorker shows OS notification
+
+-- ---------------------------------------------------------------
+-- Config
+-- ---------------------------------------------------------------
+
+config {
+    vapid_subject: String,          -- mailto: or https: identifying the application server
+    vapid_public_key: String,       -- base64url, 65-byte uncompressed ECDSA P-256 public key
+    vapid_private_key: String,      -- base64url, 32-byte raw d value (secret)
+    notification_ttl: Integer = 86400,
+    notification_urgency: String = "high"
+}
+
+-- ---------------------------------------------------------------
+-- Data
+-- ---------------------------------------------------------------
+
+entity PushSubscription {
+    id: Auto,
+    user_id: String -> auth.User.id,
+    endpoint: String [unique],      -- push service URL (e.g. https://fcm.googleapis.com/fcm/send/...)
+    p256dh: String,                 -- client public key for ECDH key agreement
+    auth: String,                   -- client auth secret (16 bytes, base64url)
+    created_at: Timestamp
+}
+
+-- Only admin users can have subscriptions.
+-- The API routes enforce this via requireAdmin guard.
+
+-- ---------------------------------------------------------------
+-- Subscription Lifecycle
+-- ---------------------------------------------------------------
+
+rule Subscribe {
+    when: AdminEnablesNotifications
+    requires: auth.IsAdmin(user)
+    steps:
+        1. Fetch VAPID public key from GET /api/admin/push/vapid-public-key
+        2. Call PushManager.subscribe({ userVisibleOnly: true, applicationServerKey })
+        3. Browser contacts push service, returns PushSubscription { endpoint, keys }
+        4. POST subscription to /api/admin/push/subscribe
+        5. Server upserts PushSubscription in D1 (dedup by endpoint)
+    ensures: PushSubscription exists for user
+}
+
+rule Unsubscribe {
+    when: AdminDisablesNotifications
+    requires: auth.IsAdmin(user)
+    steps:
+        1. POST endpoint to /api/admin/push/unsubscribe
+        2. Server deletes PushSubscription by endpoint
+        3. Client calls PushSubscription.unsubscribe()
+    ensures: PushSubscription removed
+}
+
+-- ---------------------------------------------------------------
+-- Notification Dispatch
+-- ---------------------------------------------------------------
+
+rule NotifyOnNewRestaurant {
+    when: RestaurantCreated(restaurant)
+    after: successful INSERT into restaurants table
+    steps:
+        1. Build payload: { title: "Nuovo ristorante aggiunto",
+                            body: "{name} ({type}) — {address}",
+                            url: "/admin" }
+        2. Call notifyAdmins(db, env, payload)
+    properties:
+        fire_and_forget: true       -- never blocks the user response
+        failure_silent: true        -- .catch(() => {})
+}
+
+rule NotifyOnNewEvent {
+    when: EventCreated(event)
+    after: successful INSERT into events table
+    steps:
+        1. Build payload: { title: "Nuovo evento aggiunto",
+                            body: "{title} ({category}) — {location}, {dates}",
+                            url: "/admin" }
+        2. Call notifyAdmins(db, env, payload)
+    properties:
+        fire_and_forget: true
+        failure_silent: true
+}
+
+-- ---------------------------------------------------------------
+-- Encryption Pipeline (RFC 8291 + RFC 8292)
+-- ---------------------------------------------------------------
+
+-- All crypto uses Web Crypto API (crypto.subtle), no Node.js dependencies.
+-- This is required for Cloudflare Workers compatibility.
+
+process EncryptAndSend {
+    input: PushSubscription, payload (JSON string), VapidKeys
+
+    -- Step 1: VAPID JWT (RFC 8292)
+    --   Header: { typ: "JWT", alg: "ES256" }
+    --   Payload: { aud: endpoint origin, exp: now + 12h, sub: vapid_subject }
+    --   Sign with ECDSA P-256 using VAPID private key
+    --   Result: Authorization header = "vapid t=<jwt>, k=<public_key>"
+
+    -- Step 2: Payload encryption (RFC 8291)
+    --   a. Generate ephemeral ECDH P-256 key pair (per-message)
+    --   b. ECDH shared secret = deriveBits(client_pub, server_priv)
+    --   c. HKDF stage 1: IKM = HKDF(shared_secret, salt=client_auth, info="WebPush: info\0" + client_pub + server_pub)
+    --   d. HKDF stage 2a: CEK = HKDF(IKM, salt=random_16, info="Content-Encoding: aes128gcm\0") -> 16 bytes
+    --   e. HKDF stage 2b: nonce = HKDF(IKM, salt=random_16, info="Content-Encoding: nonce\0") -> 12 bytes
+    --   f. Append 0x02 delimiter to payload (RFC 8188 final record)
+    --   g. Encrypt with AES-128-GCM(CEK, nonce, padded_payload)
+    --   h. Assemble body: salt(16) | record_size(4) | key_id_len(1) | server_pub(65) | ciphertext
+
+    -- Step 3: HTTP POST to push service endpoint
+    --   Headers: Authorization, Content-Encoding: aes128gcm, TTL, Urgency
+    --   Body: encrypted payload from step 2
+
+    output: HTTP response from push service
+}
+
+-- ---------------------------------------------------------------
+-- Stale Subscription Cleanup
+-- ---------------------------------------------------------------
+
+rule CleanupStale {
+    when: PushServiceReturns(410) or PushServiceReturns(404)
+    ensures: DELETE PushSubscription WHERE endpoint = stale_endpoint
+    -- This happens inline during notifyAdmins dispatch
+}
+
+-- ---------------------------------------------------------------
+-- Service Worker Handlers
+-- ---------------------------------------------------------------
+
+handler PushReceived {
+    on: ServiceWorker "push" event
+    steps:
+        1. Parse event.data.json() -> { title, body, url }
+        2. showNotification(title, { body, icon: "/icon-192.png", data: { url } })
+}
+
+handler NotificationClicked {
+    on: ServiceWorker "notificationclick" event
+    steps:
+        1. Close notification
+        2. Focus existing window matching url, or openWindow(url)
+}
+
+-- ---------------------------------------------------------------
+-- Files
+-- ---------------------------------------------------------------
+
+-- scripts/generate-vapid-keys.ts          — one-time VAPID key pair generation
+-- src/db/migrations/0003_push_subscriptions.sql — D1 migration
+-- src/db/schema.ts                        — pushSubscriptions Drizzle table
+-- src/utils/webpush.ts                    — RFC 8291/8292 crypto (Web Crypto API)
+-- src/utils/adminNotify.ts                — fetch subs + dispatch + cleanup
+-- src/pages/api/admin/push/vapid-public-key.ts  — GET VAPID public key
+-- src/pages/api/admin/push/subscribe.ts         — POST subscribe
+-- src/pages/api/admin/push/unsubscribe.ts       — POST unsubscribe
+-- src/hooks/usePushSubscription.ts        — React hook for browser Push API
+-- src/components/admin/AdminPushToggle.tsx — toggle UI in admin dashboard
+-- public/sw.js                            — push + notificationclick handlers

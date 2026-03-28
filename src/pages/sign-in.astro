@@ -1,0 +1,32 @@
+---
+import AppWrapper from "../building-blocks/AppWrapper.astro";
+import { SignInForm } from "../components/auth/SignInForm";
+import { ArrowLeftIcon } from "../icons/ArrowLeftIcon";
+---
+
+<AppWrapper
+  title="Accedi"
+  description="Accedi a Oggi a Ortona"
+  bodyClass="page-mangiare"
+>
+  <div class="py-4">
+    <a
+      href="/"
+      class="mb-4 inline-flex items-center gap-1 text-xs font-medium text-muted no-underline hover:text-primary"
+    >
+      <ArrowLeftIcon className="h-3.5 w-3.5" />
+      Indietro
+    </a>
+
+    <h1
+      class="font-family-display text-2xl font-medium tracking-tight text-primary"
+    >
+      Accedi
+    </h1>
+    <p class="mb-6 mt-2 text-sm text-muted">
+      Accedi per aggiungere e gestire il tuo locale.
+    </p>
+
+    <SignInForm client:load />
+  </div>
+</AppWrapper>

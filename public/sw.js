@@ -1,64 +1,49 @@
-const CACHE_NAME = "oggi-ortona-v2";
-const STATIC_ASSETS = ["/", "/site.webmanifest", "/favicon.svg"];
-
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS)),
-  );
-  self.skipWaiting();
-});
-
+// Minimal service worker — no caching, standalone PWA shell only.
+self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
-        keys
-          .filter((key) => key !== CACHE_NAME)
-          .map((key) => caches.delete(key)),
-      ),
-    ),
+    caches.keys().then((keys) => Promise.all(keys.map((key) => caches.delete(key)))),
   );
   self.clients.claim();
 });
 
-self.addEventListener("fetch", (event) => {
-  const { request } = event;
-  const url = new URL(request.url);
+// Web Push notification handler
+self.addEventListener("push", (event) => {
+  if (!event.data) return;
 
-  // Skip non-GET requests
-  if (request.method !== "GET") return;
-
-  // API calls: network only
-  if (url.pathname.startsWith("/api/")) return;
-
-  // Static assets (fonts, images): cache first
-  if (
-    url.pathname.match(/\.(js|css|png|jpg|jpeg|svg|woff2?|ttf)$/) ||
-    url.hostname === "fonts.googleapis.com" ||
-    url.hostname === "fonts.gstatic.com"
-  ) {
-    event.respondWith(
-      caches.match(request).then(
-        (cached) =>
-          cached ||
-          fetch(request).then((response) => {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-            return response;
-          }),
-      ),
-    );
+  let payload;
+  try {
+    payload = event.data.json();
+  } catch {
     return;
   }
 
-  // HTML pages: network first, cache fallback
-  event.respondWith(
-    fetch(request)
-      .then((response) => {
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-        return response;
-      })
-      .catch(() => caches.match(request)),
+  const { title, body, url } = payload;
+
+  event.waitUntil(
+    self.registration.showNotification(title || "Oggi a Ortona", {
+      body: body || "",
+      icon: "/icon-192.png",
+      badge: "/icon-192.png",
+      data: { url: url || "/admin" },
+    }),
+  );
+});
+
+// Open admin panel on notification click
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+
+  const targetUrl = event.notification.data?.url || "/admin";
+
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clients) => {
+      for (const client of clients) {
+        if (client.url.includes(targetUrl) && "focus" in client) {
+          return client.focus();
+        }
+      }
+      return self.clients.openWindow(targetUrl);
+    }),
   );
 });

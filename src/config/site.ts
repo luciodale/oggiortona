@@ -6,6 +6,6 @@ export const siteConfig = {
 } as const;
 
 export const navItems = [
-  { label: "Mangiare", href: "/mangiare", icon: "mangiare" },
-  { label: "Fare", href: "/fare", icon: "fare" },
+  { label: "Mangiare", href: "/restaurants", icon: "mangiare" },
+  { label: "Fare", href: "/events", icon: "fare" },
 ] as const;

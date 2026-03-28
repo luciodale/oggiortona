@@ -1,0 +1,257 @@
+-- Oggi a Ortona: Restaurant domain
+-- Covers restaurant lifecycle, ownership, enrichment, and public browsing.
+
+use "./promotions.allium" as promo
+
+-- ---------------------------------------------------------------
+-- External entities
+-- ---------------------------------------------------------------
+
+external entity ClerkUser {
+    id: String,
+    email: String?,
+    first_name: String?,
+    last_name: String?,
+    image_url: String?
+}
+
+-- ---------------------------------------------------------------
+-- Value types
+-- ---------------------------------------------------------------
+
+value DaySchedule {
+    open: String,         -- HH:MM
+    close: String,        -- HH:MM
+    open2: String?,       -- second shift
+    close2: String?
+}
+
+value OpeningHours {
+    lunedi: DaySchedule?,
+    martedi: DaySchedule?,
+    mercoledi: DaySchedule?,
+    giovedi: DaySchedule?,
+    venerdi: DaySchedule?,
+    sabato: DaySchedule?,
+    domenica: DaySchedule?
+}
+
+enum ItalianDay { lunedi, martedi, mercoledi, giovedi, venerdi, sabato, domenica }
+
+-- ---------------------------------------------------------------
+-- Entities
+-- ---------------------------------------------------------------
+
+entity User {
+    id: String,                    -- Clerk user ID
+    email: String?,
+    name: String?,
+    avatar_url: String?,
+    created_at: Timestamp
+}
+
+entity Restaurant {
+    name: String,
+    description: String?,
+    type: String,                  -- comma-separated: "bar,gelateria"
+    price_range: Integer,          -- 1..3
+    phone: String?,
+    address: String,
+    latitude: Decimal?,
+    longitude: Decimal?,
+    opening_hours: String,         -- JSON of OpeningHours
+    image_url: String?,
+    menu_url: String?,
+    owner: User?,
+    active: Boolean,
+    created_at: Timestamp,
+    updated_at: Timestamp,
+
+    -- Relationships
+    promotions: promo/Promotion with restaurant = this,
+
+    -- Projections
+    active_promotions: promotions where promo/is_active,
+
+    -- Derived
+    types: parse_types(type),      -- List<String> from comma-separated
+    parsed_hours: parse_json(opening_hours),
+    is_open: evaluate_open_now(parsed_hours)
+}
+
+-- ---------------------------------------------------------------
+-- Config
+-- ---------------------------------------------------------------
+
+config {
+    max_promotions_per_restaurant_in_list: Integer = 6,
+    timezone: String = "Europe/Rome"
+}
+
+-- ---------------------------------------------------------------
+-- Rules: User sync
+-- ---------------------------------------------------------------
+
+rule SyncClerkUser {
+    when: UserAuthenticates(clerk_user: ClerkUser)
+    let existing = User{id = clerk_user.id}
+    if not exists existing:
+        ensures: User.created(
+            id: clerk_user.id,
+            email: clerk_user.email,
+            name: build_name(clerk_user.first_name, clerk_user.last_name),
+            avatar_url: clerk_user.image_url
+        )
+}
+
+-- ---------------------------------------------------------------
+-- Rules: Restaurant CRUD
+-- ---------------------------------------------------------------
+
+rule CreateRestaurant {
+    when: OwnerCreatesRestaurant(user, data)
+    requires: user != null
+    ensures: Restaurant.created(
+        name: data.name,
+        description: data.description,
+        type: data.type,
+        price_range: data.price_range,
+        phone: data.phone,
+        address: data.address,
+        latitude: data.latitude,
+        longitude: data.longitude,
+        opening_hours: data.opening_hours,
+        image_url: data.image_url,
+        menu_url: data.menu_url,
+        owner: user,
+        active: true
+    )
+}
+
+rule UpdateRestaurant {
+    when: OwnerUpdatesRestaurant(user, restaurant, updates)
+    requires: restaurant.active
+    requires: restaurant.owner = user
+    ensures: restaurant.updated_at = now
+    -- only provided fields are updated; omitted fields unchanged
+}
+
+rule DeactivateRestaurant {
+    when: OwnerDeactivatesRestaurant(user, restaurant)
+    requires: restaurant.active
+    requires: restaurant.owner = user
+    ensures: restaurant.active = false
+    ensures: restaurant.updated_at = now
+}
+
+-- ---------------------------------------------------------------
+-- Rules: Opening hours evaluation
+-- ---------------------------------------------------------------
+
+rule EvaluateOpenNow {
+    -- Pure derivation, not a persisted rule.
+    -- Runs at enrichment time on every request.
+    -- Checks current Italy time against today's DaySchedule.
+    -- Supports midnight-crossing shifts (close < open).
+    -- Checks both first and second shift.
+    deferred EvaluateOpenNow.open_now_logic
+}
+
+-- ---------------------------------------------------------------
+-- Surfaces
+-- ---------------------------------------------------------------
+
+actor Visitor {
+    identified_by: anonymous
+}
+
+actor Owner {
+    identified_by: user.id
+}
+
+surface RestaurantDirectory {
+    facing visitor: Visitor
+
+    exposes:
+        for r in Restaurants where active:
+            r.name
+            r.types
+            r.price_range
+            r.is_open
+            r.address
+            r.phone
+            r.menu_url
+            r.latitude
+            r.longitude
+            r.description
+            r.active_promotions
+
+    provides:
+        FilterByOpenNow()
+        FilterByHasSpecial()
+        FilterByHasDeals()
+        SortByTier()
+
+    related:
+        RestaurantDetail(r) when r in Restaurants
+}
+
+surface RestaurantDetail {
+    facing visitor: Visitor
+
+    context restaurant: Restaurant where active
+
+    exposes:
+        restaurant.name
+        restaurant.types
+        restaurant.price_range
+        restaurant.is_open
+        restaurant.parsed_hours
+        restaurant.address
+        restaurant.phone
+        restaurant.menu_url
+        restaurant.description
+        restaurant.latitude
+        restaurant.longitude
+        restaurant.active_promotions
+}
+
+surface OwnerDashboard {
+    facing owner: Owner
+
+    exposes:
+        for r in Restaurants where owner = owner and active:
+            r.name
+            r.types
+            r.is_open
+
+    provides:
+        OwnerCreatesRestaurant(owner, data)
+
+    related:
+        OwnerRestaurantPreview(r) when r.owner = owner
+        OwnerRestaurantEdit(r) when r.owner = owner
+        OwnerStorefront(r) when r.owner = owner
+}
+
+surface OwnerRestaurantEdit {
+    facing owner: Owner
+
+    context restaurant: Restaurant where owner = owner and active
+
+    exposes:
+        restaurant.name
+        restaurant.description
+        restaurant.type
+        restaurant.price_range
+        restaurant.phone
+        restaurant.address
+        restaurant.latitude
+        restaurant.longitude
+        restaurant.opening_hours
+        restaurant.menu_url
+
+    provides:
+        OwnerUpdatesRestaurant(owner, restaurant, updates)
+        OwnerDeactivatesRestaurant(owner, restaurant)
+}

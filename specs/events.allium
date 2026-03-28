@@ -1,0 +1,116 @@
+-- Oggi a Ortona: Event domain
+-- Covers event browsing, filtering, and date grouping.
+
+-- ---------------------------------------------------------------
+-- Enumerations
+-- ---------------------------------------------------------------
+
+enum EventCategory { sagra, musica, mercato, cultura, sport, altro }
+
+-- ---------------------------------------------------------------
+-- Entities
+-- ---------------------------------------------------------------
+
+entity Event {
+    title: String,
+    description: String?,
+    date_start: String,            -- ISO date YYYY-MM-DD
+    date_end: String?,
+    time_start: String?,           -- HH:MM
+    time_end: String?,
+    address: String,
+    phone: String?,
+    latitude: Decimal?,
+    longitude: Decimal?,
+    category: EventCategory,
+    price: Decimal?,
+    image_url: String?,
+    created_at: Timestamp,
+    updated_at: Timestamp,
+
+    -- Derived
+    is_today: date_start = today,
+    is_this_week: date_start >= start_of_week and date_start < end_of_week,
+    is_upcoming: date_start > today
+}
+
+-- ---------------------------------------------------------------
+-- Config
+-- ---------------------------------------------------------------
+
+config {
+    timezone: String = "Europe/Rome"
+}
+
+-- ---------------------------------------------------------------
+-- Surfaces
+-- ---------------------------------------------------------------
+
+actor Visitor {
+    identified_by: anonymous
+}
+
+surface EventCalendar {
+    facing visitor: Visitor
+
+    exposes:
+        for e in Events where date_start >= today:
+            e.title
+            e.description
+            e.date_start
+            e.date_end
+            e.time_start
+            e.time_end
+            e.address
+            e.phone
+            e.category
+            e.price
+
+    provides:
+        FilterByCategory(category: EventCategory)
+
+    guarantee:
+        "Events grouped into this_week and upcoming sections"
+        "Sorted by date_start ASC, then time_start ASC"
+
+    related:
+        EventDetail(e) when e in Events
+}
+
+surface EventDetail {
+    facing visitor: Visitor
+
+    context event: Event
+
+    exposes:
+        event.title
+        event.description
+        event.date_start
+        event.date_end
+        event.time_start
+        event.time_end
+        event.address
+        event.phone
+        event.latitude
+        event.longitude
+        event.category
+        event.price
+        event.image_url
+}
+
+surface HomePage {
+    facing visitor: Visitor
+
+    exposes:
+        restaurant_count: Restaurants where active .count
+        specials_count: Promotions where type = special and is_active .count
+        deals_count: Promotions where type = deal and is_active .count
+        news_count: Promotions where type = news and is_active .count
+        today_events_count: Events where is_today .count
+        upcoming_events_count: Events where is_upcoming .count
+        greeting: time_based_greeting(now.hour)
+
+    related:
+        RestaurantDirectory()
+        EventCalendar()
+}

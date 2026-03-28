@@ -1,0 +1,27 @@
+---
+import AppWrapper from "../../building-blocks/AppWrapper.astro";
+import { EventForm } from "../../components/events/EventForm";
+import { ArrowLeftIcon } from "../../icons/ArrowLeftIcon";
+---
+
+<AppWrapper title="Aggiungi evento" description="Aggiungi un evento su Oggi a Ortona" bodyClass="page-fare">
+  <div class="py-4">
+    <a
+      href="/events"
+      class="mb-4 inline-flex items-center gap-1 text-xs font-medium text-muted no-underline hover:text-primary"
+    >
+      <ArrowLeftIcon className="h-3.5 w-3.5" />
+      Indietro
+    </a>
+
+    <h1 class="font-[family-name:var(--font-family-display)] text-2xl font-medium tracking-tight text-primary">
+      Aggiungi evento
+    </h1>
+
+    <p class="mt-1 mb-6 text-sm text-muted">
+      Compila i dati dell'evento. Apparira su Oggi a Ortona.
+    </p>
+
+    <EventForm client:load />
+  </div>
+</AppWrapper>

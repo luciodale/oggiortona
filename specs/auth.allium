@@ -1,0 +1,69 @@
+-- Oggi a Ortona: Authentication domain
+-- OAuth via Clerk. User sync on first request. Route protection.
+
+use "./restaurants.allium" as rest
+
+-- ---------------------------------------------------------------
+-- Config
+-- ---------------------------------------------------------------
+
+config {
+    sign_in_url: String = "/sign-in",
+    oauth_providers: List<String> = ["google", "apple", "facebook"],
+    sso_callback_url: String = "/sign-in/sso-callback"
+}
+
+-- ---------------------------------------------------------------
+-- Rules
+-- ---------------------------------------------------------------
+
+rule ProtectRoute {
+    when: RequestToProtectedRoute(request)
+    requires: request.path matches "/profile(.*)" or
+              request.path matches "/add(.*)" or
+              (request.path = "/api/restaurants" and request.method = "POST")
+    if request.user = null:
+        ensures: RedirectToSignIn(request.path)
+}
+
+rule OAuthSignIn {
+    when: UserInitiatesOAuth(strategy)
+    requires: strategy in config.oauth_providers
+    ensures: RedirectToProvider(strategy, config.sso_callback_url)
+}
+
+rule OAuthCallback {
+    when: OAuthCallbackReceived(clerk_user)
+    ensures: rest/SyncClerkUser(clerk_user)
+    ensures: RedirectToOriginalUrl()
+}
+
+rule ValidateRedirectUrl {
+    -- Prevents open redirect attacks.
+    -- Only allows paths starting with / that do not contain :// or start with //.
+    when: ParseRedirectUrl(raw)
+    if raw = null or raw starts_with "//" or raw contains "://" or not raw starts_with "/":
+        ensures: redirect_url = "/"
+    else:
+        ensures: redirect_url = raw
+}
+
+-- ---------------------------------------------------------------
+-- Surfaces
+-- ---------------------------------------------------------------
+
+surface SignIn {
+    facing visitor: rest/Visitor
+
+    exposes:
+        for p in config.oauth_providers:
+            p
+
+    provides:
+        UserInitiatesOAuth(strategy)
+            when strategy in config.oauth_providers
+
+    guarantee:
+        "Redirect URL is validated before use"
+        "Only path-relative redirects allowed"
+}

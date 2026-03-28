@@ -1,6 +1,4 @@
-import type { EventCategory, RestaurantType } from "../types/database";
-
-export const restaurantTypeLabels: Record<RestaurantType, string> = {
+export const restaurantTypeLabels: Record<string, string> = {
   ristorante: "Ristorante",
   pizzeria: "Pizzeria",
   trattoria: "Trattoria",
@@ -11,7 +9,7 @@ export const restaurantTypeLabels: Record<RestaurantType, string> = {
   altro: "Altro",
 };
 
-export const eventCategoryLabels: Record<EventCategory, string> = {
+export const eventCategoryLabels: Record<string, string> = {
   sagra: "Sagra",
   musica: "Musica",
   mercato: "Mercato",
@@ -20,7 +18,7 @@ export const eventCategoryLabels: Record<EventCategory, string> = {
   altro: "Altro",
 };
 
-export const eventCategoryColors: Record<EventCategory, string> = {
+export const eventCategoryColors: Record<string, string> = {
   sagra: "bg-amber-50 text-amber-700",
   musica: "bg-violet-50 text-violet-700",
   mercato: "bg-emerald-50 text-emerald-700",
@@ -29,7 +27,7 @@ export const eventCategoryColors: Record<EventCategory, string> = {
   altro: "bg-stone-100 text-stone-600",
 };
 
-export const restaurantTypes: Array<RestaurantType> = [
+export const restaurantTypes = [
   "ristorante",
   "pizzeria",
   "trattoria",
@@ -40,11 +38,28 @@ export const restaurantTypes: Array<RestaurantType> = [
   "altro",
 ];
 
-export const eventCategories: Array<EventCategory> = [
-  "sagra",
-  "musica",
-  "mercato",
-  "cultura",
+export const restaurantFormTypes = [
+  "ristorante",
+  "bar",
+  "gelateria",
+] as const;
+
+export const eventFormCategories = [
   "sport",
+  "cultura",
+  "musica",
+] as const;
+
+export const eventFilterCategories = [
+  "sport",
+  "musica",
+  "cultura",
+  "altro",
+];
+
+export const eventCategories = [
+  "sport",
+  "musica",
+  "cultura",
   "altro",
 ];

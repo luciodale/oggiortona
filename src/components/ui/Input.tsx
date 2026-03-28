@@ -1,0 +1,42 @@
+import { forwardRef, useId } from "react";
+
+type InputProps = {
+  label?: string;
+  required?: boolean;
+  error?: string;
+} & React.InputHTMLAttributes<HTMLInputElement>;
+
+export const Input = forwardRef<HTMLInputElement, InputProps>(
+  function Input({ label, required, error, className = "", id: externalId, ...props }, ref) {
+    const autoId = useId();
+    const id = externalId ?? autoId;
+    const errorId = error ? `${id}-error` : undefined;
+
+    return (
+      <div>
+        {label && (
+          <label htmlFor={id} className="mb-1.5 block text-[13px] font-medium text-primary">
+            {label}
+            {required && <span className="ml-0.5 text-danger" aria-hidden="true">*</span>}
+          </label>
+        )}
+        <input
+          ref={ref}
+          id={id}
+          aria-required={required}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={errorId}
+          className={`w-full rounded-xl border bg-white px-3 py-2.5 text-[13px] outline-none transition-colors ${
+            error
+              ? "border-danger focus:border-danger"
+              : "border-border focus:border-accent"
+          } ${className}`}
+          {...props}
+        />
+        {error && (
+          <p id={errorId} className="mt-1 text-[11px] text-danger" role="alert">{error}</p>
+        )}
+      </div>
+    );
+  },
+);

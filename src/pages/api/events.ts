@@ -1,41 +1,61 @@
 import type { APIContext } from "astro";
-import type { D1Database } from "@cloudflare/workers-types";
-import type { EventRow } from "../../types/database";
-import type { EventListResponse } from "../../types/api";
+import { events } from "../../db/schema";
+import { createEventApiSchema } from "../../schemas/event";
+import { notifyAdmins } from "../../utils/adminNotify";
 
-export async function GET({ locals, request }: APIContext): Promise<Response> {
-  const db = locals.runtime.env.DB as D1Database;
-  const url = new URL(request.url);
+export async function POST({ locals, request }: APIContext): Promise<Response> {
+  const user = locals.user;
+  if (!user) return Response.json({ error: "Non autenticato" }, { status: 401 });
 
-  const category = url.searchParams.get("category");
-  const period = url.searchParams.get("period") ?? "all";
+  const db = locals.db;
 
-  let sql = "SELECT * FROM events WHERE date_start >= date('now')";
-  const bindings: Array<string> = [];
-
-  if (category) {
-    sql += " AND category = ?";
-    bindings.push(category);
+  let raw: unknown;
+  try {
+    raw = await request.json();
+  } catch {
+    return Response.json({ error: "Corpo non valido" }, { status: 400 });
   }
 
-  if (period === "this_week") {
-    sql += " AND date_start < date('now', '+7 days')";
+  const result = createEventApiSchema.safeParse(raw);
+  if (!result.success) {
+    const firstError = result.error.issues[0]?.message ?? "Dati non validi";
+    return Response.json({ error: firstError }, { status: 400 });
   }
 
-  sql += " ORDER BY date_start ASC, time_start ASC";
+  const body = result.data;
 
-  const stmt = bindings.length > 0
-    ? db.prepare(sql).bind(...bindings)
-    : db.prepare(sql);
+  const [event] = await db.insert(events).values({
+    title: body.title.trim(),
+    description: body.description?.trim() || null,
+    category: body.category.trim(),
+    dateStart: body.date_start,
+    dateEnd: body.date_end || null,
+    timeStart: body.time_start || null,
+    timeEnd: body.time_end || null,
+    address: body.address.trim(),
+    phone: body.phone?.trim() || null,
+    latitude: body.latitude ?? null,
+    longitude: body.longitude ?? null,
+    price: body.price ?? null,
+    imageUrl: body.image_url?.trim() || null,
+    ownerId: user.id,
+    active: 1,
+  }).returning();
 
-  const events = await stmt.all<EventRow>();
+  if (!event) {
+    return Response.json({ error: "Errore creazione evento" }, { status: 500 });
+  }
 
-  const response: EventListResponse = {
-    events: events.results,
-    count: events.results.length,
-  };
+  // Fire-and-forget admin notification
+  const datePart = event.dateEnd
+    ? `${event.dateStart} — ${event.dateEnd}`
+    : event.dateStart;
+  notifyAdmins(locals.db, locals.runtime.env, {
+    title: "Nuovo evento aggiunto",
+    body: `${event.title} (${event.category}) — ${event.address}, ${datePart}`,
+    url: "/admin",
+  }).catch((err) => console.error("[push] notifyAdmins error:", err));
 
-  return new Response(JSON.stringify(response), {
-    headers: { "Content-Type": "application/json" },
-  });
+  const { ownerId: _, ...publicEvent } = event;
+  return Response.json({ event: publicEvent }, { status: 201 });
 }

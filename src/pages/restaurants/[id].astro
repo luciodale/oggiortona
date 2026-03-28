@@ -1,0 +1,35 @@
+---
+import AppWrapper from "../../building-blocks/AppWrapper.astro";
+import RestaurantDetail from "../../building-blocks/RestaurantDetail.astro";
+import { restaurants, promotions } from "../../db/schema";
+import { eq, and as dbAnd, lte, gte } from "drizzle-orm";
+import { getTodayISO } from "../../utils/date";
+
+const db = Astro.locals.db;
+const restaurantId = Number(Astro.params.id);
+
+const [restaurant] = await db.select().from(restaurants).where(dbAnd(eq(restaurants.id, restaurantId), eq(restaurants.active, 1))).limit(1);
+
+if (!restaurant) {
+  return Astro.redirect("/restaurants");
+}
+
+const today = getTodayISO();
+
+const activePromotions = await db.select().from(promotions).where(
+  dbAnd(eq(promotions.restaurantId, restaurantId), lte(promotions.dateStart, today), gte(promotions.dateEnd, today)),
+).limit(6);
+---
+
+<AppWrapper
+  title={restaurant.name}
+  description={restaurant.description ?? `${restaurant.name} a Ortona`}
+  bodyClass="page-mangiare"
+>
+  <RestaurantDetail
+    restaurant={restaurant}
+    promotions={activePromotions}
+    backHref="/restaurants"
+    backLabel="Tutti i locali"
+  />
+</AppWrapper>

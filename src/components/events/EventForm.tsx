@@ -1,0 +1,180 @@
+import { useWatch } from "react-hook-form";
+import { useEventForm } from "../../hooks/useEventForm";
+import { eventFormCategories, eventCategoryLabels } from "../../config/categories";
+import { toast } from "sonner";
+import { Input } from "../ui/Input";
+import { Textarea } from "../ui/Textarea";
+import { Pill } from "../ui/Pill";
+import { Button } from "../ui/Button";
+import { TimePicker } from "../ui/TimePicker";
+import { DatePicker } from "../ui/DatePicker";
+import { LocationPickerField } from "../shared/LocationPickerField";
+
+type EventFormProps = {
+  eventId?: number;
+  initialData?: Parameters<typeof useEventForm>[0];
+};
+
+export function EventForm({ eventId, initialData }: EventFormProps) {
+  const {
+    form,
+    toggleCategory,
+    onSubmit,
+    submitState,
+    errorMessage,
+    createdId,
+  } = useEventForm(initialData);
+
+  const isEdit = eventId != null;
+  const selectedCategories = useWatch({ control: form.control, name: "categories" });
+  const categoriesError = form.formState.errors.categories;
+  if (submitState === "success" && createdId) {
+    toast.success(isEdit ? "Evento aggiornato!" : "Evento pubblicato!");
+    window.location.href = isEdit ? `/events/${createdId}` : `/events/${createdId}`;
+    return null;
+  }
+
+  return (
+    <form
+      onSubmit={form.handleSubmit((data) => onSubmit(data, eventId))}
+      className="space-y-5"
+      aria-label={isEdit ? "Modifica evento" : "Pubblica evento"}
+    >
+      <Input
+        label="Titolo"
+        required
+        placeholder="Es: Sagra del pesce"
+        error={form.formState.errors.title?.message}
+        {...form.register("title")}
+      />
+
+      <Textarea
+        label="Descrizione"
+        placeholder="Descrivi l'evento..."
+        rows={3}
+        maxLength={500}
+        error={form.formState.errors.description?.message}
+        {...form.register("description")}
+      />
+
+      <fieldset>
+        <legend className="mb-1.5 block text-[13px] font-medium text-primary">
+          Categoria<span className="ml-0.5 text-danger" aria-hidden="true">*</span>
+        </legend>
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Categorie disponibili">
+          {eventFormCategories.map((cat) => (
+            <Pill
+              key={cat}
+              active={selectedCategories.includes(cat)}
+              onClick={() => toggleCategory(cat)}
+            >
+              {eventCategoryLabels[cat] ?? cat}
+            </Pill>
+          ))}
+        </div>
+        <div className="mt-3">
+          <Input
+            placeholder="Altra categoria (es: sagra, mercato...)"
+            {...form.register("customCategory")}
+          />
+        </div>
+        {categoriesError && (
+          <p className="mt-1 text-[11px] text-danger" role="alert">
+            {categoriesError.message}
+          </p>
+        )}
+      </fieldset>
+
+      <div className="grid grid-cols-2 gap-3">
+        <DatePicker
+          label="Data inizio"
+          required
+          value={form.watch("dateStart")}
+          onChange={(v) => form.setValue("dateStart", v, { shouldValidate: true, shouldDirty: true })}
+          error={form.formState.errors.dateStart?.message}
+        />
+        <DatePicker
+          label="Data fine"
+          value={form.watch("dateEnd")}
+          onChange={(v) => form.setValue("dateEnd", v, { shouldValidate: true, shouldDirty: true })}
+          error={form.formState.errors.dateEnd?.message}
+          placeholder="Facoltativa"
+        />
+      </div>
+
+      <fieldset>
+        <legend className="mb-1.5 block text-[13px] font-medium text-primary">
+          Orario
+        </legend>
+        <div className="flex items-center gap-2">
+          <TimePicker
+            value={form.watch("timeStart") || "18:00"}
+            onChange={(v) => form.setValue("timeStart", v, { shouldDirty: true })}
+          />
+          <span className="text-muted" aria-hidden="true">&ndash;</span>
+          <TimePicker
+            value={form.watch("timeEnd") || "23:00"}
+            onChange={(v) => form.setValue("timeEnd", v, { shouldDirty: true })}
+          />
+        </div>
+      </fieldset>
+
+      <LocationPickerField
+        label="Luogo"
+        placeholder="Cerca luogo..."
+        initialAddress={initialData?.address ?? undefined}
+        initialLatitude={initialData?.latitude ?? undefined}
+        initialLongitude={initialData?.longitude ?? undefined}
+        error={form.formState.errors.address?.message}
+        onAddressChange={(v) => form.setValue("address", v, { shouldValidate: true, shouldDirty: true })}
+        onCoordinatesChange={(lat, lng) => {
+          form.setValue("latitude", lat, { shouldDirty: true });
+          form.setValue("longitude", lng, { shouldDirty: true });
+        }}
+      />
+
+      <Input
+        label="Telefono"
+        type="tel"
+        placeholder="Es: +39 085 906 1234"
+        error={form.formState.errors.phone?.message}
+        {...form.register("phone")}
+      />
+
+      <Input
+        label="Prezzo (EUR)"
+        type="number"
+        step="0.01"
+        min="0"
+        placeholder="Lascia vuoto se gratuito"
+        error={form.formState.errors.price?.message}
+        {...form.register("price", { valueAsNumber: true })}
+      />
+
+      <Input
+        label="Immagine (URL)"
+        type="url"
+        placeholder="https://..."
+        error={form.formState.errors.imageUrl?.message}
+        {...form.register("imageUrl")}
+      />
+
+      {errorMessage && (
+        <p className="text-[13px] text-danger" role="alert">{errorMessage}</p>
+      )}
+
+      <Button
+        type="submit"
+        fullWidth
+        disabled={submitState === "submitting"}
+        aria-busy={submitState === "submitting"}
+      >
+        {submitState === "submitting"
+          ? "Salvataggio..."
+          : isEdit
+            ? "Salva modifiche"
+            : "Pubblica evento"}
+      </Button>
+    </form>
+  );
+}

@@ -1,0 +1,20 @@
+---
+import AppWrapper from "../../building-blocks/AppWrapper.astro";
+import ProfileApp from "../../components/profile/ProfileApp";
+
+export const prerender = false;
+
+const user = Astro.locals.user;
+
+if (!user) {
+  return Astro.redirect(`/sign-in?redirect_url=${encodeURIComponent(Astro.url.pathname)}`);
+}
+---
+
+<AppWrapper title="Profilo" description="Il tuo profilo su Oggi a Ortona">
+  <ProfileApp client:only="react" user={{ id: user.id, name: user.name, email: user.email, avatarUrl: user.avatarUrl }}>
+    <div slot="fallback" class="flex items-center justify-center py-20">
+      <div class="h-6 w-6 animate-spin rounded-full border-2 border-border border-t-accent"></div>
+    </div>
+  </ProfileApp>
+</AppWrapper>

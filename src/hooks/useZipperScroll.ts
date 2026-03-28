@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 
 const ZONE_START = 1.05;
-const ZONE_END = 0.65;
+const ZONE_END = 0.75;
 const MAX_OFFSET_X = 120;
-const MAX_BLUR = 6;
+const MAX_BLUR = 12;
 const MIN_SCALE = 0.88;
 
 export function useZipperScroll(containerRef: React.RefObject<HTMLDivElement | null>) {

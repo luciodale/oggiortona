@@ -1,17 +1,21 @@
 // API request/response contracts — compose database types.
 
 import type {
-  DailySpecialRow,
-  EventCategory,
   EventRow,
-  RestaurantType,
+  PromotionRow,
+  RestaurantRow,
+  UserRow,
 } from "./database";
 import type { RestaurantWithStatus } from "./domain";
+import type {
+  CreateRestaurantApiPayload,
+  UpdateRestaurantApiPayload,
+} from "../schemas/restaurant";
 
 // -- Restaurants --
 
 export type RestaurantListParams = {
-  type?: RestaurantType;
+  type?: string;
   open_now?: boolean;
   has_special?: boolean;
   sort?: "name" | "price_range";
@@ -26,26 +30,36 @@ export type RestaurantDetailResponse = {
   restaurant: RestaurantWithStatus;
 };
 
-// -- Daily Specials --
+export type CreateRestaurantRequest = CreateRestaurantApiPayload;
 
-export type DailySpecialsResponse = {
-  specials: Array<DailySpecialRow & { restaurant_name: string }>;
+export type UpdateRestaurantRequest = UpdateRestaurantApiPayload;
+
+// -- Dashboard --
+
+export type DashboardRestaurant = RestaurantRow & {
+  promotions: Array<PromotionRow>;
 };
 
-// -- Events --
-
-export type EventListParams = {
-  category?: EventCategory;
-  period?: "this_week" | "upcoming" | "all";
+export type DashboardResponse = {
+  user: UserRow;
+  restaurants: Array<DashboardRestaurant>;
 };
 
-export type EventListResponse = {
+// -- Promotions --
+
+export type PromotionsResponse = {
+  restaurantName: string;
+  items: Array<PromotionRow>;
+};
+
+// -- Admin --
+
+export type AdminRestaurantsResponse = {
+  restaurants: Array<DashboardRestaurant>;
+};
+
+export type AdminEventsResponse = {
   events: Array<EventRow>;
-  count: number;
-};
-
-export type EventDetailResponse = {
-  event: EventRow;
 };
 
 // -- Shared --

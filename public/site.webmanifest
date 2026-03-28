@@ -4,8 +4,8 @@
   "description": "Mangiare e fare a Ortona",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f8fafc",
-  "theme_color": "#1e3a5f",
+  "background_color": "#fdfaf6",
+  "theme_color": "#fdfaf6",
   "orientation": "portrait",
   "lang": "it",
   "icons": [

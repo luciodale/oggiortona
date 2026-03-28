@@ -122,4 +122,14 @@ describe("getTodayISO", () => {
     const result = getTodayISO();
     expect(result).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
+
+  it("has no T or Z characters", () => {
+    const result = getTodayISO();
+    expect(result).not.toContain("T");
+    expect(result).not.toContain("Z");
+  });
+
+  it("is exactly 10 characters", () => {
+    expect(getTodayISO()).toHaveLength(10);
+  });
 });

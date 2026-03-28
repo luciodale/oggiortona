@@ -1,71 +1,75 @@
 import type { APIContext } from "astro";
-import type { D1Database } from "@cloudflare/workers-types";
-import type { RestaurantRow, DailySpecialRow, DealRow } from "../../types/database";
-import type { RestaurantListResponse } from "../../types/api";
-import { isOpenNow, parseOpeningHours } from "../../utils/time";
+import { restaurants, promotions } from "../../db/schema";
+import { eq, and as dbAnd, lte, gte } from "drizzle-orm";
 import { getTodayISO } from "../../utils/date";
-import { parseTypes } from "../../utils/restaurant";
+import { createRestaurantApiSchema } from "../../schemas/restaurant";
+import { groupPromotionsByRestaurant, enrichRestaurant } from "../../utils/enrichRestaurant";
+import { notifyAdmins } from "../../utils/adminNotify";
 
-export async function GET({ locals, request }: APIContext): Promise<Response> {
-  const db = locals.runtime.env.DB as D1Database;
-  const url = new URL(request.url);
-
-  const typeFilter = url.searchParams.get("type");
-  const openNow = url.searchParams.get("open_now") === "true";
-  const hasSpecial = url.searchParams.get("has_special") === "true";
-  const sort = url.searchParams.get("sort") ?? "name";
-
+export async function GET({ locals }: APIContext): Promise<Response> {
+  const db = locals.db;
   const today = getTodayISO();
 
-  const [restaurants, specials, deals] = await Promise.all([
-    db.prepare("SELECT * FROM restaurants WHERE active = 1 ORDER BY name").all<RestaurantRow>(),
-    db.prepare("SELECT * FROM daily_specials WHERE date = ?").bind(today).all<DailySpecialRow>(),
-    db.prepare("SELECT * FROM deals WHERE valid_from <= datetime('now') AND valid_until > datetime('now')").all<DealRow>(),
+  const [allRestaurants, allPromotions] = await Promise.all([
+    db.select().from(restaurants).where(eq(restaurants.active, 1)),
+    db.select().from(promotions).where(dbAnd(lte(promotions.dateStart, today), gte(promotions.dateEnd, today))),
   ]);
 
-  const specialsByRestaurant = new Map<number, DailySpecialRow>();
-  for (const special of specials.results) {
-    specialsByRestaurant.set(special.restaurant_id, special);
+  const grouped = groupPromotionsByRestaurant(allPromotions);
+  const enriched = allRestaurants.map((r) => enrichRestaurant(r, grouped.get(r.id) ?? []));
+  const publicList = enriched.map(({ ownerId: _, ...rest }) => rest);
+
+  return Response.json({ restaurants: publicList, count: publicList.length });
+}
+
+export async function POST({ locals, request }: APIContext): Promise<Response> {
+  const user = locals.user;
+  if (!user) return Response.json({ error: "Non autenticato" }, { status: 401 });
+
+  const db = locals.db;
+
+  let raw: unknown;
+  try {
+    raw = await request.json();
+  } catch {
+    return Response.json({ error: "Corpo non valido" }, { status: 400 });
   }
 
-  const dealsByRestaurant = new Map<number, DealRow>();
-  for (const deal of deals.results) {
-    dealsByRestaurant.set(deal.restaurant_id, deal);
+  const result = createRestaurantApiSchema.safeParse(raw);
+  if (!result.success) {
+    const firstError = result.error.issues[0]?.message ?? "Dati non validi";
+    return Response.json({ error: firstError }, { status: 400 });
   }
 
-  let enriched = restaurants.results.map((r) => {
-    const { opening_hours, type, ...rest } = r;
-    const parsedHours = parseOpeningHours(opening_hours);
-    return {
-      ...rest,
-      types: parseTypes(type),
-      is_open: isOpenNow(parsedHours),
-      today_special: specialsByRestaurant.get(r.id) ?? null,
-      active_deal: dealsByRestaurant.get(r.id) ?? null,
-      parsed_hours: parsedHours,
-    };
-  });
+  const body = result.data;
 
-  if (typeFilter) {
-    enriched = enriched.filter((r) => r.types.includes(typeFilter as never));
-  }
-  if (openNow) {
-    enriched = enriched.filter((r) => r.is_open);
-  }
-  if (hasSpecial) {
-    enriched = enriched.filter((r) => r.today_special !== null);
-  }
+  const [restaurant] = await db.insert(restaurants).values({
+    name: body.name.trim(),
+    description: body.description?.trim() || null,
+    type: body.type.trim(),
+    priceRange: body.price_range,
+    phone: body.phone?.trim() || null,
+    address: body.address.trim(),
+    latitude: body.latitude ?? null,
+    longitude: body.longitude ?? null,
+    openingHours: body.opening_hours,
+    imageUrl: body.image_url?.trim() || null,
+    menuUrl: body.menu_url?.trim() || null,
+    ownerId: user.id,
+    active: 0,
+  }).returning();
 
-  if (sort === "price_range") {
-    enriched.sort((a, b) => a.price_range - b.price_range);
+  if (!restaurant) {
+    return Response.json({ error: "Errore creazione locale" }, { status: 500 });
   }
 
-  const response: RestaurantListResponse = {
-    restaurants: enriched,
-    count: enriched.length,
-  };
+  // Fire-and-forget admin notification
+  notifyAdmins(db, locals.runtime.env, {
+    title: "Nuovo ristorante aggiunto",
+    body: `${restaurant.name} (${restaurant.type}) — ${restaurant.address}`,
+    url: "/admin",
+  }).catch((err) => console.error("[push] notifyAdmins error:", err));
 
-  return new Response(JSON.stringify(response), {
-    headers: { "Content-Type": "application/json" },
-  });
+  const { ownerId: _, ...publicRestaurant } = restaurant;
+  return Response.json({ restaurant: publicRestaurant }, { status: 201 });
 }

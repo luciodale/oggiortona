@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Light background -->
+  <circle cx="256" cy="256" r="256" fill="#fdfaf6"/>
+
+  <!-- Castle silhouette -->
+  <path fill-rule="evenodd" fill="#c4512a" d="
+    M 85 355
+    L 120 250 L 120 190 L 172 190 L 172 250
+    L 340 250
+    L 340 190 L 392 190 L 392 250 L 427 355
+    Z
+    M 236 355
+    L 236 310 Q 256 288 276 310 L 276 355
+    Z
+  "/>
+
+  <!-- Text -->
+  <text x="256" y="420" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="500" font-size="34" fill="#2c1810" letter-spacing="6" opacity="0.75">ORTONA</text>
+</svg>

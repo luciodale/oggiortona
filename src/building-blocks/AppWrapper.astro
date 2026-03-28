@@ -27,16 +27,34 @@ const {
     <AppHead title={title} description={description} />
   </head>
   <body class:list={["min-h-dvh", bodyClass]}>
+    <a href="#main-content" class="skip-link">Vai al contenuto</a>
+    <!-- Splash screen (first visit only) -->
+    <div id="splash" aria-hidden="true" style="position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fdfaf6;transition:opacity 0.4s ease-out;"></div>
+    <script is:inline>
+      (function() {
+        var s = document.getElementById("splash");
+        if (!s) return;
+        if (sessionStorage.getItem("splashShown")) {
+          s.remove();
+          return;
+        }
+        s.innerHTML = '<img src="/icon.svg" alt="" width="80" height="80" style="border-radius:20px;"><p style="margin-top:16px;font-family:Georgia,Times New Roman,serif;font-size:18px;font-weight:600;color:#2c1810;letter-spacing:1px;">Oggi a Ortona</p>';
+        sessionStorage.setItem("splashShown", "1");
+        setTimeout(function() {
+          s.style.opacity = "0";
+          setTimeout(function() { s.remove(); }, 400);
+        }, 600);
+      })();
+    </script>
+
     <Layout class={layoutClass}>
       <slot />
     </Layout>
     {!hideNav && <BottomNav />}
-    {import.meta.env.PROD && (
-      <script is:inline>
-        if ("serviceWorker" in navigator) {
-          navigator.serviceWorker.register("/sw.js");
-        }
-      </script>
-    )}
+    <script is:inline>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/sw.js");
+      }
+    </script>
   </body>
 </html>

@@ -1,0 +1,73 @@
+---
+import AppWrapper from "../../building-blocks/AppWrapper.astro";
+import ZipperScroll from "../../components/shared/ZipperScroll.astro";
+import { RestaurantsView } from "../../components/restaurants/RestaurantsView";
+import { restaurants, promotions } from "../../db/schema";
+import { eq, and as dbAnd, lte, gte } from "drizzle-orm";
+import { getTodayISO } from "../../utils/date";
+import { groupPromotionsByRestaurant, enrichRestaurant } from "../../utils/enrichRestaurant";
+
+const db = Astro.locals.db;
+const today = getTodayISO();
+
+const [allRestaurants, allPromotions] = await Promise.all([
+  db.select().from(restaurants).where(eq(restaurants.active, 1)),
+  db
+    .select()
+    .from(promotions)
+    .where(
+      dbAnd(lte(promotions.dateStart, today), gte(promotions.dateEnd, today)),
+    ),
+]);
+
+const grouped = groupPromotionsByRestaurant(allPromotions);
+const enriched = allRestaurants.map((r) => enrichRestaurant(r, grouped.get(r.id) ?? []));
+const openCount = enriched.filter((r) => r.isOpen).length;
+---
+
+<AppWrapper
+  title="Mangiare"
+  description="Dove mangiare a Ortona. Ristoranti, pizzerie, bar e altro."
+  bodyClass="page-mangiare"
+>
+  <div class="mb-6 animate-fade-up flex items-start justify-between">
+    <div>
+      <h1
+        class="font-family-display text-3xl font-medium tracking-tight text-primary"
+      >
+        Mangiare
+      </h1>
+    </div>
+    <button
+      id="refresh-btn"
+      type="button"
+      aria-label="Aggiorna"
+      class="mt-1 flex h-9 w-9 items-center justify-center rounded-full border border-border-light bg-surface text-muted transition-all duration-300 hover:border-mangiare-muted hover:text-mangiare active:scale-90"
+    >
+      <svg
+        class="h-[18px] w-[18px]"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <polyline points="23 4 23 10 17 10"></polyline>
+        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+      </svg>
+    </button>
+  </div>
+
+  <script>
+    const btn = document.getElementById("refresh-btn");
+    btn?.addEventListener("click", () => {
+      btn.querySelector("svg")?.classList.add("animate-spin");
+      window.location.reload();
+    });
+  </script>
+
+  <RestaurantsView client:load restaurants={enriched} />
+  <ZipperScroll />
+</AppWrapper>

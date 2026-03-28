@@ -43,8 +43,8 @@
 
 ## Architecture
 
-- `src/db/schema.sql` is the single source of truth for all data shapes
-- `src/types/database.ts` mirrors schema 1:1
+- `src/db/schema.ts` (Drizzle ORM) is the single source of truth for all data shapes
+- `src/types/database.ts` re-exports inferred types from Drizzle
 - `src/types/api.ts` defines request/response contracts
 - `src/types/domain.ts` defines enriched types (e.g., RestaurantWithStatus)
 - Astro pages fetch data server-side from D1, pass to React islands as props

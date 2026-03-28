@@ -1,3 +1,10 @@
+export function isToday(dateStart: string, dateEnd: string | null) {
+  const today = getTodayISO();
+  if (dateStart === today) return true;
+  if (dateEnd && dateStart <= today && dateEnd >= today) return true;
+  return false;
+}
+
 export function isThisWeek(dateStr: string) {
   const date = new Date(dateStr);
   const now = new Date();
@@ -51,12 +58,13 @@ export function relativeTime(dateStr: string) {
 }
 
 export function getTodayISO() {
-  // Use Italian timezone so the "today" boundary is midnight Rome, not midnight UTC
-  const formatter = new Intl.DateTimeFormat("sv-SE", {
+  const parts = new Intl.DateTimeFormat("en-US", {
     timeZone: "Europe/Rome",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
-  });
-  return formatter.format(new Date());
+  }).formatToParts(new Date());
+
+  const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "00";
+  return `${get("year")}-${get("month")}-${get("day")}`;
 }

@@ -18,11 +18,13 @@
 - Favour types over interfaces.
 
 ## Types (Single Source of Truth)
-- `src/db/schema.sql` is the single source of truth for all data shapes.
-- `src/types/database.ts` mirrors schema.sql 1:1. If schema changes, update database.ts.
+- `src/db/schema.ts` (Drizzle) is the single source of truth for all data shapes.
+- `src/types/database.ts` re-exports `InferSelectModel` types from Drizzle schema. Never define row types manually.
+- `src/db/client.ts` provides `createDb(d1)`. Access via `locals.db` (set by middleware).
 - `src/types/api.ts` defines request/response contracts composing database types.
 - `src/types/domain.ts` defines enriched/computed types for UI.
-- API routes and components import from these typed modules. No inline type definitions for data shapes.
+- All queries use Drizzle query builder. No raw SQL.
+- Categories/types are plain strings, not union types. Lookup maps use `Record<string, string>`.
 
 ## Icons
 - NEVER inline SVGs. All icons live in `src/icons/` as TSX components.
@@ -42,9 +44,9 @@
 - Always return typed JSON responses. Always handle errors with proper HTTP status codes.
 
 ## Database
-- Raw SQL queries via D1 binding. No ORM.
-- All migrations in `src/db/migrations/` numbered sequentially.
-- Parameterized queries only. Never interpolate user input into SQL.
+- Drizzle ORM over Cloudflare D1. Schema in `src/db/schema.ts`.
+- All migrations in `src/db/migrations/` numbered sequentially (raw SQL for D1 execute).
+- Use Drizzle query builder for all queries. No raw SQL.
 
 ## Package Manager
 - Bun exclusively.

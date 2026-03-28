@@ -4,3 +4,12 @@ dist/
 .wrangler/
 .dev.vars
 .mf/
+
+# clerk configuration (can include secrets)
+/.clerk/
+
+# Localflare generated files
+.localflare/
+
+.env
+.dev.vars

@@ -1,0 +1,183 @@
+-- Oggi a Ortona: Promotion domain
+-- Covers promotion lifecycle: creation, expiry, renewal, deletion.
+-- Three types: special (piatto del giorno), deal (offerta), news (novita).
+
+use "./restaurants.allium" as rest
+
+-- ---------------------------------------------------------------
+-- Enumerations
+-- ---------------------------------------------------------------
+
+enum PromotionType { special, deal, news }
+
+-- ---------------------------------------------------------------
+-- Entities
+-- ---------------------------------------------------------------
+
+entity Promotion {
+    restaurant: rest/Restaurant,
+    type: PromotionType,
+    title: String,
+    description: String?,
+    price: Decimal?,
+    date_start: String,            -- ISO date YYYY-MM-DD
+    date_end: String,              -- ISO date YYYY-MM-DD
+    time_start: String?,           -- HH:MM
+    time_end: String?,             -- HH:MM
+    created_at: Timestamp,
+
+    -- Derived
+    is_active: date_start <= today and date_end >= today,
+    is_expired: date_end < today,
+    duration_days: day_diff(date_end, date_start) + 1
+}
+
+-- ---------------------------------------------------------------
+-- Config
+-- ---------------------------------------------------------------
+
+config {
+    min_duration_days: Integer = 1,
+    max_duration_days: Integer = 7,
+    max_promotions_in_admin: Integer = 60,
+    max_expired_notifications: Integer = 10,
+    timezone: String = "Europe/Rome"
+}
+
+-- ---------------------------------------------------------------
+-- Rules: Creation
+-- ---------------------------------------------------------------
+
+rule CreateSpecial {
+    when: OwnerCreatesPromotion(owner, restaurant, data)
+    requires: restaurant.owner = owner
+    requires: restaurant.active
+    requires: data.type = special
+    requires: data.description != null and data.description != ""
+    let clamped_days = clamp(data.duration_days, config.min_duration_days, config.max_duration_days)
+    let start = today_iso()
+    let end = compute_date_end(start, clamped_days)
+    ensures: Promotion.created(
+        restaurant: restaurant,
+        type: special,
+        title: data.description,     -- special uses description as title
+        description: null,
+        price: data.price,
+        date_start: start,
+        date_end: end,
+        time_start: data.time_start,
+        time_end: data.time_end
+    )
+}
+
+rule CreateDealOrNews {
+    when: OwnerCreatesPromotion(owner, restaurant, data)
+    requires: restaurant.owner = owner
+    requires: restaurant.active
+    requires: data.type in {deal, news}
+    requires: data.title != null and data.title != ""
+    let clamped_days = clamp(data.duration_days, config.min_duration_days, config.max_duration_days)
+    let start = today_iso()
+    let end = compute_date_end(start, clamped_days)
+    ensures: Promotion.created(
+        restaurant: restaurant,
+        type: data.type,
+        title: data.title,
+        description: data.description,
+        price: data.price,
+        date_start: start,
+        date_end: end,
+        time_start: data.time_start,
+        time_end: data.time_end
+    )
+}
+
+-- ---------------------------------------------------------------
+-- Rules: Renewal
+-- ---------------------------------------------------------------
+
+rule RenewPromotion {
+    when: OwnerRenewsPromotion(owner, promotion)
+    requires: promotion.restaurant.owner = owner
+    requires: promotion.is_expired
+    let original_duration = promotion.duration_days
+    let new_start = today_iso()
+    let new_end = compute_date_end(new_start, original_duration)
+    ensures: promotion.date_start = new_start
+    ensures: promotion.date_end = new_end
+}
+
+-- ---------------------------------------------------------------
+-- Rules: Deletion
+-- ---------------------------------------------------------------
+
+rule DeletePromotion {
+    when: OwnerDeletesPromotion(owner, promotion)
+    requires: promotion.restaurant.owner = owner
+    ensures: not exists promotion
+}
+
+-- ---------------------------------------------------------------
+-- Surfaces
+-- ---------------------------------------------------------------
+
+surface OwnerStorefront {
+    facing owner: rest/Owner
+
+    context restaurant: rest/Restaurant where owner = owner and active
+
+    exposes:
+        restaurant.name
+        for p in Promotions where restaurant = restaurant:
+            p.type
+            p.title
+            p.description
+            p.price
+            p.date_start
+            p.date_end
+            p.time_start
+            p.time_end
+            p.is_active
+            p.is_expired
+            p.created_at
+
+    provides:
+        OwnerCreatesPromotion(owner, restaurant, data)
+        OwnerDeletesPromotion(owner, promotion)
+            when promotion.restaurant = restaurant
+        OwnerRenewsPromotion(owner, promotion)
+            when promotion.is_expired and promotion.restaurant = restaurant
+
+    guidance:
+        "Promotions sorted by created_at DESC"
+        "Tab UI groups by type: special, deal, news"
+        "Expired promotions shown with dashed border and renew action"
+}
+
+surface DailySpecials {
+    facing visitor: rest/Visitor
+
+    exposes:
+        for p in Promotions where type = special and is_active:
+            p.title
+            p.description
+            p.price
+            p.restaurant.name
+}
+
+surface ExpiredPromotionsNotice {
+    facing owner: rest/Owner
+
+    exposes:
+        for p in Promotions where is_expired and restaurant.owner = owner:
+            p.type
+            p.title
+            p.restaurant.name
+            p.restaurant.id
+            p.date_end
+
+    guidance:
+        "Maximum 10 notifications shown"
+        "Sorted by date_end DESC"
+        "Links to storefront for renewal"
+}

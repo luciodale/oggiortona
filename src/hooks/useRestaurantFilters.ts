@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import type { RestaurantWithStatus } from "../types/domain";
-import { isOpenNow, isUtcDatetimeInFuture } from "../utils/time";
+import { isOpenNow } from "../utils/time";
+import { getTodayISO } from "../utils/date";
 
 type Filters = {
   openNow: boolean;
@@ -15,7 +16,7 @@ export function useRestaurantFilters(restaurants: Array<RestaurantWithStatus>) {
     hasDeals: false,
   });
 
-  // Tick every 60s to re-evaluate open status and deal expiry
+  // Tick every 60s to re-evaluate open status
   const [tick, setTick] = useState(0);
   useEffect(() => {
     const interval = setInterval(() => setTick((t) => t + 1), 60_000);
@@ -23,47 +24,50 @@ export function useRestaurantFilters(restaurants: Array<RestaurantWithStatus>) {
   }, []);
 
   const filtered = useMemo(() => {
+    const today = getTodayISO();
+
     let result = restaurants.map((r) => {
-      // Re-evaluate deal validity on the client
-      const dealStillActive =
-        r.active_deal && isUtcDatetimeInFuture(r.active_deal.valid_until);
+      // Re-evaluate promotion validity on the client
+      const activePromotions = r.promotions.filter((p) => p.dateEnd >= today);
 
       return {
         ...r,
-        is_open: isOpenNow(r.parsed_hours),
-        active_deal: dealStillActive ? r.active_deal : null,
+        isOpen: isOpenNow(r.parsedHours),
+        promotions: activePromotions,
       };
     });
 
     if (filters.openNow) {
-      result = result.filter((r) => r.is_open);
+      result = result.filter((r) => r.isOpen);
     }
     if (filters.hasSpecial) {
-      result = result.filter((r) => r.today_special !== null);
+      result = result.filter((r) => r.promotions.some((p) => p.type === "special"));
     }
     if (filters.hasDeals) {
-      result = result.filter((r) => r.active_deal !== null);
+      result = result.filter((r) => r.promotions.some((p) => p.type === "deal"));
     }
 
     result.sort((a, b) => {
       // Tier 1: active deal (soonest expiry first)
-      const aDeal = a.active_deal ? 1 : 0;
-      const bDeal = b.active_deal ? 1 : 0;
+      const aDeals = a.promotions.filter((p) => p.type === "deal");
+      const bDeals = b.promotions.filter((p) => p.type === "deal");
+      const aDeal = aDeals.length > 0 ? 1 : 0;
+      const bDeal = bDeals.length > 0 ? 1 : 0;
       if (aDeal !== bDeal) return bDeal - aDeal;
-      if (a.active_deal && b.active_deal) {
-        const aExpiry = new Date(a.active_deal.valid_until + "Z").getTime();
-        const bExpiry = new Date(b.active_deal.valid_until + "Z").getTime();
-        return aExpiry - bExpiry;
+      const aFirstDeal = aDeals[0];
+      const bFirstDeal = bDeals[0];
+      if (aFirstDeal && bFirstDeal) {
+        return aFirstDeal.dateEnd.localeCompare(bFirstDeal.dateEnd);
       }
 
       // Tier 2: has daily special
-      const aSpecial = a.today_special ? 1 : 0;
-      const bSpecial = b.today_special ? 1 : 0;
+      const aSpecial = a.promotions.some((p) => p.type === "special") ? 1 : 0;
+      const bSpecial = b.promotions.some((p) => p.type === "special") ? 1 : 0;
       if (aSpecial !== bSpecial) return bSpecial - aSpecial;
 
       // Tier 3: currently open
-      const aOpen = a.is_open ? 1 : 0;
-      const bOpen = b.is_open ? 1 : 0;
+      const aOpen = a.isOpen ? 1 : 0;
+      const bOpen = b.isOpen ? 1 : 0;
       if (aOpen !== bOpen) return bOpen - aOpen;
 
       // Tier 4: alphabetical

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Warm accent background -->
+  <rect width="512" height="512" rx="96" fill="#c4512a"/>
+
+  <!-- Castle silhouette: single path, gate arch as negative space -->
+  <path fill-rule="evenodd" fill="#fdfaf6" d="
+    M 85 370
+    L 120 255 L 120 190 L 172 190 L 172 255
+    L 340 255
+    L 340 190 L 392 190 L 392 255 L 427 370
+    Z
+    M 236 370
+    L 236 318 Q 256 293 276 318 L 276 370
+    Z
+  "/>
+</svg>

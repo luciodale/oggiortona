@@ -1,0 +1,8 @@
+---
+import AppWrapper from "../../building-blocks/AppWrapper.astro";
+import { SSOCallback } from "../../components/auth/SSOCallback";
+---
+
+<AppWrapper title="Accesso..." description="Completamento accesso" hideNav bodyClass="page-mangiare">
+  <SSOCallback client:load />
+</AppWrapper>
