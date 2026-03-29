@@ -163,6 +163,12 @@ export function EventForm({ eventId, initialData }: EventFormProps) {
         <p className="text-[13px] text-danger" role="alert">{errorMessage}</p>
       )}
 
+      {form.formState.isSubmitted && Object.keys(form.formState.errors).length > 0 && (
+        <p className="text-[13px] text-danger" role="alert">
+          Compila tutti i campi obbligatori prima di procedere
+        </p>
+      )}
+
       <Button
         type="submit"
         fullWidth

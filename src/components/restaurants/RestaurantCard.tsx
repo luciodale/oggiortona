@@ -3,8 +3,10 @@ import { MapPinIcon } from "../../icons/MapPinIcon";
 import { MessageIcon } from "../../icons/MessageIcon";
 import { PhoneIcon } from "../../icons/PhoneIcon";
 import type { RestaurantWithStatus } from "../../types/domain";
-import { formatDateShort } from "../../utils/date";
 import { IconBubble } from "../shared/IconBubble";
+import { DealEntry } from "./DealEntry";
+import { NewsEntry } from "./NewsEntry";
+import { SpecialEntry } from "./SpecialEntry";
 
 type RestaurantCardProps = {
   restaurant: RestaurantWithStatus;
@@ -13,6 +15,7 @@ type RestaurantCardProps = {
 export function RestaurantCard({ restaurant }: RestaurantCardProps) {
   const specials = restaurant.promotions.filter((p) => p.type === "special");
   const deals = restaurant.promotions.filter((p) => p.type === "deal");
+  const newsItems = restaurant.promotions.filter((p) => p.type === "news");
 
   return (
     <div className="zipper-card rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
@@ -66,49 +69,16 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
           </p>
         )}
 
-        {/* Daily specials */}
         {specials.map((special) => (
-          <div key={special.id} className="mt-3 flex items-start gap-2 rounded-xl bg-mangiare-light px-3 py-2.5">
-            <span className="mt-px text-sm" aria-hidden="true">&#9733;</span>
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-mangiare">
-                Piatto del giorno
-              </p>
-              <p className="mt-0.5 text-[13px] text-primary">
-                {special.title}
-                {special.price != null && (
-                  <span className="ml-1 font-semibold">
-                    {special.price.toFixed(2)}&euro;
-                  </span>
-                )}
-              </p>
-            </div>
-          </div>
+          <SpecialEntry key={special.id} special={special} />
         ))}
 
-        {/* Deals */}
         {deals.map((deal) => (
-          <div key={deal.id} className="mt-3 flex items-start gap-2 rounded-xl bg-violet-50 px-3 py-2.5">
-            <span className="mt-px text-sm" aria-hidden="true">&#9889;</span>
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-violet-700">
-                Offerta
-              </p>
-              <p className="mt-0.5 text-[13px] font-medium text-primary">
-                {deal.title}
-              </p>
-              {deal.description && (
-                <p className="mt-0.5 text-[12px] text-muted">
-                  {deal.description}
-                </p>
-              )}
-              {deal.dateStart !== deal.dateEnd && (
-                <p className="mt-1 text-[10px] text-violet-500">
-                  fino al {formatDateShort(deal.dateEnd)}
-                </p>
-              )}
-            </div>
-          </div>
+          <DealEntry key={deal.id} deal={deal} />
+        ))}
+
+        {newsItems.map((item) => (
+          <NewsEntry key={item.id} news={item} />
         ))}
 
       </a>
