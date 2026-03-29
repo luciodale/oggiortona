@@ -10,7 +10,7 @@ export function IconBubble({ href, label, external = false, children }: IconBubb
     <a
       href={href}
       {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-      className="flex h-11 w-11 items-center justify-center rounded-full bg-primary/5 text-primary/40 no-underline transition-all hover:bg-primary hover:text-white"
+      className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/5 text-primary/40 no-underline transition-all hover:bg-primary hover:text-white"
       aria-label={label}
     >
       {children}

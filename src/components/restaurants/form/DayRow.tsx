@@ -28,7 +28,7 @@ export function DayRow({ day, dayIndex, form, onCopyPrevious }: DayRowProps) {
     <div className="flex flex-col gap-2.5 border-b border-border-light py-4 last:border-0">
       <button
         type="button"
-        className="flex w-full cursor-pointer items-center justify-between bg-transparent p-0"
+        className="flex w-full items-center justify-between bg-transparent p-0"
         onClick={() => patch({ closed: !state.closed })}
         aria-pressed={!state.closed}
         aria-label={t("aria.dayState", { day: getDayLabel(day, locale) ?? "", state: state.closed ? t("common.closedLower") : t("common.openLower") })}

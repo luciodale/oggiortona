@@ -9,7 +9,7 @@ type Filters = {
   hasDeals: boolean;
 };
 
-export function useRestaurantFilters(restaurants: Array<RestaurantWithStatus>) {
+export function useRestaurantFilters(restaurants: Array<RestaurantWithStatus>, pinnedIds: Set<number>) {
   const [filters, setFilters] = useState<Filters>({
     openNow: false,
     hasSpecial: false,
@@ -48,6 +48,11 @@ export function useRestaurantFilters(restaurants: Array<RestaurantWithStatus>) {
     }
 
     result.sort((a, b) => {
+      // Tier 0: pinned restaurants first
+      const aPinned = pinnedIds.has(a.id) ? 1 : 0;
+      const bPinned = pinnedIds.has(b.id) ? 1 : 0;
+      if (aPinned !== bPinned) return bPinned - aPinned;
+
       // Tier 1: active deal (soonest expiry first)
       const aDeals = a.promotions.filter((p) => p.type === "deal");
       const bDeals = b.promotions.filter((p) => p.type === "deal");
@@ -76,7 +81,7 @@ export function useRestaurantFilters(restaurants: Array<RestaurantWithStatus>) {
 
     return result;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [restaurants, filters, tick]);
+  }, [restaurants, filters, tick, pinnedIds]);
 
   const noFilter: Filters = { openNow: false, hasSpecial: false, hasDeals: false };
 

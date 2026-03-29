@@ -20,8 +20,11 @@ FLAG="--$TARGET"
 echo "Dropping all tables..."
 rm -rf .wrangler/state
 
-echo "Running migration..."
-bunx wrangler d1 execute "$DB_NAME" --file=src/db/migrations/0001_initial.sql $FLAG
+echo "Running migrations..."
+for migration in src/db/migrations/*.sql; do
+  echo "  -> $(basename "$migration")"
+  bunx wrangler d1 execute "$DB_NAME" --file="$migration" $FLAG
+done
 
 echo "Seeding..."
 bunx wrangler d1 execute "$DB_NAME" --file=src/db/seed.sql $FLAG

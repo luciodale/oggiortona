@@ -160,6 +160,17 @@ body {
 .stagger-children > *:nth-child(8) { animation-delay: 0.4s; }
 
 /* ==============================
+   Interactive elements
+   ============================== */
+
+button,
+select,
+summary,
+[role="button"] {
+  cursor: pointer;
+}
+
+/* ==============================
    Focus styles (keyboard navigation)
    ============================== */
 

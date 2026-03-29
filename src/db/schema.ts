@@ -72,6 +72,18 @@ export const pushSubscriptions = sqliteTable("push_subscriptions", {
   unique("uq_push_subscriptions_endpoint_scope").on(table.endpoint, table.scope),
 ]);
 
+// -- Pinned Restaurants (user favourites, sorted to top) --
+
+export const pinnedRestaurants = sqliteTable("pinned_restaurants", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  restaurantId: integer("restaurant_id").notNull().references(() => restaurants.id, { onDelete: "cascade" }),
+  createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
+}, (table) => [
+  unique("uq_pinned_user_restaurant").on(table.userId, table.restaurantId),
+  index("idx_pinned_user").on(table.userId),
+]);
+
 // -- Events --
 
 export const events = sqliteTable("events", {

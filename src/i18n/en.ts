@@ -253,6 +253,10 @@ export const en: Translations = {
   "push.activating": "Activating...",
   "push.deactivating": "Deactivating...",
 
+  // Pin
+  "pin.pin": "Pin to top",
+  "pin.unpin": "Unpin",
+
   // Language
   "lang.label": "Language",
   "lang.italian": "Italiano",

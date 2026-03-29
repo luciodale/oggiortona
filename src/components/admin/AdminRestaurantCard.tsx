@@ -26,7 +26,7 @@ export function AdminRestaurantCard({
       <div
         role="button"
         tabIndex={0}
-        className="flex w-full cursor-pointer items-center justify-between gap-3 bg-transparent p-4 text-left"
+        className="flex w-full items-center justify-between gap-3 bg-transparent p-4 text-left"
         onClick={onExpand}
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onExpand(); } }}
         aria-expanded={expanded}

@@ -249,6 +249,10 @@ export const it = {
   "push.activating": "Attivando...",
   "push.deactivating": "Disattivando...",
 
+  // Pin
+  "pin.pin": "Fissa in alto",
+  "pin.unpin": "Rimuovi dai fissati",
+
   // Language
   "lang.label": "Lingua",
   "lang.italian": "Italiano",
