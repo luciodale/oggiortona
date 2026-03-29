@@ -63,12 +63,14 @@ export async function POST({ locals, request }: APIContext): Promise<Response> {
     return Response.json({ error: "Errore creazione locale" }, { status: 500 });
   }
 
-  // Fire-and-forget admin notification
-  notifyAdmins(db, locals.runtime.env, {
-    title: "Nuovo ristorante aggiunto",
-    body: `${restaurant.name} (${restaurant.type}) — ${restaurant.address}`,
-    url: "/admin",
-  }).catch((err) => console.error("[push] notifyAdmins error:", err));
+  // Notify admins — use waitUntil so the worker stays alive until the push is sent
+  locals.runtime.ctx.waitUntil(
+    notifyAdmins(db, locals.runtime.env, {
+      title: "Nuovo ristorante aggiunto",
+      body: `${restaurant.name} (${restaurant.type}) — ${restaurant.address}`,
+      url: "/admin",
+    }).catch((err) => console.error("[push] notifyAdmins error:", err)),
+  );
 
   const { ownerId: _, ...publicRestaurant } = restaurant;
   return Response.json({ restaurant: publicRestaurant }, { status: 201 });

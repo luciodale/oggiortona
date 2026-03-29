@@ -46,15 +46,17 @@ export async function POST({ locals, request }: APIContext): Promise<Response> {
     return Response.json({ error: "Errore creazione evento" }, { status: 500 });
   }
 
-  // Fire-and-forget admin notification
+  // Notify admins — use waitUntil so the worker stays alive until the push is sent
   const datePart = event.dateEnd
     ? `${event.dateStart} — ${event.dateEnd}`
     : event.dateStart;
-  notifyAdmins(locals.db, locals.runtime.env, {
-    title: "Nuovo evento aggiunto",
-    body: `${event.title} (${event.category}) — ${event.address}, ${datePart}`,
-    url: "/admin",
-  }).catch((err) => console.error("[push] notifyAdmins error:", err));
+  locals.runtime.ctx.waitUntil(
+    notifyAdmins(locals.db, locals.runtime.env, {
+      title: "Nuovo evento aggiunto",
+      body: `${event.title} (${event.category}) — ${event.address}, ${datePart}`,
+      url: "/admin",
+    }).catch((err) => console.error("[push] notifyAdmins error:", err)),
+  );
 
   const { ownerId: _, ...publicEvent } = event;
   return Response.json({ event: publicEvent }, { status: 201 });
