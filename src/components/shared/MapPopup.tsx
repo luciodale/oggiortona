@@ -1,8 +1,8 @@
 import { MapPinIcon } from "../../icons/MapPinIcon";
 import type { MapPin } from "../../utils/map";
-import { SpecialEntry } from "../restaurants/SpecialEntry";
 import { DealEntry } from "../restaurants/DealEntry";
 import { NewsEntry } from "../restaurants/NewsEntry";
+import { SpecialEntry } from "../restaurants/SpecialEntry";
 
 function StatusBadge({ isOpen }: { isOpen: boolean }) {
   return (
@@ -33,7 +33,7 @@ function PriceRange({ range }: { range: number }) {
 
 export function MapPopup({ pin }: { pin: MapPin }) {
   return (
-    <div className="min-w-[180px] py-1 text-center" style={{ fontFamily: "var(--font-family)" }}>
+    <div className="min-w-[180px] py-1" style={{ fontFamily: "var(--font-family)" }}>
       <div className="flex flex-wrap items-center justify-center gap-1.5">
         {pin.isOpen != null && <StatusBadge isOpen={pin.isOpen} />}
         {pin.priceRange != null && pin.priceRange > 0 && (
@@ -42,12 +42,12 @@ export function MapPopup({ pin }: { pin: MapPin }) {
       </div>
       <a
         href={pin.href}
-        className="mt-1.5 block font-family-display text-[17px] font-medium leading-tight text-primary no-underline"
+        className="mt-1.5 block text-center font-family-display text-[17px] font-medium leading-tight text-primary no-underline"
       >
         {pin.label}
       </a>
       {pin.subtitle && (
-        <span className="mt-0.5 block text-xs text-muted">{pin.subtitle}</span>
+        <span className="mt-0.5 block text-xs text-center text-muted">{pin.subtitle}</span>
       )}
       {pin.promotions?.map((p) => {
         if (p.type === "special") return <SpecialEntry key={p.id} special={p} />;
@@ -60,7 +60,7 @@ export function MapPopup({ pin }: { pin: MapPin }) {
           href={pin.directionsUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-2.5 inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold tracking-[0.02em] text-surface no-underline"
+          className="mt-2.5 inline-flex w-full justify-center items-center gap-1.5 rounded-xl bg-secondary px-4 py-2 text-xs font-semibold tracking-[0.02em] text-surface no-underline"
         >
           <MapPinIcon className="h-[13px] w-[13px]" strokeWidth={2.5} />
           Indicazioni

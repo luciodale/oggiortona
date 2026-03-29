@@ -67,6 +67,12 @@ body {
   color: var(--color-primary);
 }
 
+/* for leaflet popup */
+.leaflet-popup-content p {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 /* ==============================
    Page backgrounds (per section)
    ============================== */
