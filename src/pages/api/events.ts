@@ -37,7 +37,6 @@ export async function POST({ locals, request }: APIContext): Promise<Response> {
     latitude: body.latitude ?? null,
     longitude: body.longitude ?? null,
     price: body.price ?? null,
-    imageUrl: body.image_url?.trim() || null,
     ownerId: user.id,
     active: 1,
   }).returning();

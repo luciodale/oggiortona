@@ -30,25 +30,25 @@ describe("isPromotionExpired", () => {
 
 describe("getBadgeStyle", () => {
   it("returns special style", () => {
-    const badge = getBadgeStyle("special");
+    const badge = getBadgeStyle("special", "it");
     expect(badge.label).toBe("Piatto del giorno");
     expect(badge.cls).toContain("mangiare");
   });
 
   it("returns deal style", () => {
-    const badge = getBadgeStyle("deal");
+    const badge = getBadgeStyle("deal", "it");
     expect(badge.label).toBe("Offerta");
     expect(badge.cls).toContain("violet");
   });
 
   it("returns news style", () => {
-    const badge = getBadgeStyle("news");
+    const badge = getBadgeStyle("news", "it");
     expect(badge.label).toBe("News");
     expect(badge.cls).toContain("sky");
   });
 
   it("returns fallback for unknown type", () => {
-    const badge = getBadgeStyle("unknown");
+    const badge = getBadgeStyle("unknown", "it");
     expect(badge.label).toBe("News");
   });
 });

@@ -11,6 +11,7 @@ const isProtectedRoute = createRouteMatcher([
   "/api/restaurants",
   "/api/events",
   "/api/my-events",
+  "/api/push(.*)",
   "/admin(.*)",
   "/api/admin(.*)",
 ]);

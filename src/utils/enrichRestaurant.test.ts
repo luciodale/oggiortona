@@ -37,7 +37,6 @@ function makeRestaurant(overrides: Partial<RestaurantRow> = {}): RestaurantRow {
       sabato: null,
       domenica: null,
     }),
-    imageUrl: null,
     menuUrl: null,
     ownerId: "test_user",
     active: 1,

@@ -63,7 +63,6 @@ export async function PUT({ locals, params, request }: APIContext): Promise<Resp
   if (body.phone !== undefined) updates.phone = body.phone?.trim() || null;
   if (body.address !== undefined) updates.address = body.address.trim();
   if (body.opening_hours !== undefined) updates.openingHours = body.opening_hours;
-  if (body.image_url !== undefined) updates.imageUrl = body.image_url?.trim() || null;
   if (body.menu_url !== undefined) updates.menuUrl = body.menu_url?.trim() || null;
   if (body.latitude !== undefined) updates.latitude = body.latitude;
   if (body.longitude !== undefined) updates.longitude = body.longitude;

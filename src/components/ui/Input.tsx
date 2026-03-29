@@ -1,4 +1,5 @@
 import { forwardRef, useId } from "react";
+import { FormError } from "./FormError";
 
 type InputProps = {
   label?: string;
@@ -33,9 +34,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           } ${className}`}
           {...props}
         />
-        {error && (
-          <p id={errorId} className="mt-1 text-[11px] text-danger" role="alert">{error}</p>
-        )}
+        {error && <FormError id={errorId} message={error} />}
       </div>
     );
   },

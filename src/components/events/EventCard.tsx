@@ -1,11 +1,8 @@
 import { eventCategoryColors, eventCategoryLabels } from "../../config/categories";
 import { useLocale } from "../../i18n/useLocale";
 import { ClockIcon } from "../../icons/ClockIcon";
-import { MapPinIcon } from "../../icons/MapPinIcon";
-import { MessageIcon } from "../../icons/MessageIcon";
-import { PhoneIcon } from "../../icons/PhoneIcon";
 import type { EventRow } from "../../types/database";
-import { IconBubble } from "../shared/IconBubble";
+import { CardContactButtons } from "../shared/CardContactButtons";
 import { EventPriceBadge } from "./EventPriceBadge";
 
 type EventCardProps = {
@@ -13,7 +10,7 @@ type EventCardProps = {
 };
 
 export function EventCard({ event }: EventCardProps) {
-  const { locale, t } = useLocale();
+  const { locale } = useLocale();
   const labels = eventCategoryLabels(locale);
   const categories = event.category.split(",").map((c) => c.trim());
 
@@ -43,15 +40,6 @@ export function EventCard({ event }: EventCardProps) {
                 {event.description}
               </p>
             )}
-            <div className="mt-2 flex items-center gap-3 text-[11px] text-muted/70">
-              {event.timeStart && (
-                <span className="flex items-center gap-1">
-                  <ClockIcon className="h-3 w-3" />
-                  {event.timeStart}{event.timeEnd && ` \u2013 ${event.timeEnd}`}
-                </span>
-              )}
-              <EventPriceBadge price={event.price} />
-            </div>
           </div>
 
           <div className="flex shrink-0 flex-col items-center rounded-xl bg-fare-light px-3 py-2">
@@ -66,36 +54,22 @@ export function EventCard({ event }: EventCardProps) {
       </a>
 
       <div className="flex items-center justify-between gap-2 px-4 pb-3.5 pt-3">
-        <div className="flex items-center gap-1.5">
-          {event.phone && (
-            <>
-              <IconBubble
-                href={`https://wa.me/${event.phone.replace(/[\s\-+()]/g, "")}?text=${encodeURIComponent(t("aria.whatsappMessage"))}`}
-                label={t("aria.whatsappFor", { name: event.title })}
-                external
-              >
-                <MessageIcon className="h-3.5 w-3.5" />
-              </IconBubble>
-              <IconBubble
-                href={`tel:${event.phone}`}
-                label={t("aria.callFor", { name: event.title })}
-              >
-                <PhoneIcon className="h-3.5 w-3.5" />
-              </IconBubble>
-            </>
+        <div className="flex min-w-0 items-center gap-3 text-[11px] text-muted/70">
+          {event.timeStart && (
+            <span className="flex items-center gap-1">
+              <ClockIcon className="h-3 w-3" />
+              {event.timeStart}{event.timeEnd && ` \u2013 ${event.timeEnd}`}
+            </span>
           )}
+          <EventPriceBadge price={event.price} />
         </div>
-        <IconBubble
-          href={
-            event.latitude != null && event.longitude != null
-              ? `https://www.google.com/maps/search/?api=1&query=${event.latitude},${event.longitude}`
-              : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.address)}`
-          }
-          label={t("aria.directionsFor", { name: event.title })}
-          external
-        >
-          <MapPinIcon className="h-3.5 w-3.5" />
-        </IconBubble>
+        <CardContactButtons
+          phone={event.phone}
+          name={event.title}
+          address={event.address}
+          latitude={event.latitude}
+          longitude={event.longitude}
+        />
       </div>
     </div>
   );

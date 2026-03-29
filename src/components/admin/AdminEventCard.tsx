@@ -3,11 +3,12 @@ import type { EventRow } from "../../types/database";
 import { formatDateShort } from "../../utils/date";
 
 type AdminEventCardProps = {
-  event: EventRow & { ownerEmail: string | null };
+  event: EventRow & { ownerEmail: string | null; ownerName: string | null };
   onToggle: () => void;
 };
 
 export function AdminEventCard({ event, onToggle }: AdminEventCardProps) {
+  const catLabels = eventCategoryLabels("it");
   const isActive = event.active === 1;
   const colorClass = eventCategoryColors[event.category] ?? "bg-stone-100 text-stone-600";
 
@@ -16,7 +17,7 @@ export function AdminEventCard({ event, onToggle }: AdminEventCardProps) {
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${colorClass}`}>
-            {eventCategoryLabels[event.category] ?? event.category}
+            {catLabels[event.category] ?? event.category}
           </span>
           <span
             className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
@@ -30,10 +31,12 @@ export function AdminEventCard({ event, onToggle }: AdminEventCardProps) {
           {event.title}
         </p>
         <p className="mt-0.5 text-[11px] text-muted">
-          {formatDateShort(event.dateStart)} · {event.address}
+          {formatDateShort(event.dateStart, "it")} · {event.address}
         </p>
-        {event.ownerEmail && (
-          <p className="mt-0.5 text-[10px] text-muted/50">{event.ownerEmail}</p>
+        {(event.ownerName || event.ownerEmail) && (
+          <p className="mt-0.5 text-[10px] text-muted/50">
+            {[event.ownerName, event.ownerEmail].filter(Boolean).join(" · ")}
+          </p>
         )}
       </div>
       <button

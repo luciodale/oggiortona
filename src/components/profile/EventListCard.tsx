@@ -1,12 +1,15 @@
 import { eventCategoryColors, eventCategoryLabels } from "../../config/categories";
+import { useLocale } from "../../i18n/useLocale";
 import type { EventRow } from "../../types/database";
-import { formatDateItalian } from "../../utils/date";
+import { formatDateLong } from "../../utils/date";
 
 type EventListCardProps = {
   event: EventRow;
 };
 
 export function EventListCard({ event }: EventListCardProps) {
+  const { locale } = useLocale();
+  const catLabels = eventCategoryLabels(locale);
   const categories = event.category.split(",").map((c) => c.trim());
 
   return (
@@ -17,7 +20,7 @@ export function EventListCard({ event }: EventListCardProps) {
             key={cat}
             className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${eventCategoryColors[cat] ?? eventCategoryColors["altro"]}`}
           >
-            {eventCategoryLabels[cat] ?? cat}
+            {catLabels[cat] ?? cat}
           </span>
         ))}
       </div>
@@ -25,8 +28,8 @@ export function EventListCard({ event }: EventListCardProps) {
         {event.title}
       </p>
       <p className="mt-0.5 text-[11px] capitalize text-muted">
-        {formatDateItalian(event.dateStart)}
-        {event.dateEnd && ` \u2013 ${formatDateItalian(event.dateEnd)}`}
+        {formatDateLong(event.dateStart, locale)}
+        {event.dateEnd && ` \u2013 ${formatDateLong(event.dateEnd, locale)}`}
       </p>
       <div className="mt-3 flex gap-3">
         <a

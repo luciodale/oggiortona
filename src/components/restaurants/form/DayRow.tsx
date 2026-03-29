@@ -2,6 +2,7 @@ import { useWatch } from "react-hook-form";
 import type { ItalianDay } from "../../../types/database";
 import type { RestaurantFormValues, DayFormValues } from "../../../schemas/restaurant";
 import type { UseFormReturn } from "react-hook-form";
+import { useLocale } from "../../../i18n/useLocale";
 import { getDayLabel, getOrderedDays } from "../../../utils/time";
 import { TimePicker } from "../../ui/TimePicker";
 
@@ -13,6 +14,7 @@ type DayRowProps = {
 };
 
 export function DayRow({ day, dayIndex, form, onCopyPrevious }: DayRowProps) {
+  const { locale, t } = useLocale();
   const state = useWatch({ control: form.control, name: `hours.${day}` }) as DayFormValues;
   const days = getOrderedDays();
   const prevDay = dayIndex > 0 ? days[dayIndex - 1] : undefined;
@@ -29,10 +31,10 @@ export function DayRow({ day, dayIndex, form, onCopyPrevious }: DayRowProps) {
         className="flex w-full cursor-pointer items-center justify-between bg-transparent p-0"
         onClick={() => patch({ closed: !state.closed })}
         aria-pressed={!state.closed}
-        aria-label={`${getDayLabel(day)}: ${state.closed ? "chiuso" : "aperto"}`}
+        aria-label={t("aria.dayState", { day: getDayLabel(day, locale) ?? "", state: state.closed ? t("common.closedLower") : t("common.openLower") })}
       >
         <span className="text-[13px] font-medium text-primary">
-          {getDayLabel(day)}
+          {getDayLabel(day, locale)}
         </span>
         <div className="flex items-center gap-2">
           {prevDay && (
@@ -44,7 +46,7 @@ export function DayRow({ day, dayIndex, form, onCopyPrevious }: DayRowProps) {
               }}
               className="rounded-full bg-surface-warm px-2.5 py-1 text-[10px] font-semibold text-muted transition-colors hover:bg-primary/10 hover:text-primary"
             >
-              Copia da {getDayLabel(prevDay).toLowerCase()}
+              {t("dayRow.copyFrom", { day: (getDayLabel(prevDay, locale) ?? "").toLowerCase() })}
             </button>
           )}
           <span
@@ -54,7 +56,7 @@ export function DayRow({ day, dayIndex, form, onCopyPrevious }: DayRowProps) {
                 : "bg-success/10 text-success"
             }`}
           >
-            {state.closed ? "Chiuso" : "Aperto"}
+            {state.closed ? t("common.closed") : t("common.open")}
           </span>
         </div>
       </button>
@@ -80,8 +82,8 @@ export function DayRow({ day, dayIndex, form, onCopyPrevious }: DayRowProps) {
             className="text-[11px] text-muted underline"
           >
             {state.hasSecondShift
-              ? "Rimuovi secondo turno"
-              : "Aggiungi secondo turno"}
+              ? t("dayRow.removeSecondShift")
+              : t("dayRow.addSecondShift")}
           </button>
 
           {state.hasSecondShift && (

@@ -75,6 +75,7 @@ export function usePromotions(restaurantId: string) {
   const [data, setData] = useState<PromotionsData>({ items: [] });
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [restaurantName, setRestaurantName] = useState("");
   const [specialForm, setSpecialForm] = useState<SpecialFormState>(INITIAL_SPECIAL);
   const [dealForm, setDealForm] = useState<DealFormState>(INITIAL_DEAL);
@@ -97,12 +98,13 @@ export function usePromotions(restaurantId: string) {
   }, [fetchData]);
 
   async function handleCreate() {
+    setErrorMessage("");
     let body: Record<string, unknown>;
 
     switch (tab) {
       case "special": {
         if (!specialForm.description.trim()) {
-          toast.error("La descrizione è obbligatoria");
+          setErrorMessage("La descrizione è obbligatoria");
           return;
         }
         body = {
@@ -116,7 +118,7 @@ export function usePromotions(restaurantId: string) {
       }
       case "deal": {
         if (!dealForm.title.trim()) {
-          toast.error("Il titolo è obbligatorio");
+          setErrorMessage("Il titolo è obbligatorio");
           return;
         }
         body = {
@@ -131,7 +133,7 @@ export function usePromotions(restaurantId: string) {
       }
       case "news": {
         if (!newsForm.title.trim()) {
-          toast.error("Il titolo è obbligatorio");
+          setErrorMessage("Il titolo è obbligatorio");
           return;
         }
         body = {
@@ -226,6 +228,7 @@ export function usePromotions(restaurantId: string) {
     setDealForm,
     newsForm,
     setNewsForm,
+    errorMessage,
     handleCreate,
     handleDelete,
     handleRenew,

@@ -3,7 +3,7 @@ import { TrashIcon } from "../../icons/TrashIcon";
 import type { PromotionRow, RestaurantRow } from "../../types/database";
 
 type AdminRestaurantCardProps = {
-  restaurant: RestaurantRow & { ownerEmail: string | null; promotions: Array<PromotionRow> };
+  restaurant: RestaurantRow & { ownerEmail: string | null; ownerName: string | null; promotions: Array<PromotionRow> };
   expanded: boolean;
   onExpand: () => void;
   onToggle: () => void;
@@ -17,15 +17,18 @@ export function AdminRestaurantCard({
   onToggle,
   onDeletePromotion,
 }: AdminRestaurantCardProps) {
+  const labels = restaurantTypeLabels("it");
   const types = restaurant.type.split(",").map((t) => t.trim());
   const isActive = restaurant.active === 1;
 
   return (
     <div className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-      <button
-        type="button"
+      <div
+        role="button"
+        tabIndex={0}
         className="flex w-full cursor-pointer items-center justify-between gap-3 bg-transparent p-4 text-left"
         onClick={onExpand}
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onExpand(); } }}
         aria-expanded={expanded}
       >
         <div className="min-w-0 flex-1">
@@ -33,10 +36,12 @@ export function AdminRestaurantCard({
             {restaurant.name}
           </p>
           <p className="mt-0.5 text-[11px] capitalize text-muted">
-            {types.map((t) => restaurantTypeLabels[t] ?? t).join(" · ")}
+            {types.map((tp) => labels[tp] ?? tp).join(" · ")}
           </p>
-          {restaurant.ownerEmail && (
-            <p className="mt-0.5 text-[10px] text-muted/50">{restaurant.ownerEmail}</p>
+          {(restaurant.ownerName || restaurant.ownerEmail) && (
+            <p className="mt-0.5 text-[10px] text-muted/50">
+              {[restaurant.ownerName, restaurant.ownerEmail].filter(Boolean).join(" · ")}
+            </p>
           )}
         </div>
         <div className="flex shrink-0 items-center gap-2">
@@ -63,7 +68,7 @@ export function AdminRestaurantCard({
             {isActive ? "Disabilita" : "Approva"}
           </button>
         </div>
-      </button>
+      </div>
 
       {expanded && restaurant.promotions.length > 0 && (
         <div className="border-t border-border-light px-4 pb-4 pt-3">

@@ -23,7 +23,6 @@ type InitialData = {
   latitude: number | null;
   longitude: number | null;
   price: number | null;
-  imageUrl: string | null;
 };
 
 function splitCategories(category: string) {
@@ -53,7 +52,6 @@ export function useEventForm(initial?: InitialData) {
       latitude: initial?.latitude ?? null,
       longitude: initial?.longitude ?? null,
       price: initial?.price ?? null,
-      imageUrl: initial?.imageUrl ?? "",
     },
     mode: "onBlur",
   });
@@ -94,7 +92,6 @@ export function useEventForm(initial?: InitialData) {
       latitude: data.latitude ?? undefined,
       longitude: data.longitude ?? undefined,
       price: data.price != null && !Number.isNaN(data.price) ? data.price : undefined,
-      image_url: data.imageUrl || undefined,
     };
 
     const isEdit = eventId != null;

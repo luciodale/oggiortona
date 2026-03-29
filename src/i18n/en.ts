@@ -6,7 +6,7 @@ export const en: Translations = {
   // Navigation
   "nav.today": "Today",
   "nav.restaurants": "Eat",
-  "nav.events": "Do",
+  "nav.events": "Events",
   "nav.profile": "Profile",
   "nav.signIn": "Sign in",
   "nav.mainLabel": "Main navigation",
@@ -38,7 +38,7 @@ export const en: Translations = {
   "common.directions": "Directions",
   "common.call": "Call",
   "common.menu": "Menu",
-  "common.imageUrl": "Image (URL)",
+
   "common.untilDate": "until {date}",
   "common.skipToContent": "Skip to content",
   "common.siteName": "Oggi a Ortona",
@@ -77,7 +77,7 @@ export const en: Translations = {
   "home.mainSections": "Main sections",
 
   // Events
-  "events.pageTitle": "Do",
+  "events.pageTitle": "Events",
   "events.pageDesc": "Events, festivals, concerts and activities in Ortona.",
   "events.noEvents": "No upcoming events",
   "events.thisWeek": "This week",
@@ -232,6 +232,15 @@ export const en: Translations = {
   "eventCategory.cultura": "Culture",
   "eventCategory.sport": "Sport",
   "eventCategory.altro": "Other",
+
+  // Push notifications
+  "push.generalOn": "Notifications on",
+  "push.generalOff": "Enable notifications",
+  "push.ownerOn": "Expiry alerts on",
+  "push.ownerOff": "Enable expiry alerts",
+  "push.denied": "Notifications blocked",
+  "push.activating": "Activating...",
+  "push.deactivating": "Deactivating...",
 
   // Language
   "lang.label": "Language",

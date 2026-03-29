@@ -1,4 +1,5 @@
 import { useId, useMemo, useState } from "react";
+import { FormError } from "../ui/FormError";
 import { SearchableDropdown } from "@luciodale/react-searchable-dropdown";
 import { useAddressSearch } from "../../hooks/useAddressSearch";
 import { useLocationPicker } from "../../hooks/useLocationPicker";
@@ -11,6 +12,7 @@ type LocationPickerFieldProps = {
   initialLatitude?: number;
   initialLongitude?: number;
   error?: string;
+  coordinateError?: string;
   onAddressChange: (address: string) => void;
   onCoordinatesChange: (lat: number, lng: number) => void;
 };
@@ -22,6 +24,7 @@ export function LocationPickerField({
   initialLatitude,
   initialLongitude,
   error,
+  coordinateError,
   onAddressChange,
   onCoordinatesChange,
 }: LocationPickerFieldProps) {
@@ -74,9 +77,7 @@ export function LocationPickerField({
           aria-describedby={error ? errorId : undefined}
           className="w-full rounded-xl border border-border bg-white px-3 py-2.5 text-[13px] text-primary outline-none placeholder:text-muted/40 focus:border-accent"
         />
-        {error && (
-          <p id={errorId} className="mt-1 text-[11px] text-danger" role="alert">{error}</p>
-        )}
+        {error && <FormError message={error} />}
       </div>
 
       <div>
@@ -117,6 +118,7 @@ export function LocationPickerField({
             />
           </div>
         )}
+        {coordinateError && <FormError message={coordinateError} />}
       </div>
     </div>
   );

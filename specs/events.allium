@@ -24,7 +24,6 @@ entity Event {
     longitude: Decimal?,
     category: EventCategory,
     price: Decimal?,
-    image_url: String?,
     created_at: Timestamp,
     updated_at: Timestamp,
 
@@ -95,7 +94,6 @@ surface EventDetail {
         event.longitude
         event.category
         event.price
-        event.image_url
 }
 
 surface HomePage {

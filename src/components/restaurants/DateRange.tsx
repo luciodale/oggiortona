@@ -1,3 +1,4 @@
+import { useLocale } from "../../i18n/useLocale";
 import { formatDateShort } from "../../utils/date";
 
 type DateRangeProps = {
@@ -7,11 +8,12 @@ type DateRangeProps = {
 };
 
 export function DateRange({ dateStart, dateEnd, className }: DateRangeProps) {
+  const { locale, t } = useLocale();
   if (dateStart === dateEnd) return null;
 
   return (
     <span className={className}>
-      Fino al {formatDateShort(dateEnd)}
+      {t("common.untilDate", { date: formatDateShort(dateEnd, locale) })}
     </span>
   );
 }

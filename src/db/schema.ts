@@ -1,7 +1,7 @@
 // SINGLE SOURCE OF TRUTH for all data shapes.
 // All types are inferred from these table definitions.
 
-import { sqliteTable, text, integer, real, index } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, real, index, unique } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 
 // -- Users (synced from Clerk on first authenticated request) --
@@ -27,7 +27,6 @@ export const restaurants = sqliteTable("restaurants", {
   latitude: real("latitude"),
   longitude: real("longitude"),
   openingHours: text("opening_hours").notNull(), // JSON
-  imageUrl: text("image_url"),
   menuUrl: text("menu_url"),
   ownerId: text("owner_id").notNull().references(() => users.id),
   active: integer("active").notNull().default(1),
@@ -55,17 +54,20 @@ export const promotions = sqliteTable("promotions", {
   index("idx_promotions_dates").on(table.dateStart, table.dateEnd),
 ]);
 
-// -- Push Subscriptions (admin Web Push) --
+// -- Push Subscriptions (Web Push: admin | owner | general) --
 
 export const pushSubscriptions = sqliteTable("push_subscriptions", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  endpoint: text("endpoint").notNull().unique(),
+  endpoint: text("endpoint").notNull(),
   p256dh: text("p256dh").notNull(),
   auth: text("auth").notNull(),
+  scope: text("scope").notNull().default("admin"),
   createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
 }, (table) => [
   index("idx_push_subscriptions_user").on(table.userId),
+  index("idx_push_subscriptions_scope").on(table.scope),
+  unique("uq_push_subscriptions_endpoint_scope").on(table.endpoint, table.scope),
 ]);
 
 // -- Events --
@@ -84,7 +86,6 @@ export const events = sqliteTable("events", {
   longitude: real("longitude"),
   category: text("category").notNull(),
   price: real("price"),
-  imageUrl: text("image_url"),
   ownerId: text("owner_id").notNull().references(() => users.id),
   active: integer("active").notNull().default(1),
   createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),

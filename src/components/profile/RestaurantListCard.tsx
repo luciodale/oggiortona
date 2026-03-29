@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { restaurantTypeLabels } from "../../config/categories";
+import { useLocale } from "../../i18n/useLocale";
 import type { RestaurantWithStatus } from "../../types/domain";
 
 type RestaurantListCardProps = {
@@ -7,13 +8,16 @@ type RestaurantListCardProps = {
 };
 
 export function RestaurantListCard({ restaurant }: RestaurantListCardProps) {
+  const { locale, t } = useLocale();
+  const labels = restaurantTypeLabels(locale);
+
   return (
     <div className="rounded-2xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
       <p className="font-family-display text-base font-medium text-primary">
         {restaurant.name}
       </p>
       <p className="mt-0.5 text-[11px] capitalize text-muted">
-        {restaurant.types.map((t) => restaurantTypeLabels[t] ?? t).join(" · ")}
+        {restaurant.types.map((tp) => labels[tp] ?? tp).join(" · ")}
       </p>
       {restaurant.active === 0 && (
         <span className="mt-1.5 inline-block rounded-full bg-amber-50 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700">
@@ -26,21 +30,21 @@ export function RestaurantListCard({ restaurant }: RestaurantListCardProps) {
           params={{ id: String(restaurant.id) }}
           className="text-[12px] font-semibold text-muted no-underline transition-colors hover:text-primary"
         >
-          Anteprima
+          {t("profile.previewCard")}
         </Link>
         <Link
           to="/restaurant/$id/edit"
           params={{ id: String(restaurant.id) }}
           className="text-[12px] font-semibold text-accent no-underline transition-colors hover:text-accent-hover"
         >
-          Modifica
+          {t("common.edit")}
         </Link>
         <Link
           to="/restaurant/$id/storefront"
           params={{ id: String(restaurant.id) }}
           className="text-[12px] font-semibold text-violet-600 no-underline transition-colors hover:text-violet-800"
         >
-          Vetrina
+          {t("profile.storefront")}
         </Link>
       </div>
     </div>

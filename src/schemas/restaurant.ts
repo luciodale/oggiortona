@@ -35,7 +35,11 @@ export const restaurantFormSchema = z
       message: "Seleziona almeno un tipo o inserisci un tipo personalizzato",
       path: ["types"],
     },
-  );
+  )
+  .refine((data) => data.latitude != null && data.longitude != null, {
+    message: "Seleziona una posizione sulla mappa",
+    path: ["latitude"],
+  });
 
 export type RestaurantFormValues = z.infer<typeof restaurantFormSchema>;
 
@@ -48,13 +52,14 @@ export const createRestaurantApiSchema = z.object({
   address: z.string().trim().min(1, "Indirizzo obbligatorio"),
   opening_hours: z.string().min(1, "Orari obbligatori"),
   menu_url: z.string().nullish(),
-  latitude: z.number().nullish(),
-  longitude: z.number().nullish(),
-  image_url: z.string().nullish(),
+  latitude: z.number(),
+  longitude: z.number(),
 });
 
 export type CreateRestaurantApiPayload = z.infer<typeof createRestaurantApiSchema>;
 
-export const updateRestaurantApiSchema = createRestaurantApiSchema.partial();
+export const updateRestaurantApiSchema = createRestaurantApiSchema
+  .partial()
+  .required({ latitude: true, longitude: true });
 
 export type UpdateRestaurantApiPayload = z.infer<typeof updateRestaurantApiSchema>;

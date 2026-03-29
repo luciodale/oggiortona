@@ -12,14 +12,16 @@ export async function GET({ locals }: APIContext): Promise<Response> {
   const rows = await db.select({
     event: events,
     ownerEmail: users.email,
+    ownerName: users.name,
   })
     .from(events)
     .leftJoin(users, eq(events.ownerId, users.id))
     .orderBy(asc(events.active), desc(events.dateStart));
 
-  const allEvents = rows.map(({ event, ownerEmail }) => ({
+  const allEvents = rows.map(({ event, ownerEmail, ownerName }) => ({
     ...event,
     ownerEmail,
+    ownerName,
   }));
 
   return Response.json({ events: allEvents });

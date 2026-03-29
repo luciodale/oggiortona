@@ -2,7 +2,7 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 import {
   isThisWeek,
   isUpcoming,
-  formatDateItalian,
+  formatDateLong,
   formatDateShort,
   relativeTime,
   getTodayISO,
@@ -66,18 +66,23 @@ describe("isUpcoming", () => {
   });
 });
 
-describe("formatDateItalian", () => {
+describe("formatDateLong", () => {
   it("formats date in Italian locale", () => {
-    const result = formatDateItalian("2025-06-18");
-    // Should contain the day name and date in Italian
+    const result = formatDateLong("2025-06-18", "it");
     expect(result).toContain("18");
     expect(result).toContain("giugno");
+  });
+
+  it("formats date in English locale", () => {
+    const result = formatDateLong("2025-06-18", "en");
+    expect(result).toContain("18");
+    expect(result).toContain("June");
   });
 });
 
 describe("formatDateShort", () => {
   it("formats date in short form", () => {
-    const result = formatDateShort("2025-06-18");
+    const result = formatDateShort("2025-06-18", "it");
     expect(result).toContain("18");
   });
 });
@@ -92,28 +97,28 @@ describe("relativeTime", () => {
     const now = new Date("2025-06-18T12:00:00");
     vi.setSystemTime(now);
 
-    expect(relativeTime("2025-06-18T12:00:00")).toBe("adesso");
+    expect(relativeTime("2025-06-18T12:00:00", "it")).toBe("adesso");
   });
 
   it("returns minutes ago for < 60 min", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2025-06-18T12:30:00"));
 
-    expect(relativeTime("2025-06-18T12:00:00")).toBe("30 min fa");
+    expect(relativeTime("2025-06-18T12:00:00", "it")).toBe("30 min fa");
   });
 
   it("returns hours ago for < 24 hours", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2025-06-18T15:00:00"));
 
-    expect(relativeTime("2025-06-18T12:00:00")).toBe("3 ore fa");
+    expect(relativeTime("2025-06-18T12:00:00", "it")).toBe("3 ore fa");
   });
 
   it("returns days ago for < 7 days", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2025-06-20T12:00:00"));
 
-    expect(relativeTime("2025-06-18T12:00:00")).toBe("2 giorni fa");
+    expect(relativeTime("2025-06-18T12:00:00", "it")).toBe("2 giorni fa");
   });
 });
 

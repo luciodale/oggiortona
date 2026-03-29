@@ -1,4 +1,5 @@
 import { useAdminData } from "../../hooks/useAdminData";
+import { AdminBroadcast } from "./AdminBroadcast";
 import { AdminEventList } from "./AdminEventList";
 import { AdminPushToggle } from "./AdminPushToggle";
 import { AdminRestaurantList } from "./AdminRestaurantList";
@@ -28,6 +29,10 @@ export function AdminDashboard() {
           Pannello Admin
         </h1>
         <AdminPushToggle />
+      </div>
+
+      <div className="mt-5">
+        <AdminBroadcast />
       </div>
 
       <div className="mt-5 space-y-4">

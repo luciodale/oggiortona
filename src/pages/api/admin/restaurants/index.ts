@@ -16,6 +16,7 @@ export async function GET({ locals }: APIContext): Promise<Response> {
     db.select({
       restaurant: restaurants,
       ownerEmail: users.email,
+      ownerName: users.name,
     })
       .from(restaurants)
       .leftJoin(users, eq(restaurants.ownerId, users.id))
@@ -24,9 +25,10 @@ export async function GET({ locals }: APIContext): Promise<Response> {
   ]);
 
   const grouped = groupPromotionsByRestaurant(allPromotions);
-  const result = allRestaurants.map(({ restaurant: r, ownerEmail }) => ({
+  const result = allRestaurants.map(({ restaurant: r, ownerEmail, ownerName }) => ({
     ...r,
     ownerEmail,
+    ownerName,
     promotions: grouped.get(r.id) ?? [],
   }));
 

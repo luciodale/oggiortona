@@ -45,16 +45,19 @@ CREATE INDEX IF NOT EXISTS idx_promotions_restaurant ON promotions(restaurant_id
 CREATE INDEX IF NOT EXISTS idx_promotions_type ON promotions(type);
 CREATE INDEX IF NOT EXISTS idx_promotions_dates ON promotions(date_start, date_end);
 
--- Push Subscriptions
+-- Push Subscriptions (admin | owner | general)
 CREATE TABLE IF NOT EXISTS push_subscriptions (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  endpoint TEXT NOT NULL UNIQUE,
+  endpoint TEXT NOT NULL,
   p256dh TEXT NOT NULL,
   auth TEXT NOT NULL,
-  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  scope TEXT NOT NULL DEFAULT 'admin',
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  UNIQUE(endpoint, scope)
 );
 CREATE INDEX IF NOT EXISTS idx_push_subscriptions_user ON push_subscriptions(user_id);
+CREATE INDEX IF NOT EXISTS idx_push_subscriptions_scope ON push_subscriptions(scope);
 
 -- Events
 CREATE TABLE IF NOT EXISTS events (

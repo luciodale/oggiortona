@@ -7,11 +7,13 @@ export type AdminTab = "restaurants" | "events";
 
 type AdminRestaurant = RestaurantRow & {
   ownerEmail: string | null;
+  ownerName: string | null;
   promotions: Array<PromotionRow>;
 };
 
 type AdminEvent = EventRow & {
   ownerEmail: string | null;
+  ownerName: string | null;
 };
 
 export function useAdminData() {

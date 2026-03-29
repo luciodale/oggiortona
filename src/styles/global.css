@@ -83,11 +83,13 @@ body::before {
    ============================== */
 
 .page-mangiare {
-  background: linear-gradient(180deg, var(--color-mangiare-light) 0%, var(--color-surface) 280px);
+  background-color: var(--color-mangiare-light);
+  background-image: linear-gradient(180deg, var(--color-mangiare-light) 0%, var(--color-surface) 280px);
 }
 
 .page-fare {
-  background: linear-gradient(180deg, var(--color-fare-light) 0%, var(--color-surface) 280px);
+  background-color: var(--color-fare-light);
+  background-image: linear-gradient(180deg, var(--color-fare-light) 0%, var(--color-surface) 280px);
 }
 
 /* ==============================

@@ -20,7 +20,6 @@ export const eventFormSchema = z
     latitude: z.number().nullable(),
     longitude: z.number().nullable(),
     price: z.union([z.number().min(0, "Prezzo non valido"), z.nan()]).nullable(),
-    imageUrl: z.union([z.string().url("URL non valido"), z.literal("")]),
   })
   .refine(
     (data) => data.categories.length > 0 || data.customCategory.trim().length > 0,
@@ -28,7 +27,11 @@ export const eventFormSchema = z
       message: "Seleziona almeno una categoria o inserisci una personalizzata",
       path: ["categories"],
     },
-  );
+  )
+  .refine((data) => data.latitude != null && data.longitude != null, {
+    message: "Seleziona una posizione sulla mappa",
+    path: ["latitude"],
+  });
 
 export type EventFormValues = z.infer<typeof eventFormSchema>;
 
@@ -42,14 +45,15 @@ export const createEventApiSchema = z.object({
   time_end: z.union([timeString, z.literal("")]).nullish(),
   address: z.string().trim().min(1, "Luogo obbligatorio"),
   phone: z.string().trim().nullish(),
-  latitude: z.number().nullish(),
-  longitude: z.number().nullish(),
+  latitude: z.number(),
+  longitude: z.number(),
   price: z.number().min(0).nullish(),
-  image_url: z.union([z.string().url(), z.literal("")]).nullish(),
 });
 
 export type CreateEventApiPayload = z.infer<typeof createEventApiSchema>;
 
-export const updateEventApiSchema = createEventApiSchema.partial();
+export const updateEventApiSchema = createEventApiSchema
+  .partial()
+  .required({ latitude: true, longitude: true });
 
 export type UpdateEventApiPayload = z.infer<typeof updateEventApiSchema>;

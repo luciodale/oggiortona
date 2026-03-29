@@ -104,8 +104,13 @@ describe("getItalianDayName", () => {
 
 describe("getDayLabel", () => {
   it("returns Italian label for day", () => {
-    expect(getDayLabel("lunedi")).toBe("Lunedi");
-    expect(getDayLabel("domenica")).toBe("Domenica");
+    expect(getDayLabel("lunedi", "it")).toBe("Lunedi");
+    expect(getDayLabel("domenica", "it")).toBe("Domenica");
+  });
+
+  it("returns English label for day", () => {
+    expect(getDayLabel("lunedi", "en")).toBe("Monday");
+    expect(getDayLabel("domenica", "en")).toBe("Sunday");
   });
 });
 
@@ -121,7 +126,7 @@ describe("getOrderedDays", () => {
 describe("formatSchedule", () => {
   it("formats single shift", () => {
     expect(
-      formatSchedule({ open: "12:00", close: "15:00", open2: null, close2: null }),
+      formatSchedule({ open: "12:00", close: "15:00", open2: null, close2: null }, "it"),
     ).toBe("12:00 - 15:00");
   });
 
@@ -132,12 +137,16 @@ describe("formatSchedule", () => {
         close: "15:00",
         open2: "19:00",
         close2: "23:00",
-      }),
+      }, "it"),
     ).toBe("12:00 - 15:00 / 19:00 - 23:00");
   });
 
-  it("returns Chiuso for null schedule", () => {
-    expect(formatSchedule(null)).toBe("Chiuso");
+  it("returns Chiuso for null schedule in Italian", () => {
+    expect(formatSchedule(null, "it")).toBe("Chiuso");
+  });
+
+  it("returns Closed for null schedule in English", () => {
+    expect(formatSchedule(null, "en")).toBe("Closed");
   });
 });
 

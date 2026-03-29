@@ -1,5 +1,5 @@
--- Oggi a Ortona: Admin Push Notifications domain
--- Web Push (RFC 8291/8292) for admin alerts on new content.
+-- Oggi a Ortona: Push Notifications domain
+-- Web Push (RFC 8291/8292) with three scopes: admin, owner, general.
 
 use "./auth.allium" as auth
 
@@ -7,31 +7,33 @@ use "./auth.allium" as auth
 -- Architecture
 -- ---------------------------------------------------------------
 
--- The system uses the W3C Push API and Web Push protocol to deliver
--- real-time notifications to the admin, even when the app is closed.
---
 -- Three participants:
 --   1. Browser (client)    — subscribes via PushManager, receives via ServiceWorker
---   2. Application server  — Cloudflare Worker (your API routes)
---   3. Push service        — browser vendor (FCM for Chrome, Mozilla for Firefox, APNs for Safari)
+--   2. Application server  — Cloudflare Worker (API routes)
+--   3. Push service        — browser vendor (FCM/Mozilla/APNs)
 --
--- Flow:
---   Browser --subscribe--> Push Service  (returns endpoint + keys)
---   Browser --POST-------> /api/admin/push/subscribe  (stores subscription in D1)
---   User creates content -> POST /api/restaurants or /api/events
---   Worker encrypts payload + signs VAPID JWT
---   Worker --POST-------> Push Service endpoint  (delivers encrypted payload)
---   Push Service --------> ServiceWorker push event  (even if app closed)
---   ServiceWorker shows OS notification
+-- Three notification scopes:
+--   admin   — immediate alerts when new restaurant/event is created
+--   owner   — daily grouped alert when promotions expire (cron)
+--   general — manual broadcast from admin dashboard
+--
+-- Auto-enrollment: first browser permission grant creates rows for
+-- all applicable scopes (always general, + owner if has restaurants, + admin if admin).
+-- Subsequent toggles add/remove individual scope rows without re-prompting browser.
+--
+-- Key constraint: W3C Push API allows ONE PushSubscription per service worker.
+-- Multiple scope rows in DB share the same browser endpoint.
+-- Unsubscribing a scope must NOT call browser subscription.unsubscribe().
 
 -- ---------------------------------------------------------------
 -- Config
 -- ---------------------------------------------------------------
 
 config {
-    vapid_subject: String,          -- mailto: or https: identifying the application server
-    vapid_public_key: String,       -- base64url, 65-byte uncompressed ECDSA P-256 public key
-    vapid_private_key: String,      -- base64url, 32-byte raw d value (secret)
+    vapid_subject: String,
+    vapid_public_key: String,
+    vapid_private_key: String,
+    cron_secret: String,
     notification_ttl: Integer = 86400,
     notification_urgency: String = "high"
 }
@@ -43,65 +45,81 @@ config {
 entity PushSubscription {
     id: Auto,
     user_id: String -> auth.User.id,
-    endpoint: String [unique],      -- push service URL (e.g. https://fcm.googleapis.com/fcm/send/...)
-    p256dh: String,                 -- client public key for ECDH key agreement
-    auth: String,                   -- client auth secret (16 bytes, base64url)
-    created_at: Timestamp
+    endpoint: String,
+    p256dh: String,
+    auth: String,
+    scope: String [default: "admin"],  -- "admin" | "owner" | "general"
+    created_at: Timestamp,
+    unique(endpoint, scope)
 }
 
--- Only admin users can have subscriptions.
--- The API routes enforce this via requireAdmin guard.
+type PushScope = "admin" | "owner" | "general"
+
+-- ---------------------------------------------------------------
+-- Pure Logic (src/utils/)
+-- ---------------------------------------------------------------
+
+-- pushScope.ts: isValidScope, canSubscribeToScope, scopesForUser
+-- ownerNotificationPayload.ts: groupByOwner, buildOwnerPayload, buildOwnerPayloads
+-- pushResults.ts: extractStaleEndpoints
 
 -- ---------------------------------------------------------------
 -- Subscription Lifecycle
 -- ---------------------------------------------------------------
 
-rule Subscribe {
-    when: AdminEnablesNotifications
-    requires: auth.IsAdmin(user)
+rule AutoEnroll {
+    when: UserFirstEnablesNotifications
+    requires: auth.Authenticated(user)
     steps:
-        1. Fetch VAPID public key from GET /api/admin/push/vapid-public-key
-        2. Call PushManager.subscribe({ userVisibleOnly: true, applicationServerKey })
-        3. Browser contacts push service, returns PushSubscription { endpoint, keys }
-        4. POST subscription to /api/admin/push/subscribe
-        5. Server upserts PushSubscription in D1 (dedup by endpoint)
-    ensures: PushSubscription exists for user
+        1. Fetch VAPID public key from GET /api/push/vapid-public-key
+        2. Call PushManager.subscribe (idempotent, reuses existing)
+        3. POST to /api/push/auto-enroll with endpoint + keys
+        4. Server determines applicable scopes via scopesForUser()
+        5. Upserts PushSubscription rows for each scope
+    ensures: PushSubscription rows exist for all applicable scopes
 }
 
-rule Unsubscribe {
-    when: AdminDisablesNotifications
-    requires: auth.IsAdmin(user)
+rule SubscribeSingleScope {
+    when: UserTogglesOnScope(scope)
+    requires: auth.Authenticated(user), canSubscribeToScope(scope, user)
     steps:
-        1. POST endpoint to /api/admin/push/unsubscribe
-        2. Server deletes PushSubscription by endpoint
-        3. Client calls PushSubscription.unsubscribe()
-    ensures: PushSubscription removed
+        1. Reuse existing browser PushSubscription (PushManager.getSubscription)
+        2. POST to /api/push/subscribe with endpoint + keys + scope
+        3. Server upserts single PushSubscription row
+    ensures: PushSubscription exists for (endpoint, scope)
+}
+
+rule UnsubscribeSingleScope {
+    when: UserTogglesOffScope(scope)
+    requires: auth.Authenticated(user)
+    steps:
+        1. POST to /api/push/unsubscribe with endpoint + scope
+        2. Server deletes PushSubscription row for (endpoint, scope)
+        3. Browser subscription remains active (other scopes may use it)
+    ensures: PushSubscription removed for (endpoint, scope)
 }
 
 -- ---------------------------------------------------------------
--- Notification Dispatch
+-- Notification Dispatch: Admin (immediate)
 -- ---------------------------------------------------------------
 
 rule NotifyOnNewRestaurant {
     when: RestaurantCreated(restaurant)
     after: successful INSERT into restaurants table
     steps:
-        1. Build payload: { title: "Nuovo ristorante aggiunto",
-                            body: "{name} ({type}) — {address}",
-                            url: "/admin" }
+        1. Build payload: { title, body: "{name} ({type})", url: "/admin" }
         2. Call notifyAdmins(db, env, payload)
+        3. Sends to all scope="admin" subscriptions
     properties:
-        fire_and_forget: true       -- never blocks the user response
-        failure_silent: true        -- .catch(() => {})
+        fire_and_forget: true
+        failure_silent: true
 }
 
 rule NotifyOnNewEvent {
     when: EventCreated(event)
     after: successful INSERT into events table
     steps:
-        1. Build payload: { title: "Nuovo evento aggiunto",
-                            body: "{title} ({category}) — {location}, {dates}",
-                            url: "/admin" }
+        1. Build payload: { title, body: "{title} ({category})", url: "/admin" }
         2. Call notifyAdmins(db, env, payload)
     properties:
         fire_and_forget: true
@@ -109,36 +127,38 @@ rule NotifyOnNewEvent {
 }
 
 -- ---------------------------------------------------------------
--- Encryption Pipeline (RFC 8291 + RFC 8292)
+-- Notification Dispatch: Owner (daily cron)
 -- ---------------------------------------------------------------
 
--- All crypto uses Web Crypto API (crypto.subtle), no Node.js dependencies.
--- This is required for Cloudflare Workers compatibility.
+rule NotifyOwnersOnExpiry {
+    when: DailyCron("0 8 * * *" UTC)
+    steps:
+        1. Cron worker POSTs to /api/cron/notifications with CRON_SECRET
+        2. Server calls notifyOwners(db, env)
+        3. Query promotions WHERE dateEnd = today, JOIN restaurants for ownerId
+        4. Group by ownerId, count per owner (pure: buildOwnerPayloads)
+        5. For each owner with scope="owner" subscription:
+           count=1 -> "Hai 1 promozione in scadenza oggi"
+           count>1 -> "Hai N promozioni in scadenza oggi"
+        6. Click target: /profile (dashboard shows ExpiredPromotionsNotice)
+    ensures: One notification per owner, grouped count
+}
 
-process EncryptAndSend {
-    input: PushSubscription, payload (JSON string), VapidKeys
+-- ---------------------------------------------------------------
+-- Notification Dispatch: General (manual broadcast)
+-- ---------------------------------------------------------------
 
-    -- Step 1: VAPID JWT (RFC 8292)
-    --   Header: { typ: "JWT", alg: "ES256" }
-    --   Payload: { aud: endpoint origin, exp: now + 12h, sub: vapid_subject }
-    --   Sign with ECDSA P-256 using VAPID private key
-    --   Result: Authorization header = "vapid t=<jwt>, k=<public_key>"
-
-    -- Step 2: Payload encryption (RFC 8291)
-    --   a. Generate ephemeral ECDH P-256 key pair (per-message)
-    --   b. ECDH shared secret = deriveBits(client_pub, server_priv)
-    --   c. HKDF stage 1: IKM = HKDF(shared_secret, salt=client_auth, info="WebPush: info\0" + client_pub + server_pub)
-    --   d. HKDF stage 2a: CEK = HKDF(IKM, salt=random_16, info="Content-Encoding: aes128gcm\0") -> 16 bytes
-    --   e. HKDF stage 2b: nonce = HKDF(IKM, salt=random_16, info="Content-Encoding: nonce\0") -> 12 bytes
-    --   f. Append 0x02 delimiter to payload (RFC 8188 final record)
-    --   g. Encrypt with AES-128-GCM(CEK, nonce, padded_payload)
-    --   h. Assemble body: salt(16) | record_size(4) | key_id_len(1) | server_pub(65) | ciphertext
-
-    -- Step 3: HTTP POST to push service endpoint
-    --   Headers: Authorization, Content-Encoding: aes128gcm, TTL, Urgency
-    --   Body: encrypted payload from step 2
-
-    output: HTTP response from push service
+rule AdminBroadcast {
+    when: AdminSendsBroadcast(title, body)
+    requires: auth.IsAdmin(user)
+    steps:
+        1. POST /api/admin/push/broadcast with { title, body }
+        2. Server calls broadcastNotification(db, env, { title, body })
+        3. Sends to all scope="general" subscriptions
+        4. Returns { sent, failed } counts
+    properties:
+        fire_and_forget: false
+        history: none (not persisted)
 }
 
 -- ---------------------------------------------------------------
@@ -147,8 +167,9 @@ process EncryptAndSend {
 
 rule CleanupStale {
     when: PushServiceReturns(410) or PushServiceReturns(404)
-    ensures: DELETE PushSubscription WHERE endpoint = stale_endpoint
-    -- This happens inline during notifyAdmins dispatch
+    ensures: DELETE PushSubscription WHERE endpoint = stale AND scope = current_scope
+    -- Uses extractStaleEndpoints() pure function
+    -- Happens inline during all dispatch functions
 }
 
 -- ---------------------------------------------------------------
@@ -158,29 +179,65 @@ rule CleanupStale {
 handler PushReceived {
     on: ServiceWorker "push" event
     steps:
-        1. Parse event.data.json() -> { title, body, url }
-        2. showNotification(title, { body, icon: "/icon-192.png", data: { url } })
+        1. Parse event.data.json() -> { title, body, url? }
+        2. showNotification(title, { body, icon, data: { url } })
 }
 
 handler NotificationClicked {
     on: ServiceWorker "notificationclick" event
     steps:
         1. Close notification
-        2. Focus existing window matching url, or openWindow(url)
+        2. Focus existing window matching url, or openWindow(url || "/")
 }
+
+-- ---------------------------------------------------------------
+-- Cron Worker (workers/cron/)
+-- ---------------------------------------------------------------
+
+-- Separate Cloudflare Worker with scheduled handler.
+-- Single cron: "0 8 * * *" UTC (~9am CET / 10am CEST).
+-- POSTs to APP_URL/api/cron/notifications with CRON_SECRET.
+
+-- ---------------------------------------------------------------
+-- API Endpoints
+-- ---------------------------------------------------------------
+
+-- GET  /api/push/vapid-public-key         — authenticated, returns VAPID public key
+-- POST /api/push/subscribe                — authenticated, scope-validated
+-- POST /api/push/unsubscribe              — authenticated, deletes (endpoint, scope)
+-- GET  /api/push/status?scope=X           — authenticated, returns { subscribed }
+-- POST /api/push/auto-enroll              — authenticated, enrolls all applicable scopes
+-- POST /api/cron/notifications            — CRON_SECRET auth, triggers notifyOwners
+-- POST /api/admin/push/broadcast          — admin, sends { title, body } to general
+-- GET  /api/admin/push/subscriber-count   — admin, returns general subscriber count
 
 -- ---------------------------------------------------------------
 -- Files
 -- ---------------------------------------------------------------
 
--- scripts/generate-vapid-keys.ts          — one-time VAPID key pair generation
--- src/db/migrations/0003_push_subscriptions.sql — D1 migration
--- src/db/schema.ts                        — pushSubscriptions Drizzle table
--- src/utils/webpush.ts                    — RFC 8291/8292 crypto (Web Crypto API)
--- src/utils/adminNotify.ts                — fetch subs + dispatch + cleanup
--- src/pages/api/admin/push/vapid-public-key.ts  — GET VAPID public key
--- src/pages/api/admin/push/subscribe.ts         — POST subscribe
--- src/pages/api/admin/push/unsubscribe.ts       — POST unsubscribe
--- src/hooks/usePushSubscription.ts        — React hook for browser Push API
--- src/components/admin/AdminPushToggle.tsx — toggle UI in admin dashboard
--- public/sw.js                            — push + notificationclick handlers
+-- workers/cron/index.ts                        — scheduled handler
+-- workers/cron/wrangler.jsonc                  — cron trigger config
+-- src/db/migrations/0005_push_scope.sql        — scope column migration
+-- src/db/schema.ts                             — pushSubscriptions with scope
+-- src/types/domain.ts                          — PushScope type
+-- src/utils/pushScope.ts                       — scope validation (pure)
+-- src/utils/ownerNotificationPayload.ts        — payload building (pure)
+-- src/utils/pushResults.ts                     — stale detection (pure)
+-- src/utils/notifyOwners.ts                    — owner dispatch (side effects)
+-- src/utils/broadcastNotification.ts           — broadcast dispatch (side effects)
+-- src/utils/adminNotify.ts                     — admin dispatch (side effects)
+-- src/utils/webpush.ts                         — RFC 8291/8292 crypto
+-- src/pages/api/push/subscribe.ts              — subscribe endpoint
+-- src/pages/api/push/unsubscribe.ts            — unsubscribe endpoint
+-- src/pages/api/push/vapid-public-key.ts       — VAPID key endpoint
+-- src/pages/api/push/status.ts                 — status check endpoint
+-- src/pages/api/push/auto-enroll.ts            — auto-enrollment endpoint
+-- src/pages/api/cron/notifications.ts          — cron trigger endpoint
+-- src/pages/api/admin/push/broadcast.ts        — broadcast endpoint
+-- src/pages/api/admin/push/subscriber-count.ts — count endpoint
+-- src/hooks/usePushSubscription.ts             — React hook (scope-aware)
+-- src/hooks/useBroadcast.ts                    — React hook for broadcast UI
+-- src/components/shared/PushToggle.tsx         — reusable toggle component
+-- src/components/admin/AdminPushToggle.tsx      — admin toggle (uses PushToggle)
+-- src/components/admin/AdminBroadcast.tsx       — broadcast form UI
+-- public/sw.js                                 — push + notification handlers

@@ -4,9 +4,10 @@ import { siteConfig } from "../config/site";
 type Props = {
   title: string;
   description: string;
+  themeColor?: string;
 };
 
-const { title, description } = Astro.props;
+const { title, description, themeColor = "#fdfaf6" } = Astro.props;
 const canonicalUrl = Astro.url.href;
 const fullTitle = title === siteConfig.title ? title : `${title} | ${siteConfig.title}`;
 ---
@@ -28,9 +29,9 @@ const fullTitle = title === siteConfig.title ? title : `${title} | ${siteConfig.
 <!-- PWA -->
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Ortona" />
-<meta name="theme-color" content="#fdfaf6" />
+<meta name="theme-color" content={themeColor} />
 <link rel="manifest" href="/site.webmanifest" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />

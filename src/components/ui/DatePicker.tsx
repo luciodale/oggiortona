@@ -12,6 +12,7 @@ import {
 } from "@floating-ui/react";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { CalendarIcon } from "../../icons/CalendarIcon";
+import { FormError } from "./FormError";
 
 type DatePickerProps = {
   label?: string;
@@ -249,8 +250,6 @@ function MobileDatePicker({ value, onChange, placeholder, label }: {
 
 export function DatePicker({ label, required, value, onChange, error, placeholder }: DatePickerProps) {
   const isDesktop = useMediaQuery("(hover: hover) and (pointer: fine)");
-  const errorId = error ? "datepicker-error" : undefined;
-
   return (
     <div>
       {label && (
@@ -263,9 +262,7 @@ export function DatePicker({ label, required, value, onChange, error, placeholde
         ? <DesktopDatePicker value={value} onChange={onChange} placeholder={placeholder} label={label} />
         : <MobileDatePicker value={value} onChange={onChange} placeholder={placeholder} label={label} />
       }
-      {error && (
-        <p id={errorId} className="mt-1 text-[11px] text-danger" role="alert">{error}</p>
-      )}
+      {error && <FormError message={error} />}
     </div>
   );
 }

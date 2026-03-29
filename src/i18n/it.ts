@@ -34,7 +34,7 @@ export const it = {
   "common.directions": "Indicazioni",
   "common.call": "Chiama",
   "common.menu": "Menu",
-  "common.imageUrl": "Immagine (URL)",
+
   "common.untilDate": "fino al {date}",
   "common.skipToContent": "Vai al contenuto",
   "common.siteName": "Oggi a Ortona",
@@ -228,6 +228,15 @@ export const it = {
   "eventCategory.cultura": "Cultura",
   "eventCategory.sport": "Sport",
   "eventCategory.altro": "Altro",
+
+  // Push notifications
+  "push.generalOn": "Notifiche attive",
+  "push.generalOff": "Attiva notifiche",
+  "push.ownerOn": "Notifiche scadenze attive",
+  "push.ownerOff": "Attiva notifiche scadenze",
+  "push.denied": "Notifiche bloccate",
+  "push.activating": "Attivando...",
+  "push.deactivating": "Disattivando...",
 
   // Language
   "lang.label": "Lingua",

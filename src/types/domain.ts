@@ -2,6 +2,8 @@
 
 export type Locale = "it" | "en";
 
+export type PushScope = "admin" | "owner" | "general";
+
 import type {
   PromotionRow,
   OpeningHours,

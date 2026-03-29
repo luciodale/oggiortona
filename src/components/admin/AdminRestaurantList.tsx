@@ -2,7 +2,7 @@ import type { PromotionRow, RestaurantRow } from "../../types/database";
 import { AdminRestaurantCard } from "./AdminRestaurantCard";
 
 type AdminRestaurantListProps = {
-  restaurants: Array<RestaurantRow & { ownerEmail: string | null; promotions: Array<PromotionRow> }>;
+  restaurants: Array<RestaurantRow & { ownerEmail: string | null; ownerName: string | null; promotions: Array<PromotionRow> }>;
   loading: boolean;
   expandedId: number | null;
   onExpand: (id: number | null) => void;

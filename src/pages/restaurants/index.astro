@@ -24,7 +24,6 @@ const [allRestaurants, allPromotions] = await Promise.all([
 
 const grouped = groupPromotionsByRestaurant(allPromotions);
 const enriched = allRestaurants.map((r) => enrichRestaurant(r, grouped.get(r.id) ?? []));
-const openCount = enriched.filter((r) => r.isOpen).length;
 ---
 
 <AppWrapper
@@ -63,11 +62,8 @@ const openCount = enriched.filter((r) => r.isOpen).length;
   </div>
 
   <script>
-    const btn = document.getElementById("refresh-btn");
-    btn?.addEventListener("click", () => {
-      btn.querySelector("svg")?.classList.add("animate-spin");
-      window.location.reload();
-    });
+    import { initRefreshButton } from "../../utils/refresh";
+    initRefreshButton();
   </script>
 
   <RestaurantsView client:load restaurants={enriched} locale={locale} />

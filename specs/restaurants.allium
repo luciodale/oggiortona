@@ -60,7 +60,6 @@ entity Restaurant {
     latitude: Decimal?,
     longitude: Decimal?,
     opening_hours: String,         -- JSON of OpeningHours
-    image_url: String?,
     menu_url: String?,
     owner: User?,
     active: Boolean,
@@ -121,7 +120,6 @@ rule CreateRestaurant {
         latitude: data.latitude,
         longitude: data.longitude,
         opening_hours: data.opening_hours,
-        image_url: data.image_url,
         menu_url: data.menu_url,
         owner: user,
         active: true

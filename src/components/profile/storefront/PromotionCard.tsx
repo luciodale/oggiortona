@@ -1,21 +1,25 @@
-import { TrashIcon } from "../../../icons/TrashIcon";
 import { RefreshIcon } from "../../../icons/RefreshIcon";
+import { TrashIcon } from "../../../icons/TrashIcon";
 
 type PromotionCardProps = {
   expired: boolean;
+  badge: React.ReactNode;
   onRenew: () => void;
   onDelete: () => void;
   children: React.ReactNode;
 };
 
-export function PromotionCard({ expired, onRenew, onDelete, children }: PromotionCardProps) {
+export function PromotionCard({ expired, badge, onRenew, onDelete, children }: PromotionCardProps) {
   return (
     <div className={`rounded-2xl p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)] ${expired ? "border border-dashed border-border bg-surface-alt" : "bg-white"}`}>
-      <span className={`mb-2 inline-block rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
-        expired ? "bg-danger/10 text-danger" : "bg-success/10 text-success"
-      }`}>
-        {expired ? "Scaduto" : "Attivo"}
-      </span>
+      <div className="mb-2 flex flex-wrap items-center gap-1.5">
+        <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+          expired ? "bg-danger/10 text-danger" : "bg-success/10 text-success"
+        }`}>
+          {expired ? "Scaduto" : "Attivo"}
+        </span>
+        {badge}
+      </div>
       {children}
       <div className="mt-3 flex gap-2">
         {expired && (

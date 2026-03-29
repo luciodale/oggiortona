@@ -1,4 +1,5 @@
 // Minimal service worker — no caching, standalone PWA shell only.
+// Web Push scopes: admin, owner, general.
 self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", (event) => {
   event.waitUntil(
@@ -30,11 +31,11 @@ self.addEventListener("push", (event) => {
   );
 });
 
-// Open admin panel on notification click
+// Open target page on notification click
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
-  const targetUrl = event.notification.data?.url || "/admin";
+  const targetUrl = event.notification.data?.url || "/";
 
   event.waitUntil(
     self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clients) => {

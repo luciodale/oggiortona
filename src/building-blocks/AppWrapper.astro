@@ -21,13 +21,21 @@ const {
   layoutClass = "",
 } = Astro.props;
 
+function getThemeColor(cls: string) {
+  if (cls.includes("page-mangiare")) return "#fdf2ed";
+  if (cls.includes("page-fare")) return "#edf4f8";
+  return "#fdfaf6";
+}
+
+const themeColor = getThemeColor(bodyClass);
+
 const locale = Astro.locals.locale;
 ---
 
 <!doctype html>
 <html lang={locale}>
   <head>
-    <AppHead title={title} description={description} />
+    <AppHead title={title} description={description} themeColor={themeColor} />
   </head>
   <body class:list={["min-h-dvh", bodyClass]}>
     <a href="#main-content" class="skip-link">{t("common.skipToContent", locale)}</a>

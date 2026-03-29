@@ -1,7 +1,8 @@
 import type { Db } from "../db/client";
 import { pushSubscriptions } from "../db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { sendWebPush } from "./webpush";
+import { extractStaleEndpoints } from "./pushResults";
 
 type NotificationPayload = {
   title: string;
@@ -18,8 +19,10 @@ type VapidEnv = {
 export async function notifyAdmins(db: Db, env: VapidEnv, notification: NotificationPayload) {
   console.log("[push] notifyAdmins called:", notification.title);
 
-  const subs = await db.select().from(pushSubscriptions);
-  console.log(`[push] Found ${subs.length} subscription(s)`);
+  const subs = await db.select().from(pushSubscriptions)
+    .where(eq(pushSubscriptions.scope, "admin"));
+
+  console.log(`[push] Found ${subs.length} admin subscription(s)`);
   if (subs.length === 0) return;
 
   const vapid = {
@@ -46,21 +49,13 @@ export async function notifyAdmins(db: Db, env: VapidEnv, notification: Notifica
     }
   }
 
-  // Remove stale subscriptions (410 Gone or 404 Not Found)
-  const staleEndpoints: string[] = [];
-  for (const [i, result] of results.entries()) {
-    if (result.status === "fulfilled" && !result.value.success) {
-      const { status } = result.value;
-      if (status === 410 || status === 404) {
-        staleEndpoints.push(subs[i]!.endpoint);
-      }
-    }
-  }
-
-  if (staleEndpoints.length > 0) {
+  const stale = extractStaleEndpoints(subs.map((s) => s.endpoint), results);
+  if (stale.length > 0) {
     await Promise.allSettled(
-      staleEndpoints.map((endpoint) =>
-        db.delete(pushSubscriptions).where(eq(pushSubscriptions.endpoint, endpoint)),
+      stale.map((endpoint) =>
+        db.delete(pushSubscriptions).where(
+          and(eq(pushSubscriptions.endpoint, endpoint), eq(pushSubscriptions.scope, "admin")),
+        ),
       ),
     );
   }

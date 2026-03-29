@@ -1,6 +1,7 @@
 import { useWatch } from "react-hook-form";
 import { useRestaurantForm } from "../../hooks/useRestaurantForm";
 import { restaurantFormTypes, restaurantTypeLabels } from "../../config/categories";
+import { useLocale } from "../../i18n/useLocale";
 import { getOrderedDays } from "../../utils/time";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
@@ -8,6 +9,7 @@ import { Input } from "../ui/Input";
 import { Textarea } from "../ui/Textarea";
 import { Pill } from "../ui/Pill";
 import { Button } from "../ui/Button";
+import { FormError, SummaryFormError } from "../ui/FormError";
 import { DayRow } from "./form/DayRow";
 import { LocationPickerField } from "../shared/LocationPickerField";
 
@@ -27,6 +29,8 @@ export function RestaurantForm({ restaurantId, initialData }: RestaurantFormProp
     createdId,
   } = useRestaurantForm(initialData);
 
+  const { locale } = useLocale();
+  const typeLabels = restaurantTypeLabels(locale);
   const isEdit = restaurantId != null;
   const selectedTypes = useWatch({ control: form.control, name: "types" });
   const typesError = form.formState.errors.types;
@@ -73,7 +77,7 @@ export function RestaurantForm({ restaurantId, initialData }: RestaurantFormProp
               active={selectedTypes.includes(t)}
               onClick={() => toggleType(t)}
             >
-              {restaurantTypeLabels[t]}
+              {typeLabels[t]}
             </Pill>
           ))}
         </div>
@@ -83,11 +87,7 @@ export function RestaurantForm({ restaurantId, initialData }: RestaurantFormProp
             {...form.register("customType")}
           />
         </div>
-        {typesError && (
-          <p className="mt-1 text-[11px] text-danger" role="alert">
-            {typesError.message}
-          </p>
-        )}
+        {typesError?.message && <FormError message={typesError.message} />}
       </fieldset>
 
       <fieldset>
@@ -123,10 +123,11 @@ export function RestaurantForm({ restaurantId, initialData }: RestaurantFormProp
         initialLatitude={initialData?.latitude ?? undefined}
         initialLongitude={initialData?.longitude ?? undefined}
         error={form.formState.errors.address?.message}
+        coordinateError={form.formState.errors.latitude?.message}
         onAddressChange={(v) => form.setValue("address", v, { shouldValidate: true, shouldDirty: true })}
         onCoordinatesChange={(lat, lng) => {
-          form.setValue("latitude", lat, { shouldDirty: true });
-          form.setValue("longitude", lng, { shouldDirty: true });
+          form.setValue("latitude", lat, { shouldValidate: true, shouldDirty: true });
+          form.setValue("longitude", lng, { shouldValidate: true, shouldDirty: true });
         }}
       />
 
@@ -162,14 +163,10 @@ export function RestaurantForm({ restaurantId, initialData }: RestaurantFormProp
         </div>
       </fieldset>
 
-      {errorMessage && (
-        <p className="text-[13px] text-danger" role="alert">{errorMessage}</p>
-      )}
+      {errorMessage && <SummaryFormError message={errorMessage} />}
 
       {form.formState.isSubmitted && Object.keys(form.formState.errors).length > 0 && (
-        <p className="text-[13px] text-danger" role="alert">
-          Compila tutti i campi obbligatori prima di procedere
-        </p>
+        <SummaryFormError message="Compila tutti i campi obbligatori prima di procedere" />
       )}
 
       <Button

@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
+import type { PushScope } from "../types/domain";
 
 type PushState = "loading" | "unsupported" | "denied" | "subscribed" | "unsubscribed";
 
-export function usePushSubscription() {
+export function usePushSubscription(scope: PushScope) {
   const [state, setState] = useState<PushState>("loading");
   const [busy, setBusy] = useState(false);
 
@@ -13,40 +14,48 @@ export function usePushSubscription() {
     }
 
     async function check() {
-      const permission = Notification.permission;
-      if (permission === "denied") {
+      if (Notification.permission === "denied") {
         setState("denied");
         return;
       }
 
-      const reg = await navigator.serviceWorker.ready;
-      const existing = await reg.pushManager.getSubscription();
-      setState(existing ? "subscribed" : "unsubscribed");
+      const res = await fetch(`/api/push/status?scope=${scope}`);
+      if (res.ok) {
+        const { subscribed } = await res.json() as { subscribed: boolean };
+        setState(subscribed ? "subscribed" : "unsubscribed");
+      } else {
+        setState("unsubscribed");
+      }
     }
 
     check();
-  }, []);
+  }, [scope]);
 
   const subscribe = useCallback(async () => {
     setBusy(true);
     try {
-      const res = await fetch("/api/admin/push/vapid-public-key");
+      const res = await fetch("/api/push/vapid-public-key");
       if (!res.ok) throw new Error("Impossibile ottenere chiave VAPID");
       const { publicKey } = await res.json() as { publicKey: string };
 
       const reg = await navigator.serviceWorker.ready;
-      const subscription = await reg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(publicKey),
-      });
+      let subscription = await reg.pushManager.getSubscription();
+
+      if (!subscription) {
+        subscription = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(publicKey),
+        });
+      }
 
       const subJson = subscription.toJSON();
-      const saveRes = await fetch("/api/admin/push/subscribe", {
+      const saveRes = await fetch("/api/push/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           endpoint: subJson.endpoint,
           keys: subJson.keys,
+          scope,
         }),
       });
 
@@ -58,7 +67,7 @@ export function usePushSubscription() {
     } finally {
       setBusy(false);
     }
-  }, []);
+  }, [scope]);
 
   const unsubscribe = useCallback(async () => {
     setBusy(true);
@@ -66,12 +75,11 @@ export function usePushSubscription() {
       const reg = await navigator.serviceWorker.ready;
       const subscription = await reg.pushManager.getSubscription();
       if (subscription) {
-        await fetch("/api/admin/push/unsubscribe", {
+        await fetch("/api/push/unsubscribe", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ endpoint: subscription.endpoint }),
+          body: JSON.stringify({ endpoint: subscription.endpoint, scope }),
         });
-        await subscription.unsubscribe();
       }
       setState("unsubscribed");
     } catch (err) {
@@ -79,9 +87,52 @@ export function usePushSubscription() {
     } finally {
       setBusy(false);
     }
-  }, []);
+  }, [scope]);
 
   return { state, busy, subscribe, unsubscribe };
+}
+
+export function useAutoEnroll() {
+  const [busy, setBusy] = useState(false);
+  const [enrolled, setEnrolled] = useState(false);
+
+  const enroll = useCallback(async () => {
+    setBusy(true);
+    try {
+      const res = await fetch("/api/push/vapid-public-key");
+      if (!res.ok) throw new Error("Impossibile ottenere chiave VAPID");
+      const { publicKey } = await res.json() as { publicKey: string };
+
+      const reg = await navigator.serviceWorker.ready;
+      let subscription = await reg.pushManager.getSubscription();
+
+      if (!subscription) {
+        subscription = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(publicKey),
+        });
+      }
+
+      const subJson = subscription.toJSON();
+      const saveRes = await fetch("/api/push/auto-enroll", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          endpoint: subJson.endpoint,
+          keys: subJson.keys,
+        }),
+      });
+
+      if (!saveRes.ok) throw new Error("Impossibile salvare sottoscrizione");
+      setEnrolled(true);
+    } catch (err) {
+      console.error("Auto-enroll failed:", err);
+    } finally {
+      setBusy(false);
+    }
+  }, []);
+
+  return { enroll, busy, enrolled };
 }
 
 function urlBase64ToUint8Array(base64String: string) {

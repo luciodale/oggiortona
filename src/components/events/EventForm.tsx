@@ -1,21 +1,33 @@
 import { useWatch } from "react-hook-form";
 import { useEventForm } from "../../hooks/useEventForm";
 import { eventFormCategories, eventCategoryLabels } from "../../config/categories";
+import { LocaleProvider, useLocale } from "../../i18n/useLocale";
+import type { Locale } from "../../types/domain";
 import { toast } from "sonner";
 import { Input } from "../ui/Input";
 import { Textarea } from "../ui/Textarea";
 import { Pill } from "../ui/Pill";
 import { Button } from "../ui/Button";
+import { FormError, SummaryFormError } from "../ui/FormError";
 import { TimePicker } from "../ui/TimePicker";
 import { DatePicker } from "../ui/DatePicker";
 import { LocationPickerField } from "../shared/LocationPickerField";
 
 type EventFormProps = {
+  locale: Locale;
   eventId?: number;
   initialData?: Parameters<typeof useEventForm>[0];
 };
 
-export function EventForm({ eventId, initialData }: EventFormProps) {
+export function EventForm({ locale, eventId, initialData }: EventFormProps) {
+  return (
+    <LocaleProvider locale={locale}>
+      <EventFormInner eventId={eventId} initialData={initialData} />
+    </LocaleProvider>
+  );
+}
+
+function EventFormInner({ eventId, initialData }: Omit<EventFormProps, "locale">) {
   const {
     form,
     toggleCategory,
@@ -25,6 +37,8 @@ export function EventForm({ eventId, initialData }: EventFormProps) {
     createdId,
   } = useEventForm(initialData);
 
+  const { locale } = useLocale();
+  const catLabels = eventCategoryLabels(locale);
   const isEdit = eventId != null;
   const selectedCategories = useWatch({ control: form.control, name: "categories" });
   const categoriesError = form.formState.errors.categories;
@@ -68,7 +82,7 @@ export function EventForm({ eventId, initialData }: EventFormProps) {
               active={selectedCategories.includes(cat)}
               onClick={() => toggleCategory(cat)}
             >
-              {eventCategoryLabels[cat] ?? cat}
+              {catLabels[cat] ?? cat}
             </Pill>
           ))}
         </div>
@@ -78,11 +92,7 @@ export function EventForm({ eventId, initialData }: EventFormProps) {
             {...form.register("customCategory")}
           />
         </div>
-        {categoriesError && (
-          <p className="mt-1 text-[11px] text-danger" role="alert">
-            {categoriesError.message}
-          </p>
-        )}
+        {categoriesError?.message && <FormError message={categoriesError.message} />}
       </fieldset>
 
       <div className="grid grid-cols-2 gap-3">
@@ -126,10 +136,11 @@ export function EventForm({ eventId, initialData }: EventFormProps) {
         initialLatitude={initialData?.latitude ?? undefined}
         initialLongitude={initialData?.longitude ?? undefined}
         error={form.formState.errors.address?.message}
+        coordinateError={form.formState.errors.latitude?.message}
         onAddressChange={(v) => form.setValue("address", v, { shouldValidate: true, shouldDirty: true })}
         onCoordinatesChange={(lat, lng) => {
-          form.setValue("latitude", lat, { shouldDirty: true });
-          form.setValue("longitude", lng, { shouldDirty: true });
+          form.setValue("latitude", lat, { shouldValidate: true, shouldDirty: true });
+          form.setValue("longitude", lng, { shouldValidate: true, shouldDirty: true });
         }}
       />
 
@@ -151,22 +162,10 @@ export function EventForm({ eventId, initialData }: EventFormProps) {
         {...form.register("price", { valueAsNumber: true })}
       />
 
-      <Input
-        label="Immagine (URL)"
-        type="url"
-        placeholder="https://..."
-        error={form.formState.errors.imageUrl?.message}
-        {...form.register("imageUrl")}
-      />
-
-      {errorMessage && (
-        <p className="text-[13px] text-danger" role="alert">{errorMessage}</p>
-      )}
+      {errorMessage && <SummaryFormError message={errorMessage} />}
 
       {form.formState.isSubmitted && Object.keys(form.formState.errors).length > 0 && (
-        <p className="text-[13px] text-danger" role="alert">
-          Compila tutti i campi obbligatori prima di procedere
-        </p>
+        <SummaryFormError message="Compila tutti i campi obbligatori prima di procedere" />
       )}
 
       <Button
