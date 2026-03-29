@@ -237,6 +237,10 @@ export const it = {
   "eventCategory.altro": "Altro",
 
   // Push notifications
+  "push.promptTitle": "Resta aggiornato",
+  "push.promptBody": "Ricevi notifiche su eventi e novit\u00e0 a Ortona.",
+  "push.promptEnable": "Attiva",
+  "push.dismissHint": "Puoi attivare le notifiche dal tuo profilo.",
   "push.generalOn": "Notifiche attive",
   "push.generalOff": "Attiva notifiche",
   "push.ownerOn": "Notifiche scadenze attive",

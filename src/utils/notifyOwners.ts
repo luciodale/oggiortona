@@ -33,6 +33,7 @@ export async function notifyOwners(db: Db, env: VapidEnv) {
 
   const subsByUser = new Map<string, typeof ownerSubs>();
   for (const sub of ownerSubs) {
+    if (!sub.userId) continue;
     const list = subsByUser.get(sub.userId) ?? [];
     list.push(sub);
     subsByUser.set(sub.userId, list);

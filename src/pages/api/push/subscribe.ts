@@ -20,11 +20,6 @@ function isValidBody(raw: unknown): raw is SubscribeBody {
 }
 
 export async function POST({ locals, request }: APIContext): Promise<Response> {
-  const user = locals.user;
-  if (!user) {
-    return Response.json({ error: "Non autenticato" }, { status: 401 });
-  }
-
   let raw: unknown;
   try {
     raw = await request.json();
@@ -40,10 +35,17 @@ export async function POST({ locals, request }: APIContext): Promise<Response> {
     return Response.json({ error: "Scope non valido" }, { status: 400 });
   }
 
+  const user = locals.user;
+
+  // Non-general scopes require authentication
+  if (raw.scope !== "general" && !user) {
+    return Response.json({ error: "Non autenticato" }, { status: 401 });
+  }
+
   const db = locals.db;
 
   let ownsRestaurants = false;
-  if (raw.scope === "owner") {
+  if (raw.scope === "owner" && user) {
     const owned = await db.select({ id: restaurants.id })
       .from(restaurants)
       .where(eq(restaurants.ownerId, user.id))
@@ -51,7 +53,7 @@ export async function POST({ locals, request }: APIContext): Promise<Response> {
     ownsRestaurants = owned.length > 0;
   }
 
-  if (!canSubscribeToScope(raw.scope, { isAdmin: locals.isAdmin, ownsRestaurants })) {
+  if (raw.scope !== "general" && !canSubscribeToScope(raw.scope, { isAdmin: locals.isAdmin, ownsRestaurants })) {
     return Response.json({ error: "Non autorizzato per questo scope" }, { status: 403 });
   }
 
@@ -60,7 +62,7 @@ export async function POST({ locals, request }: APIContext): Promise<Response> {
   );
 
   await db.insert(pushSubscriptions).values({
-    userId: user.id,
+    userId: user?.id ?? null,
     endpoint: raw.endpoint,
     p256dh: raw.keys.p256dh,
     auth: raw.keys.auth,

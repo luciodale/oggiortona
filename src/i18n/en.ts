@@ -241,6 +241,10 @@ export const en: Translations = {
   "eventCategory.altro": "Other",
 
   // Push notifications
+  "push.promptTitle": "Stay updated",
+  "push.promptBody": "Get notified about events and news in Ortona.",
+  "push.promptEnable": "Enable",
+  "push.dismissHint": "You can enable notifications from your profile.",
   "push.generalOn": "Notifications on",
   "push.generalOff": "Enable notifications",
   "push.ownerOn": "Expiry alerts on",

@@ -1,5 +1,6 @@
 ---
 import AppWrapper from "../building-blocks/AppWrapper.astro";
+import { NotificationPrompt } from "../components/shared/NotificationPrompt";
 import { PwaInstallPrompt } from "../components/shared/PwaInstallPrompt";
 import { siteConfig } from "../config/site";
 import { t } from "../i18n/t";
@@ -237,6 +238,7 @@ const user = Astro.locals.user;
       }
     </nav>
 
+    <NotificationPrompt client:idle locale={locale} />
     <PwaInstallPrompt client:idle locale={locale} />
   </div>
 </AppWrapper>

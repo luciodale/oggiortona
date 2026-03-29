@@ -4,10 +4,6 @@ import { eq, and } from "drizzle-orm";
 import { isValidScope } from "../../../utils/pushScope";
 
 export async function POST({ locals, request }: APIContext): Promise<Response> {
-  if (!locals.user) {
-    return Response.json({ error: "Non autenticato" }, { status: 401 });
-  }
-
   let raw: unknown;
   try {
     raw = await request.json();
