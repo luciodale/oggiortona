@@ -1,22 +1,22 @@
-export const restaurantTypeLabels: Record<string, string> = {
-  ristorante: "Ristorante",
-  pizzeria: "Pizzeria",
-  trattoria: "Trattoria",
-  bar: "Bar",
-  gelateria: "Gelateria",
-  pasticceria: "Pasticceria",
-  pescheria: "Pescheria",
-  altro: "Altro",
-};
+import type { Locale } from "../types/domain";
+import type { TranslationKey } from "../i18n/t";
+import { t } from "../i18n/t";
 
-export const eventCategoryLabels: Record<string, string> = {
-  sagra: "Sagra",
-  musica: "Musica",
-  mercato: "Mercato",
-  cultura: "Cultura",
-  sport: "Sport",
-  altro: "Altro",
-};
+function buildLabels(keys: Array<string>, prefix: string, locale: Locale): Record<string, string> {
+  const result: Record<string, string> = {};
+  for (const key of keys) {
+    result[key] = t(`${prefix}.${key}` as TranslationKey, locale);
+  }
+  return result;
+}
+
+export function restaurantTypeLabels(locale: Locale): Record<string, string> {
+  return buildLabels(restaurantTypes, "category", locale);
+}
+
+export function eventCategoryLabels(locale: Locale): Record<string, string> {
+  return buildLabels(eventCategories, "eventCategory", locale);
+}
 
 export const eventCategoryColors: Record<string, string> = {
   sagra: "bg-amber-50 text-amber-700",

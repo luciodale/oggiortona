@@ -1,5 +1,6 @@
 ---
 import { restaurantTypeLabels } from "../config/categories";
+import { t } from "../i18n/t";
 import type { PromotionRow, RestaurantRow } from "../types/database";
 import { parseTypes } from "../utils/restaurant";
 import {
@@ -19,8 +20,10 @@ type Props = {
 };
 
 const { restaurant, promotions, backHref, backLabel } = Astro.props;
+const locale = Astro.locals.locale;
 
 const types = parseTypes(restaurant.type);
+const labels = restaurantTypeLabels(locale);
 const parsedHours = parseOpeningHours(restaurant.openingHours);
 const isOpen = isOpenNow(parsedHours);
 const days = getOrderedDays();
@@ -56,10 +59,14 @@ const days = getOrderedDays();
       </h1>
       <div class="mt-1 flex items-center gap-2 text-[11px] text-muted">
         <span class="capitalize"
-          >{types.map((t) => restaurantTypeLabels[t] ?? t).join(" · ")}</span
+          >{types.map((tp) => labels[tp] ?? tp).join(" · ")}</span
         >
         <span aria-hidden="true">&middot;</span>
-        <span aria-label={`Fascia di prezzo: ${restaurant.priceRange} su 3`}>
+        <span
+          aria-label={t("aria.priceRange", locale, {
+            range: restaurant.priceRange,
+          })}
+        >
           {
             [1, 2, 3].map((i) => (
               <span
@@ -87,7 +94,7 @@ const days = getOrderedDays();
           isOpen ? "bg-success" : "bg-danger",
         ]}
         aria-hidden="true"></span>
-      {isOpen ? "Aperto" : "Chiuso"}
+      {isOpen ? t("common.open", locale) : t("common.closed", locale)}
     </span>
   </div>
 
@@ -103,13 +110,13 @@ const days = getOrderedDays();
     {
       restaurant.phone && (
         <a
-          href={`https://wa.me/${restaurant.phone.replace(/[\s\-+()]/g, "")}?text=${encodeURIComponent("Da Oggi a Ortona, messaggio:")}`}
+          href={`https://wa.me/${restaurant.phone.replace(/[\s\-+()]/g, "")}?text=${encodeURIComponent(t("aria.whatsappMessage", locale))}`}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={`Scrivi su WhatsApp a ${restaurant.name}`}
+          aria-label={t("aria.whatsappTo", locale, { name: restaurant.name })}
           class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#25D366] py-3 text-[13px] font-semibold text-white no-underline transition-all hover:bg-[#1FAD55] active:scale-[0.98]"
         >
-          WhatsApp
+          {t("common.whatsapp", locale)}
         </a>
       )
     }
@@ -119,18 +126,18 @@ const days = getOrderedDays();
         : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(restaurant.address)}`}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label={`Indicazioni per ${restaurant.name}`}
+      aria-label={t("aria.directionsFor", locale, { name: restaurant.name })}
       class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary py-3 text-[13px] font-semibold text-white no-underline transition-all hover:bg-primary/90 active:scale-[0.98]"
-      >Indicazioni</a
+      >{t("common.directions", locale)}</a
     >
     {
       restaurant.phone && (
         <a
           href={`tel:${restaurant.phone}`}
-          aria-label={`Chiama ${restaurant.name}`}
+          aria-label={t("aria.callName", locale, { name: restaurant.name })}
           class="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-white py-3 text-[13px] font-semibold text-primary no-underline transition-all hover:bg-surface-alt active:scale-[0.98]"
         >
-          Chiama
+          {t("common.call", locale)}
         </a>
       )
     }
@@ -140,10 +147,10 @@ const days = getOrderedDays();
           href={restaurant.menuUrl}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={`Menu di ${restaurant.name}`}
+          aria-label={t("aria.menuOf", locale, { name: restaurant.name })}
           class="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-white py-3 text-[13px] font-semibold text-primary no-underline transition-all hover:bg-surface-alt active:scale-[0.98]"
         >
-          Menu
+          {t("common.menu", locale)}
         </a>
       )
     }
@@ -157,7 +164,7 @@ const days = getOrderedDays();
     <h2
       class="mb-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-muted"
     >
-      Orari
+      {t("common.hours", locale)}
     </h2>
     <div class="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
       {
@@ -171,7 +178,7 @@ const days = getOrderedDays();
               ]}
             >
               <span class="text-[13px] font-medium text-primary">
-                {getDayLabel(day)}
+                {getDayLabel(day, locale)}
               </span>
               <span
                 class:list={[
@@ -179,7 +186,7 @@ const days = getOrderedDays();
                   schedule ? "text-muted" : "text-danger/60",
                 ]}
               >
-                {formatSchedule(schedule)}
+                {formatSchedule(schedule, locale)}
               </span>
             </div>
           );
@@ -192,7 +199,7 @@ const days = getOrderedDays();
     <h2
       class="mb-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-muted"
     >
-      Indirizzo
+      {t("common.address", locale)}
     </h2>
     <p class="text-[13px] text-primary">{restaurant.address}</p>
   </div>

@@ -4,7 +4,9 @@ import RestaurantDetail from "../../building-blocks/RestaurantDetail.astro";
 import { restaurants, promotions } from "../../db/schema";
 import { eq, and as dbAnd, lte, gte } from "drizzle-orm";
 import { getTodayISO } from "../../utils/date";
+import { t } from "../../i18n/t";
 
+const locale = Astro.locals.locale;
 const db = Astro.locals.db;
 const restaurantId = Number(Astro.params.id);
 
@@ -30,6 +32,6 @@ const activePromotions = await db.select().from(promotions).where(
     restaurant={restaurant}
     promotions={activePromotions}
     backHref="/restaurants"
-    backLabel="Tutti i locali"
+    backLabel={t("restaurants.allVenues", locale)}
   />
 </AppWrapper>

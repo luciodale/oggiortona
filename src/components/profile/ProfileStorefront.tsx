@@ -1,29 +1,32 @@
 import { Link, useParams } from "@tanstack/react-router";
 import { usePromotions } from "../../hooks/usePromotions";
+import { useLocale } from "../../i18n/useLocale";
 import { ArrowLeftIcon } from "../../icons/ArrowLeftIcon";
 import { Button } from "../ui/Button";
+import { SummaryFormError } from "../ui/FormError";
 import { PromotionForm } from "./storefront/PromotionForm";
 import { PromotionsList } from "./storefront/PromotionsList";
 
 type PromotionTab = "special" | "deal" | "news";
 
-const TAB_LABELS: Record<PromotionTab, string> = {
-  special: "Piatto",
-  deal: "Offerta",
-  news: "News",
-};
-
 export function ProfileStorefront() {
+  const { t } = useLocale();
   const { id } = useParams({ strict: false });
   const {
     tab, setTab,
-    data, loading, submitting,
+    data, loading, submitting, errorMessage,
     restaurantName,
     specialForm, setSpecialForm,
     dealForm, setDealForm,
     newsForm, setNewsForm,
     handleCreate, handleDelete, handleRenew,
   } = usePromotions(id);
+
+  const TAB_LABELS: Record<PromotionTab, string> = {
+    special: t("storefront.dish"),
+    deal: t("storefront.deal"),
+    news: t("storefront.news"),
+  };
 
   if (loading) {
     return (
@@ -41,29 +44,29 @@ export function ProfileStorefront() {
         className="mb-4 inline-flex items-center gap-1 text-xs font-medium text-muted no-underline hover:text-primary"
       >
         <ArrowLeftIcon className="h-3.5 w-3.5" />
-        Indietro
+        {t("common.back")}
       </Link>
 
       <h1 className="font-family-display text-xl font-medium tracking-tight text-primary">
-        Vetrina
+        {t("profile.storefront")}
       </h1>
       {restaurantName && (
         <p className="mt-0.5 text-[11px] text-muted">{restaurantName}</p>
       )}
 
       <div className="mt-5 flex rounded-xl bg-surface-warm p-0.5" role="tablist" aria-label="Tipo">
-        {(["special", "deal", "news"] as const).map((t) => (
+        {(["special", "deal", "news"] as const).map((tp) => (
           <button
-            key={t}
+            key={tp}
             type="button"
             role="tab"
-            aria-selected={tab === t}
-            onClick={() => setTab(t)}
+            aria-selected={tab === tp}
+            onClick={() => setTab(tp)}
             className={`flex flex-1 items-center justify-center rounded-lg py-2 text-[11px] font-semibold uppercase tracking-[0.06em] transition-all ${
-              tab === t ? "bg-white text-primary shadow-sm" : "text-muted"
+              tab === tp ? "bg-white text-primary shadow-sm" : "text-muted"
             }`}
           >
-            {TAB_LABELS[t]}
+            {TAB_LABELS[tp]}
           </button>
         ))}
       </div>
@@ -74,8 +77,8 @@ export function ProfileStorefront() {
             form={specialForm}
             onChange={setSpecialForm}
             showTitle={false}
-            descriptionLabel="Descrizione"
-            descriptionPlaceholder="Es. Pasta alla chitarra con ragù"
+            descriptionLabel={t("storefront.descLabel")}
+            descriptionPlaceholder={t("storefront.dishDescPlaceholder")}
           />
         )}
         {tab === "deal" && (
@@ -83,8 +86,8 @@ export function ProfileStorefront() {
             form={dealForm}
             onChange={setDealForm}
             showTitle={true}
-            titlePlaceholder="Es. 2x1 Birra artigianale"
-            descriptionPlaceholder="Dettagli dell'offerta"
+            titlePlaceholder={t("storefront.dealTitlePlaceholder")}
+            descriptionPlaceholder={t("storefront.dealDescPlaceholder")}
           />
         )}
         {tab === "news" && (
@@ -92,9 +95,15 @@ export function ProfileStorefront() {
             form={newsForm}
             onChange={setNewsForm}
             showTitle={true}
-            titlePlaceholder="Es. Nuovo menu estivo"
-            descriptionPlaceholder="Racconta la news"
+            titlePlaceholder={t("storefront.newsTitlePlaceholder")}
+            descriptionPlaceholder={t("storefront.newsDescPlaceholder")}
           />
+        )}
+
+        {errorMessage && (
+          <div className="mt-4">
+            <SummaryFormError message={errorMessage} />
+          </div>
         )}
 
         <Button
@@ -103,7 +112,7 @@ export function ProfileStorefront() {
           onClick={handleCreate}
           disabled={submitting}
         >
-          {submitting ? "Salvataggio..." : "Pubblica"}
+          {submitting ? t("common.saving") : t("common.publish")}
         </Button>
       </div>
 

@@ -25,24 +25,29 @@ export function isUpcoming(dateStr: string) {
   return date >= today;
 }
 
-export function formatDateItalian(dateStr: string) {
+import type { Locale } from "../types/domain";
+import { t } from "../i18n/t";
+
+const LOCALE_MAP: Record<Locale, string> = { it: "it-IT", en: "en-GB" };
+
+export function formatDateLong(dateStr: string, locale: Locale) {
   const date = new Date(dateStr);
-  return date.toLocaleDateString("it-IT", {
+  return date.toLocaleDateString(LOCALE_MAP[locale], {
     weekday: "long",
     day: "numeric",
     month: "long",
   });
 }
 
-export function formatDateShort(dateStr: string) {
+export function formatDateShort(dateStr: string, locale: Locale) {
   const date = new Date(dateStr);
-  return date.toLocaleDateString("it-IT", {
+  return date.toLocaleDateString(LOCALE_MAP[locale], {
     day: "numeric",
     month: "short",
   });
 }
 
-export function relativeTime(dateStr: string) {
+export function relativeTime(dateStr: string, locale: Locale) {
   const date = new Date(dateStr);
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
@@ -50,11 +55,11 @@ export function relativeTime(dateStr: string) {
   const diffHours = Math.floor(diffMinutes / 60);
   const diffDays = Math.floor(diffHours / 24);
 
-  if (diffMinutes < 1) return "adesso";
-  if (diffMinutes < 60) return `${diffMinutes} min fa`;
-  if (diffHours < 24) return `${diffHours} ore fa`;
-  if (diffDays < 7) return `${diffDays} giorni fa`;
-  return formatDateShort(dateStr);
+  if (diffMinutes < 1) return t("date.now", locale);
+  if (diffMinutes < 60) return t("date.minutesAgo", locale, { count: diffMinutes });
+  if (diffHours < 24) return t("date.hoursAgo", locale, { count: diffHours });
+  if (diffDays < 7) return t("date.daysAgo", locale, { count: diffDays });
+  return formatDateShort(dateStr, locale);
 }
 
 export function getTodayISO() {

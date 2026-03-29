@@ -1,24 +1,30 @@
 ---
+import { t } from "../i18n/t";
 import type { PromotionRow } from "../types/database";
 import { formatDateShort } from "../utils/date";
 
 type Props = { item: PromotionRow };
 const { item } = Astro.props;
+const locale = Astro.locals.locale;
 const isMultiDay = item.dateStart !== item.dateEnd;
 
 type Style = { bg: string; label: string; labelColor: string };
 const fallback: Style = {
   bg: "bg-sky-50",
-  label: "News",
+  label: t("promo.news", locale),
   labelColor: "text-sky-700",
 };
 const styleMap: Record<string, Style> = {
   special: {
     bg: "bg-mangiare-light",
-    label: "Piatto del giorno",
+    label: t("promo.dailySpecial", locale),
     labelColor: "text-mangiare",
   },
-  deal: { bg: "bg-violet-50", label: "Offerta", labelColor: "text-violet-700" },
+  deal: {
+    bg: "bg-violet-50",
+    label: t("promo.deal", locale),
+    labelColor: "text-violet-700",
+  },
   news: fallback,
 };
 const style: Style = styleMap[item.type] ?? fallback;
@@ -56,6 +62,14 @@ const style: Style = styleMap[item.type] ?? fallback;
         </span>
       )
     }
-    {isMultiDay && <span>fino al {formatDateShort(item.dateEnd)}</span>}
+    {
+      isMultiDay && (
+        <span>
+          {t("common.untilDate", locale, {
+            date: formatDateShort(item.dateEnd, locale),
+          })}
+        </span>
+      )
+    }
   </div>
 </div>

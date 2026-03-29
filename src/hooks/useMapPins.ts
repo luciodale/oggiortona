@@ -1,9 +1,11 @@
 import { useMemo } from "react";
-import type { RestaurantWithStatus } from "../types/domain";
+import type { RestaurantWithStatus, Locale } from "../types/domain";
 import type { MapPin } from "../utils/map";
 import { restaurantTypeLabels } from "../config/categories";
+import { useLocale } from "../i18n/useLocale";
 
-export function restaurantsToMapPins(restaurants: Array<RestaurantWithStatus>): Array<MapPin> {
+export function restaurantsToMapPins(restaurants: Array<RestaurantWithStatus>, locale: Locale): Array<MapPin> {
+  const typeLabels = restaurantTypeLabels(locale);
   return restaurants
     .filter((r) => r.latitude != null && r.longitude != null)
     .map((r) => {
@@ -15,7 +17,7 @@ export function restaurantsToMapPins(restaurants: Array<RestaurantWithStatus>): 
         lat: r.latitude!,
         lng: r.longitude!,
         label: r.name,
-        subtitle: r.types.map((t) => restaurantTypeLabels[t] ?? t).join(" · "),
+        subtitle: r.types.map((t) => typeLabels[t] ?? t).join(" · "),
         href: `/restaurants/${r.id}`,
         directionsUrl:
           r.latitude != null && r.longitude != null
@@ -46,5 +48,6 @@ export function restaurantsToMapPins(restaurants: Array<RestaurantWithStatus>): 
 }
 
 export function useMapPins(restaurants: Array<RestaurantWithStatus>) {
-  return useMemo(() => restaurantsToMapPins(restaurants), [restaurants]);
+  const { locale } = useLocale();
+  return useMemo(() => restaurantsToMapPins(restaurants, locale), [restaurants, locale]);
 }

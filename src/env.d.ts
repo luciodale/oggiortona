@@ -16,5 +16,6 @@ declare namespace App {
     user: import("./types/database").UserRow | null;
     db: import("./db/client").Db;
     isAdmin: boolean;
+    locale: import("./types/domain").Locale;
   }
 }

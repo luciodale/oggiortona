@@ -6,7 +6,9 @@ import { restaurants, promotions } from "../../db/schema";
 import { eq, and as dbAnd, lte, gte } from "drizzle-orm";
 import { getTodayISO } from "../../utils/date";
 import { groupPromotionsByRestaurant, enrichRestaurant } from "../../utils/enrichRestaurant";
+import { t } from "../../i18n/t";
 
+const locale = Astro.locals.locale;
 const db = Astro.locals.db;
 const today = getTodayISO();
 
@@ -26,8 +28,8 @@ const openCount = enriched.filter((r) => r.isOpen).length;
 ---
 
 <AppWrapper
-  title="Mangiare"
-  description="Dove mangiare a Ortona. Ristoranti, pizzerie, bar e altro."
+  title={t("restaurants.pageTitle", locale)}
+  description={t("restaurants.pageDesc", locale)}
   bodyClass="page-mangiare"
 >
   <div class="mb-6 animate-fade-up flex items-start justify-between">
@@ -35,13 +37,13 @@ const openCount = enriched.filter((r) => r.isOpen).length;
       <h1
         class="font-family-display text-3xl font-medium tracking-tight text-primary"
       >
-        Mangiare
+        {t("restaurants.pageTitle", locale)}
       </h1>
     </div>
     <button
       id="refresh-btn"
       type="button"
-      aria-label="Aggiorna"
+      aria-label={t("common.refresh", locale)}
       class="mt-1 flex h-9 w-9 items-center justify-center rounded-full border border-border-light bg-surface text-muted transition-all duration-300 hover:border-mangiare-muted hover:text-mangiare active:scale-90"
     >
       <svg
@@ -68,6 +70,6 @@ const openCount = enriched.filter((r) => r.isOpen).length;
     });
   </script>
 
-  <RestaurantsView client:load restaurants={enriched} />
+  <RestaurantsView client:load restaurants={enriched} locale={locale} />
   <ZipperScroll />
 </AppWrapper>

@@ -4,7 +4,9 @@ import ZipperScroll from "../../components/shared/ZipperScroll.astro";
 import { EventsView } from "../../components/events/EventsView";
 import { events } from "../../db/schema";
 import { gte, asc, eq, and as dbAnd, or } from "drizzle-orm";
+import { t } from "../../i18n/t";
 
+const locale = Astro.locals.locale;
 const db = Astro.locals.db;
 const today = new Date().toISOString().split("T")[0]!;
 
@@ -21,8 +23,8 @@ const allEvents = await db
 ---
 
 <AppWrapper
-  title="Eventi"
-  description="Eventi, sagre, concerti e attivita a Ortona."
+  title={t("events.pageTitle", locale)}
+  description={t("events.pageDesc", locale)}
   bodyClass="page-fare"
 >
   <div class="mb-6 animate-fade-up flex items-start justify-between">
@@ -30,13 +32,13 @@ const allEvents = await db
       <h1
         class="font-family-display text-3xl font-medium tracking-tight text-primary"
       >
-        Eventi
+        {t("events.pageTitle", locale)}
       </h1>
     </div>
     <button
       id="refresh-btn"
       type="button"
-      aria-label="Aggiorna"
+      aria-label={t("common.refresh", locale)}
       class="mt-1 flex h-9 w-9 items-center justify-center rounded-full border border-border-light bg-surface text-muted transition-all duration-300 hover:border-fare-muted hover:text-fare active:scale-90"
     >
       <svg
@@ -56,13 +58,10 @@ const allEvents = await db
   </div>
 
   <script>
-    const btn = document.getElementById("refresh-btn");
-    btn?.addEventListener("click", () => {
-      btn.querySelector("svg")?.classList.add("animate-spin");
-      window.location.reload();
-    });
+    import { initRefreshButton } from "../../utils/refresh";
+    initRefreshButton();
   </script>
 
-  <EventsView client:load events={allEvents} />
+  <EventsView client:load events={allEvents} locale={locale} />
   <ZipperScroll />
 </AppWrapper>

@@ -14,7 +14,7 @@
 ## Two Core Sections
 
 1. **Mangiare** (eat) — restaurant/food directory with live "open now" status + optional daily specials (piatto del giorno). The static directory is always useful; daily specials are a bonus dynamic layer.
-2. **Fare** (do) — events calendar (sagre, musica, mercato, cultura, sport). Grouped by "this week" / "upcoming".
+2. **Events** (events) — events calendar (sagre, musica, mercato, cultura, sport). Grouped by "this week" / "upcoming".
 
 ## Key Design Decisions
 

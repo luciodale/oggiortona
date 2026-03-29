@@ -1,4 +1,6 @@
 import type { DaySchedule, ItalianDay, OpeningHours } from "../types/database";
+import type { Locale } from "../types/domain";
+import { DAY_LABELS } from "../i18n/t";
 
 const DAY_MAP: Array<ItalianDay> = [
   "domenica",
@@ -10,16 +12,6 @@ const DAY_MAP: Array<ItalianDay> = [
   "sabato",
 ];
 
-const DAY_LABELS: Record<ItalianDay, string> = {
-  lunedi: "Lunedi",
-  martedi: "Martedi",
-  mercoledi: "Mercoledi",
-  giovedi: "Giovedi",
-  venerdi: "Venerdi",
-  sabato: "Sabato",
-  domenica: "Domenica",
-};
-
 export function getItalianDayName(date: Date): ItalianDay {
   const dayIndex = date.getDay();
   const day = DAY_MAP[dayIndex];
@@ -27,8 +19,8 @@ export function getItalianDayName(date: Date): ItalianDay {
   return day;
 }
 
-export function getDayLabel(day: ItalianDay) {
-  return DAY_LABELS[day];
+export function getDayLabel(day: ItalianDay, locale: Locale) {
+  return DAY_LABELS[locale][day];
 }
 
 export function getOrderedDays(): Array<ItalianDay> {
@@ -90,8 +82,8 @@ export function formatTime(time: string) {
   return time;
 }
 
-export function formatSchedule(schedule: DaySchedule | null) {
-  if (!schedule) return "Chiuso";
+export function formatSchedule(schedule: DaySchedule | null, locale: Locale) {
+  if (!schedule) return locale === "it" ? "Chiuso" : "Closed";
 
   let result = `${schedule.open} - ${schedule.close}`;
   if (schedule.open2 && schedule.close2) {

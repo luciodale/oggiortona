@@ -1,6 +1,8 @@
 import { createContext, useContext } from "react";
 import { RouterProvider } from "@tanstack/react-router";
 import { profileRouter } from "../../config/profileRoutes";
+import { LocaleProvider } from "../../i18n/useLocale";
+import type { Locale } from "../../types/domain";
 
 type ProfileUser = {
   id: string;
@@ -11,13 +13,16 @@ type ProfileUser = {
 
 type ProfileAppProps = {
   user: ProfileUser;
+  locale: Locale;
 };
 
-export default function ProfileApp({ user }: ProfileAppProps) {
+export default function ProfileApp({ user, locale }: ProfileAppProps) {
   return (
-    <ProfileUserContext.Provider value={user}>
-      <RouterProvider router={profileRouter} />
-    </ProfileUserContext.Provider>
+    <LocaleProvider locale={locale}>
+      <ProfileUserContext.Provider value={user}>
+        <RouterProvider router={profileRouter} />
+      </ProfileUserContext.Provider>
+    </LocaleProvider>
   );
 }
 

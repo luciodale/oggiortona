@@ -6,8 +6,10 @@ import {
   eventCategoryLabels,
 } from "../../config/categories";
 import { events } from "../../db/schema";
-import { formatDateItalian } from "../../utils/date";
+import { t } from "../../i18n/t";
+import { formatDateLong } from "../../utils/date";
 
+const locale = Astro.locals.locale;
 const db = Astro.locals.db;
 const eventId = Number(Astro.params.id);
 
@@ -22,6 +24,7 @@ if (!event) {
 }
 
 const categories = event.category.split(",").map((c: string) => c.trim());
+const catLabels = eventCategoryLabels(locale);
 ---
 
 <AppWrapper
@@ -46,7 +49,7 @@ const categories = event.category.split(",").map((c: string) => c.trim());
       <line x1="19" y1="12" x2="5" y2="12"></line>
       <polyline points="12 19 5 12 12 5"></polyline>
     </svg>
-    Tutti gli eventi
+    {t("events.allEvents", locale)}
   </a>
 
   <div class="animate-fade-up">
@@ -59,7 +62,7 @@ const categories = event.category.split(",").map((c: string) => c.trim());
               eventCategoryColors[cat] ?? "bg-stone-100 text-stone-600",
             ]}
           >
-            {eventCategoryLabels[cat] ?? cat}
+            {catLabels[cat] ?? cat}
           </span>
         ))
       }
@@ -95,14 +98,16 @@ const categories = event.category.split(",").map((c: string) => c.trim());
           </svg>
         </div>
         <div>
-          <span class="capitalize">{formatDateItalian(event.dateStart)}</span>
+          <span class="capitalize"
+            >{formatDateLong(event.dateStart, locale)}</span
+          >
           {
             event.dateEnd && (
               <span>
                 {" "}
                 &ndash;{" "}
                 <span class="capitalize">
-                  {formatDateItalian(event.dateEnd)}
+                  {formatDateLong(event.dateEnd, locale)}
                 </span>
               </span>
             )
@@ -162,13 +167,13 @@ const categories = event.category.split(",").map((c: string) => c.trim());
       {
         event.phone && (
           <a
-            href={`https://wa.me/${event.phone.replace(/[\s\-+()]/g, "")}?text=${encodeURIComponent("Da Oggi a Ortona, messaggio:")}`}
+            href={`https://wa.me/${event.phone.replace(/[\s\-+()]/g, "")}?text=${encodeURIComponent(t("aria.whatsappMessage", locale))}`}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label={`Scrivi su WhatsApp per ${event.title}`}
+            aria-label={t("aria.whatsappFor", locale, { name: event.title })}
             class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#25D366] py-3 text-[13px] font-semibold text-white no-underline transition-all hover:bg-[#1FAD55] active:scale-[0.98]"
           >
-            WhatsApp
+            {t("common.whatsapp", locale)}
           </a>
         )
       }
@@ -178,18 +183,18 @@ const categories = event.category.split(",").map((c: string) => c.trim());
           : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.address)}`}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label={`Indicazioni per ${event.title}`}
+        aria-label={t("aria.directionsFor", locale, { name: event.title })}
         class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary py-3 text-[13px] font-semibold text-white no-underline transition-all hover:bg-primary/90 active:scale-[0.98]"
-        >Indicazioni</a
+        >{t("common.directions", locale)}</a
       >
       {
         event.phone && (
           <a
             href={`tel:${event.phone}`}
-            aria-label={`Chiama per ${event.title}`}
+            aria-label={t("aria.callFor", locale, { name: event.title })}
             class="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-white py-3 text-[13px] font-semibold text-primary no-underline transition-all hover:bg-surface-alt active:scale-[0.98]"
           >
-            Chiama
+            {t("common.call", locale)}
           </a>
         )
       }
@@ -199,7 +204,7 @@ const categories = event.category.split(",").map((c: string) => c.trim());
       event.description && (
         <div class="mt-6">
           <h2 class="mb-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-muted">
-            Dettagli
+            {t("common.details", locale)}
           </h2>
           <p class="text-[13px] leading-relaxed text-muted">
             {event.description}
@@ -212,7 +217,7 @@ const categories = event.category.split(",").map((c: string) => c.trim());
       <h2
         class="mb-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-muted"
       >
-        Indirizzo
+        {t("common.address", locale)}
       </h2>
       <p class="text-[13px] text-primary">{event.address}</p>
     </div>

@@ -1,3 +1,5 @@
+import { useLocale } from "../../i18n/useLocale";
+
 type ViewMode = "list" | "map";
 
 type ViewToggleProps = {
@@ -6,8 +8,10 @@ type ViewToggleProps = {
 };
 
 export function ViewToggle({ mode, onToggle }: ViewToggleProps) {
+  const { t } = useLocale();
+
   return (
-    <div className="flex rounded-xl bg-surface-warm p-0.5" role="tablist" aria-label="Vista">
+    <div className="flex rounded-xl bg-surface-warm p-0.5" role="tablist" aria-label={t("ui.view")}>
       <button
         type="button"
         role="tab"
@@ -25,7 +29,7 @@ export function ViewToggle({ mode, onToggle }: ViewToggleProps) {
           <line x1="3" y1="12" x2="3.01" y2="12" />
           <line x1="3" y1="18" x2="3.01" y2="18" />
         </svg>
-        Lista
+        {t("ui.list")}
       </button>
       <button
         type="button"
@@ -41,7 +45,7 @@ export function ViewToggle({ mode, onToggle }: ViewToggleProps) {
           <line x1="8" y1="2" x2="8" y2="18" />
           <line x1="16" y1="6" x2="16" y2="22" />
         </svg>
-        Mappa
+        {t("ui.map")}
       </button>
     </div>
   );

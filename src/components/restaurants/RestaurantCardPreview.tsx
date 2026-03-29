@@ -1,4 +1,5 @@
 import { restaurantTypeLabels } from "../../config/categories";
+import { useLocale } from "../../i18n/useLocale";
 import type { RestaurantWithStatus } from "../../types/domain";
 import { DealEntry } from "./DealEntry";
 import { NewsEntry } from "./NewsEntry";
@@ -9,6 +10,8 @@ type RestaurantCardPreviewProps = {
 };
 
 export function RestaurantCardPreview({ restaurant }: RestaurantCardPreviewProps) {
+  const { locale, t } = useLocale();
+  const labels = restaurantTypeLabels(locale);
   const specials = restaurant.promotions.filter((p) => p.type === "special");
   const deals = restaurant.promotions.filter((p) => p.type === "deal");
   const newsItems = restaurant.promotions.filter((p) => p.type === "news");
@@ -24,7 +27,7 @@ export function RestaurantCardPreview({ restaurant }: RestaurantCardPreviewProps
             <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-muted">
               <span className="capitalize">
                 {restaurant.types
-                  .map((t) => restaurantTypeLabels[t] ?? t)
+                  .map((tp) => labels[tp] ?? tp)
                   .join(" · ")}
               </span>
               <span aria-hidden="true">&middot;</span>
@@ -50,7 +53,7 @@ export function RestaurantCardPreview({ restaurant }: RestaurantCardPreviewProps
               }`}
               aria-hidden="true"
             />
-            {restaurant.isOpen ? "Aperto" : "Chiuso"}
+            {restaurant.isOpen ? t("common.open") : t("common.closed")}
           </span>
         </div>
 
@@ -78,7 +81,7 @@ export function RestaurantCardPreview({ restaurant }: RestaurantCardPreviewProps
         <div className="flex min-w-0 items-center gap-2">
           <p className="min-w-0 truncate text-[11px] text-muted/60">{restaurant.address}</p>
           {restaurant.menuUrl && (
-            <span className="shrink-0 text-[11px] font-semibold text-accent">Menu</span>
+            <span className="shrink-0 text-[11px] font-semibold text-accent">{t("common.menu")}</span>
           )}
         </div>
       </div>

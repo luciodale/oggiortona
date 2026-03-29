@@ -1,4 +1,5 @@
 import { eventCategoryColors, eventCategoryLabels } from "../../config/categories";
+import { useLocale } from "../../i18n/useLocale";
 import { ClockIcon } from "../../icons/ClockIcon";
 import { MapPinIcon } from "../../icons/MapPinIcon";
 import { MessageIcon } from "../../icons/MessageIcon";
@@ -12,6 +13,8 @@ type EventCardProps = {
 };
 
 export function EventCard({ event }: EventCardProps) {
+  const { locale, t } = useLocale();
+  const labels = eventCategoryLabels(locale);
   const categories = event.category.split(",").map((c) => c.trim());
 
   return (
@@ -28,7 +31,7 @@ export function EventCard({ event }: EventCardProps) {
                   key={cat}
                   className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${eventCategoryColors[cat] ?? eventCategoryColors["altro"]}`}
                 >
-                  {eventCategoryLabels[cat] ?? cat}
+                  {labels[cat] ?? cat}
                 </span>
               ))}
             </div>
@@ -53,7 +56,7 @@ export function EventCard({ event }: EventCardProps) {
 
           <div className="flex shrink-0 flex-col items-center rounded-xl bg-fare-light px-3 py-2">
             <span className="text-[10px] font-semibold uppercase text-fare/60">
-              {new Date(event.dateStart).toLocaleDateString("it-IT", { month: "short" })}
+              {new Date(event.dateStart).toLocaleDateString(locale === "it" ? "it-IT" : "en-GB", { month: "short" })}
             </span>
             <span className="font-family-display text-2xl font-semibold leading-tight text-fare">
               {new Date(event.dateStart).getDate()}
@@ -67,15 +70,15 @@ export function EventCard({ event }: EventCardProps) {
           {event.phone && (
             <>
               <IconBubble
-                href={`https://wa.me/${event.phone.replace(/[\s\-+()]/g, "")}?text=${encodeURIComponent("Da Oggi a Ortona, messaggio:")}`}
-                label={`Scrivi su WhatsApp per ${event.title}`}
+                href={`https://wa.me/${event.phone.replace(/[\s\-+()]/g, "")}?text=${encodeURIComponent(t("aria.whatsappMessage"))}`}
+                label={t("aria.whatsappFor", { name: event.title })}
                 external
               >
                 <MessageIcon className="h-3.5 w-3.5" />
               </IconBubble>
               <IconBubble
                 href={`tel:${event.phone}`}
-                label={`Chiama per ${event.title}`}
+                label={t("aria.callFor", { name: event.title })}
               >
                 <PhoneIcon className="h-3.5 w-3.5" />
               </IconBubble>
@@ -88,7 +91,7 @@ export function EventCard({ event }: EventCardProps) {
               ? `https://www.google.com/maps/search/?api=1&query=${event.latitude},${event.longitude}`
               : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.address)}`
           }
-          label={`Indicazioni per ${event.title}`}
+          label={t("aria.directionsFor", { name: event.title })}
           external
         >
           <MapPinIcon className="h-3.5 w-3.5" />

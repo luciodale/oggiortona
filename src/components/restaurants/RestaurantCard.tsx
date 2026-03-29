@@ -1,9 +1,7 @@
 import { restaurantTypeLabels } from "../../config/categories";
-import { MapPinIcon } from "../../icons/MapPinIcon";
-import { MessageIcon } from "../../icons/MessageIcon";
-import { PhoneIcon } from "../../icons/PhoneIcon";
+import { useLocale } from "../../i18n/useLocale";
 import type { RestaurantWithStatus } from "../../types/domain";
-import { IconBubble } from "../shared/IconBubble";
+import { CardContactButtons } from "../shared/CardContactButtons";
 import { DealEntry } from "./DealEntry";
 import { NewsEntry } from "./NewsEntry";
 import { SpecialEntry } from "./SpecialEntry";
@@ -13,6 +11,8 @@ type RestaurantCardProps = {
 };
 
 export function RestaurantCard({ restaurant }: RestaurantCardProps) {
+  const { locale, t } = useLocale();
+  const labels = restaurantTypeLabels(locale);
   const specials = restaurant.promotions.filter((p) => p.type === "special");
   const deals = restaurant.promotions.filter((p) => p.type === "deal");
   const newsItems = restaurant.promotions.filter((p) => p.type === "news");
@@ -32,11 +32,11 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
             <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-muted">
               <span className="capitalize">
                 {restaurant.types
-                  .map((t) => restaurantTypeLabels[t] ?? t)
+                  .map((tp) => labels[tp] ?? tp)
                   .join(" · ")}
               </span>
               <span aria-hidden="true">&middot;</span>
-              <span aria-label={`Fascia di prezzo: ${restaurant.priceRange} su 3`}>
+              <span aria-label={t("aria.priceRange", { range: restaurant.priceRange })}>
                 {Array.from({ length: 3 }, (_, i) => (
                   <span key={i} className={i < restaurant.priceRange ? "text-primary" : "text-border"}>
                     &euro;
@@ -58,7 +58,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
               }`}
               aria-hidden="true"
             />
-            {restaurant.isOpen ? "Aperto" : "Chiuso"}
+            {restaurant.isOpen ? t("common.open") : t("common.closed")}
           </span>
         </div>
 
@@ -93,43 +93,20 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
               target="_blank"
               rel="noopener noreferrer"
               className="shrink-0 text-[11px] font-semibold text-accent no-underline"
-              aria-label={`Menu di ${restaurant.name}`}
+              aria-label={t("aria.menuOf", { name: restaurant.name })}
               onClick={(e) => e.stopPropagation()}
             >
-              Menu
+              {t("common.menu")}
             </a>
           )}
         </div>
-        <div className="flex shrink-0 items-center gap-1.5">
-          {restaurant.phone && (
-            <IconBubble
-              href={`https://wa.me/${restaurant.phone.replace(/[\s\-+()]/g, "")}?text=${encodeURIComponent("Da Oggi a Ortona, messaggio:")}`}
-              label={`Scrivi su WhatsApp a ${restaurant.name}`}
-              external
-            >
-              <MessageIcon className="h-3.5 w-3.5" />
-            </IconBubble>
-          )}
-          <IconBubble
-            href={
-              restaurant.latitude != null && restaurant.longitude != null
-                ? `https://www.google.com/maps/search/?api=1&query=${restaurant.latitude},${restaurant.longitude}`
-                : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(restaurant.address)}`
-            }
-            label={`Indicazioni per ${restaurant.name}`}
-            external
-          >
-            <MapPinIcon className="h-3.5 w-3.5" />
-          </IconBubble>
-          {restaurant.phone && (
-            <IconBubble
-              href={`tel:${restaurant.phone}`}
-              label={`Chiama ${restaurant.name}`}
-            >
-              <PhoneIcon className="h-3.5 w-3.5" />
-            </IconBubble>
-          )}
-        </div>
+        <CardContactButtons
+          phone={restaurant.phone}
+          name={restaurant.name}
+          address={restaurant.address}
+          latitude={restaurant.latitude}
+          longitude={restaurant.longitude}
+        />
       </div>
     </div>
   );

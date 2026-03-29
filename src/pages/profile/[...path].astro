@@ -1,9 +1,11 @@
 ---
 import AppWrapper from "../../building-blocks/AppWrapper.astro";
 import ProfileApp from "../../components/profile/ProfileApp";
+import { t } from "../../i18n/t";
 
 export const prerender = false;
 
+const locale = Astro.locals.locale;
 const user = Astro.locals.user;
 
 if (!user) {
@@ -11,8 +13,8 @@ if (!user) {
 }
 ---
 
-<AppWrapper title="Profilo" description="Il tuo profilo su Oggi a Ortona">
-  <ProfileApp client:only="react" user={{ id: user.id, name: user.name, email: user.email, avatarUrl: user.avatarUrl }}>
+<AppWrapper title={t("profile.pageTitle", locale)} description={t("profile.pageDesc", locale)}>
+  <ProfileApp client:only="react" user={{ id: user.id, name: user.name, email: user.email, avatarUrl: user.avatarUrl }} locale={locale}>
     <div slot="fallback" class="flex items-center justify-center py-20">
       <div class="h-6 w-6 animate-spin rounded-full border-2 border-border border-t-accent"></div>
     </div>

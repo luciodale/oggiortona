@@ -3,6 +3,7 @@ import type { D1Database } from "@cloudflare/workers-types";
 import { createDb } from "./db/client";
 import { users } from "./db/schema";
 import { eq } from "drizzle-orm";
+import type { Locale } from "./types/domain";
 
 const isProtectedRoute = createRouteMatcher([
   "/profile(.*)",
@@ -14,7 +15,19 @@ const isProtectedRoute = createRouteMatcher([
   "/api/admin(.*)",
 ]);
 
+function detectLocale(request: Request): Locale {
+  const cookie = request.headers.get("cookie") ?? "";
+  const match = cookie.match(/(?:^|;\s*)locale=(it|en)(?:;|$)/);
+  if (match) return match[1] as Locale;
+
+  const acceptLang = request.headers.get("accept-language") ?? "";
+  if (/\bit\b/i.test(acceptLang)) return "it";
+  return "en";
+}
+
 export const onRequest = clerkMiddleware(async (auth, context, next) => {
+  context.locals.locale = detectLocale(context.request);
+
   const d1 = context.locals.runtime.env.DB as D1Database;
   const db = createDb(d1);
   context.locals.db = db;

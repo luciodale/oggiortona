@@ -4,10 +4,12 @@ import { CupIcon } from "../icons/CupIcon";
 import { HomeIcon } from "../icons/HomeIcon";
 import { ShieldIcon } from "../icons/ShieldIcon";
 import { UserIcon } from "../icons/UserIcon";
+import { t } from "../i18n/t";
 
 const currentPath = Astro.url.pathname;
 const user = Astro.locals.user;
 const isAdmin = Astro.locals.isAdmin;
+const locale = Astro.locals.locale;
 
 type NavItem = {
   label: string;
@@ -17,23 +19,11 @@ type NavItem = {
 };
 
 const items: Array<NavItem> = [
-  { label: "Oggi", href: "/", section: "home", Icon: HomeIcon },
-  {
-    label: "Mangiare",
-    href: "/restaurants",
-    section: "mangiare",
-    Icon: CupIcon,
-  },
-  { label: "Eventi", href: "/events", section: "fare", Icon: CalendarIcon },
-  {
-    label: user ? "Profilo" : "Accedi",
-    href: "/profile",
-    section: "profilo",
-    Icon: UserIcon,
-  },
-  ...(isAdmin
-    ? [{ label: "Admin", href: "/admin", section: "admin", Icon: ShieldIcon }]
-    : []),
+  { label: t("nav.today", locale), href: "/", section: "home", Icon: HomeIcon },
+  { label: t("nav.restaurants", locale), href: "/restaurants", section: "mangiare", Icon: CupIcon },
+  { label: t("nav.events", locale), href: "/events", section: "fare", Icon: CalendarIcon },
+  { label: user ? t("nav.profile", locale) : t("nav.signIn", locale), href: "/profile", section: "profilo", Icon: UserIcon },
+  ...(isAdmin ? [{ label: "Admin", href: "/admin", section: "admin", Icon: ShieldIcon }] : []),
 ];
 
 function isActive(item: NavItem) {
@@ -60,7 +50,7 @@ function getActiveColor(section: string) {
 >
   <nav
     class="nav-glass flex w-full max-w-sm items-center justify-around px-1 py-2"
-    aria-label="Navigazione principale"
+    aria-label={t("nav.mainLabel", locale)}
   >
     {
       items.map((item) => {
