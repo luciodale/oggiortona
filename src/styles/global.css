@@ -57,25 +57,13 @@ html {
 }
 
 body {
+  --noise-texture: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
   background-color: var(--color-surface);
+  background-image: var(--noise-texture);
+  background-size: 256px 256px;
+  min-height: 100vh;
   min-height: 100dvh;
   color: var(--color-primary);
-  overflow-x: clip;
-}
-
-/* ==============================
-   Texture overlay
-   ============================== */
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 100;
-  opacity: 0.025;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 256px 256px;
 }
 
 /* ==============================
@@ -84,12 +72,14 @@ body::before {
 
 .page-mangiare {
   background-color: var(--color-mangiare-light);
-  background-image: linear-gradient(180deg, var(--color-mangiare-light) 0%, var(--color-surface) 280px);
+  background-image: var(--noise-texture), linear-gradient(180deg, var(--color-mangiare-light) 0%, var(--color-surface) 280px);
+  background-size: 256px 256px, 100% 100%;
 }
 
 .page-fare {
   background-color: var(--color-fare-light);
-  background-image: linear-gradient(180deg, var(--color-fare-light) 0%, var(--color-surface) 280px);
+  background-image: var(--noise-texture), linear-gradient(180deg, var(--color-fare-light) 0%, var(--color-surface) 280px);
+  background-size: 256px 256px, 100% 100%;
 }
 
 /* ==============================

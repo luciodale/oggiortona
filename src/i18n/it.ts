@@ -147,6 +147,13 @@ export const it = {
   "profile.backToVenue": "Torna al locale",
   "profile.editVenue": "Modifica locale",
   "profile.addVenueTitle": "Aggiungi locale",
+  "profile.editEventTitle": "Modifica evento",
+  "profile.backToEvent": "Torna all'evento",
+  "profile.eventNotFound": "Evento non trovato",
+  "profile.confirmDeleteVenue": "Sei sicuro di voler eliminare questo locale?",
+  "profile.confirmDeleteEvent": "Sei sicuro di voler eliminare questo evento?",
+  "profile.pendingApproval": "In attesa di approvazione",
+  "profile.disabledByAdmin": "Disabilitato",
 
   // Storefront
   "storefront.dish": "Piatto",

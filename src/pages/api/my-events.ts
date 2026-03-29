@@ -1,6 +1,6 @@
 import type { APIContext } from "astro";
 import { events } from "../../db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and as dbAnd } from "drizzle-orm";
 
 export async function GET({ locals }: APIContext): Promise<Response> {
   const user = locals.user;
@@ -11,7 +11,7 @@ export async function GET({ locals }: APIContext): Promise<Response> {
   const userEvents = await db
     .select()
     .from(events)
-    .where(eq(events.ownerId, user.id))
+    .where(dbAnd(eq(events.ownerId, user.id), eq(events.deleted, 0)))
     .orderBy(desc(events.dateStart));
 
   return Response.json({ events: userEvents });

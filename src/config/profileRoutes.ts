@@ -5,6 +5,7 @@ import { ProfileRestaurantPreview } from "../components/profile/ProfileRestauran
 import { ProfileRestaurantEdit } from "../components/profile/ProfileRestaurantEdit";
 import { ProfileAddRestaurant } from "../components/profile/ProfileAddRestaurant";
 import { ProfileStorefront } from "../components/profile/ProfileStorefront";
+import { ProfileEventEdit } from "../components/profile/ProfileEventEdit";
 
 const rootRoute = createRootRoute({
   component: ProfileLayout,
@@ -46,9 +47,22 @@ const addRestaurantRoute = createRoute({
   component: ProfileAddRestaurant,
 });
 
+const eventRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "event/$id",
+  component: Outlet,
+});
+
+const eventEditRoute = createRoute({
+  getParentRoute: () => eventRoute,
+  path: "/edit",
+  component: ProfileEventEdit,
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   restaurantRoute.addChildren([restaurantPreviewRoute, restaurantEditRoute, restaurantStorefrontRoute]),
+  eventRoute.addChildren([eventEditRoute]),
   addRestaurantRoute,
 ]);
 

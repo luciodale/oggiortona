@@ -13,11 +13,19 @@ const locale = Astro.locals.locale;
 const db = Astro.locals.db;
 const eventId = Number(Astro.params.id);
 
-const [event] = await db
+let [event] = await db
   .select()
   .from(events)
-  .where(dbAnd(eq(events.id, eventId), eq(events.active, 1)))
+  .where(dbAnd(eq(events.id, eventId), eq(events.active, 1), eq(events.deleted, 0)))
   .limit(1);
+
+if (!event && Astro.locals.user) {
+  [event] = await db
+    .select()
+    .from(events)
+    .where(dbAnd(eq(events.id, eventId), eq(events.ownerId, Astro.locals.user.id), eq(events.deleted, 0)))
+    .limit(1);
+}
 
 if (!event) {
   return Astro.redirect("/events");

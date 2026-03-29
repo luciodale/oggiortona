@@ -16,21 +16,22 @@ export async function fetchHomePageData(db: Db): Promise<HomePageData> {
   const today = getTodayISO();
 
   const [restaurantCountResult, promotionCounts, todayEventResult, upcomingEventResult] = await Promise.all([
-    db.select({ count: count() }).from(restaurants).where(eq(restaurants.active, 1)),
+    db.select({ count: count() }).from(restaurants).where(dbAnd(eq(restaurants.active, 1), eq(restaurants.deleted, 0))),
     db.select({
       type: promotions.type,
       count: count(),
     })
       .from(promotions)
       .innerJoin(restaurants, eq(restaurants.id, promotions.restaurantId))
-      .where(dbAnd(lte(promotions.dateStart, today), gte(promotions.dateEnd, today), eq(restaurants.active, 1)))
+      .where(dbAnd(lte(promotions.dateStart, today), gte(promotions.dateEnd, today), eq(restaurants.active, 1), eq(restaurants.deleted, 0)))
       .groupBy(promotions.type),
     db.select({ count: count() }).from(events).where(dbAnd(
       eq(events.active, 1),
+      eq(events.deleted, 0),
       lte(events.dateStart, today),
       or(gte(events.dateEnd, today), eq(events.dateStart, today)),
     )),
-    db.select({ count: count() }).from(events).where(dbAnd(eq(events.active, 1), gt(events.dateStart, today))),
+    db.select({ count: count() }).from(events).where(dbAnd(eq(events.active, 1), eq(events.deleted, 0), gt(events.dateStart, today))),
   ]);
 
   const countByType = new Map(promotionCounts.map((r) => [r.type, r.count]));

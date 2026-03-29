@@ -1,6 +1,7 @@
 import type { APIContext } from "astro";
 import { restaurants, promotions } from "../../db/schema";
 import { eq, lte, gte, and as dbAnd } from "drizzle-orm";
+
 import { getTodayISO } from "../../utils/date";
 import { groupPromotionsByRestaurant, enrichRestaurant } from "../../utils/enrichRestaurant";
 
@@ -12,7 +13,7 @@ export async function GET({ locals }: APIContext): Promise<Response> {
   const today = getTodayISO();
 
   const [userRestaurants, allPromotions] = await Promise.all([
-    db.select().from(restaurants).where(eq(restaurants.ownerId, user.id)),
+    db.select().from(restaurants).where(dbAnd(eq(restaurants.ownerId, user.id), eq(restaurants.deleted, 0))),
     db.select().from(promotions).where(dbAnd(lte(promotions.dateStart, today), gte(promotions.dateEnd, today))),
   ]);
 

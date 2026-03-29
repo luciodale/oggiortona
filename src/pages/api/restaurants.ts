@@ -11,7 +11,7 @@ export async function GET({ locals }: APIContext): Promise<Response> {
   const today = getTodayISO();
 
   const [allRestaurants, allPromotions] = await Promise.all([
-    db.select().from(restaurants).where(eq(restaurants.active, 1)),
+    db.select().from(restaurants).where(dbAnd(eq(restaurants.active, 1), eq(restaurants.deleted, 0))),
     db.select().from(promotions).where(dbAnd(lte(promotions.dateStart, today), gte(promotions.dateEnd, today))),
   ]);
 
@@ -56,6 +56,7 @@ export async function POST({ locals, request }: APIContext): Promise<Response> {
     menuUrl: body.menu_url?.trim() || null,
     ownerId: user.id,
     active: 0,
+    approved: 0,
   }).returning();
 
   if (!restaurant) {

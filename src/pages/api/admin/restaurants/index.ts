@@ -20,6 +20,7 @@ export async function GET({ locals }: APIContext): Promise<Response> {
     })
       .from(restaurants)
       .leftJoin(users, eq(restaurants.ownerId, users.id))
+      .where(eq(restaurants.deleted, 0))
       .orderBy(asc(restaurants.active), asc(restaurants.name)),
     db.select().from(promotions).where(dbAnd(lte(promotions.dateStart, today), gte(promotions.dateEnd, today))),
   ]);

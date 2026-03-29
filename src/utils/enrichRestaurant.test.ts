@@ -40,6 +40,8 @@ function makeRestaurant(overrides: Partial<RestaurantRow> = {}): RestaurantRow {
     menuUrl: null,
     ownerId: "test_user",
     active: 1,
+    deleted: 0,
+    approved: 1,
     createdAt: "2026-03-28T00:00:00",
     updatedAt: "2026-03-28T00:00:00",
     ...overrides,

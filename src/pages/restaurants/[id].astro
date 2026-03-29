@@ -10,7 +10,11 @@ const locale = Astro.locals.locale;
 const db = Astro.locals.db;
 const restaurantId = Number(Astro.params.id);
 
-const [restaurant] = await db.select().from(restaurants).where(dbAnd(eq(restaurants.id, restaurantId), eq(restaurants.active, 1))).limit(1);
+let [restaurant] = await db.select().from(restaurants).where(dbAnd(eq(restaurants.id, restaurantId), eq(restaurants.active, 1), eq(restaurants.deleted, 0))).limit(1);
+
+if (!restaurant && Astro.locals.user) {
+  [restaurant] = await db.select().from(restaurants).where(dbAnd(eq(restaurants.id, restaurantId), eq(restaurants.ownerId, Astro.locals.user.id), eq(restaurants.deleted, 0))).limit(1);
+}
 
 if (!restaurant) {
   return Astro.redirect("/restaurants");

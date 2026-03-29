@@ -16,6 +16,7 @@ const allEvents = await db
   .where(
     dbAnd(
       eq(events.active, 1),
+      eq(events.deleted, 0),
       or(gte(events.dateStart, today), gte(events.dateEnd, today)),
     ),
   )

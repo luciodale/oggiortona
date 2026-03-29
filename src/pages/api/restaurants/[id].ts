@@ -10,10 +10,10 @@ export async function GET({ locals, params }: APIContext): Promise<Response> {
   const db = locals.db;
   const id = Number(params.id);
 
-  let [restaurant] = await db.select().from(restaurants).where(dbAnd(eq(restaurants.id, id), eq(restaurants.active, 1))).limit(1);
+  let [restaurant] = await db.select().from(restaurants).where(dbAnd(eq(restaurants.id, id), eq(restaurants.active, 1), eq(restaurants.deleted, 0))).limit(1);
 
   if (!restaurant && locals.user) {
-    [restaurant] = await db.select().from(restaurants).where(dbAnd(eq(restaurants.id, id), eq(restaurants.ownerId, locals.user.id))).limit(1);
+    [restaurant] = await db.select().from(restaurants).where(dbAnd(eq(restaurants.id, id), eq(restaurants.ownerId, locals.user.id), eq(restaurants.deleted, 0))).limit(1);
   }
 
   if (!restaurant) return Response.json({ error: "Non trovato" }, { status: 404 });
@@ -39,6 +39,7 @@ export async function PUT({ locals, params, request }: APIContext): Promise<Resp
   const [restaurant] = await db.select().from(restaurants).where(eq(restaurants.id, id)).limit(1);
   if (!restaurant) return Response.json({ error: "Non trovato" }, { status: 404 });
   if (restaurant.ownerId !== user.id) return Response.json({ error: "Non autorizzato" }, { status: 403 });
+  if (restaurant.deleted === 1) return Response.json({ error: "Non trovato" }, { status: 404 });
 
   let raw: unknown;
   try {
@@ -89,7 +90,7 @@ export async function DELETE({ locals, params }: APIContext): Promise<Response> 
   if (!restaurant) return Response.json({ error: "Non trovato" }, { status: 404 });
   if (restaurant.ownerId !== user.id) return Response.json({ error: "Non autorizzato" }, { status: 403 });
 
-  await db.update(restaurants).set({ active: 0, updatedAt: new Date().toISOString() }).where(eq(restaurants.id, id));
+  await db.update(restaurants).set({ deleted: 1, updatedAt: nowItalyFormatted() }).where(eq(restaurants.id, id));
 
   return Response.json({ message: "Locale rimosso" });
 }

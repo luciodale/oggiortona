@@ -28,6 +28,8 @@ function makeRestaurant(overrides: Partial<RestaurantWithStatus> = {}): Restaura
     menuUrl: null,
     ownerId: "test_user",
     active: 1,
+    deleted: 0,
+    approved: 1,
     createdAt: "2026-03-28",
     updatedAt: "2026-03-28",
     types: ["bar"],

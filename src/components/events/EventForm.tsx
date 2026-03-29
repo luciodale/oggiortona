@@ -44,7 +44,7 @@ function EventFormInner({ eventId, initialData }: Omit<EventFormProps, "locale">
   const categoriesError = form.formState.errors.categories;
   if (submitState === "success" && createdId) {
     toast.success(isEdit ? "Evento aggiornato!" : "Evento pubblicato!");
-    window.location.href = isEdit ? `/events/${createdId}` : `/events/${createdId}`;
+    window.location.href = isEdit ? "/profile" : `/events/${createdId}`;
     return null;
   }
 

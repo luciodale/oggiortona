@@ -23,6 +23,8 @@ CREATE TABLE IF NOT EXISTS restaurants (
   menu_url TEXT,
   owner_id TEXT NOT NULL REFERENCES users(id),
   active INTEGER NOT NULL DEFAULT 1,
+  deleted INTEGER NOT NULL DEFAULT 0,
+  approved INTEGER NOT NULL DEFAULT 1,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
@@ -77,6 +79,8 @@ CREATE TABLE IF NOT EXISTS events (
   image_url TEXT,
   owner_id TEXT NOT NULL REFERENCES users(id),
   active INTEGER NOT NULL DEFAULT 1,
+  deleted INTEGER NOT NULL DEFAULT 0,
+  approved INTEGER NOT NULL DEFAULT 1,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );

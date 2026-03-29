@@ -30,6 +30,8 @@ export const restaurants = sqliteTable("restaurants", {
   menuUrl: text("menu_url"),
   ownerId: text("owner_id").notNull().references(() => users.id),
   active: integer("active").notNull().default(1),
+  deleted: integer("deleted").notNull().default(0),
+  approved: integer("approved").notNull().default(1),
   createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
   updatedAt: text("updated_at").notNull().default(sql`(datetime('now'))`),
 });
@@ -88,6 +90,8 @@ export const events = sqliteTable("events", {
   price: real("price"),
   ownerId: text("owner_id").notNull().references(() => users.id),
   active: integer("active").notNull().default(1),
+  deleted: integer("deleted").notNull().default(0),
+  approved: integer("approved").notNull().default(1),
   createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
   updatedAt: text("updated_at").notNull().default(sql`(datetime('now'))`),
 }, (table) => [

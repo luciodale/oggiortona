@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { eventCategoryColors, eventCategoryLabels } from "../../config/categories";
 import { useLocale } from "../../i18n/useLocale";
 import type { EventRow } from "../../types/database";
@@ -8,9 +9,16 @@ type EventListCardProps = {
 };
 
 export function EventListCard({ event }: EventListCardProps) {
-  const { locale } = useLocale();
+  const { locale, t } = useLocale();
   const catLabels = eventCategoryLabels(locale);
   const categories = event.category.split(",").map((c) => c.trim());
+
+  function handleDelete() {
+    if (!window.confirm(t("profile.confirmDeleteEvent"))) return;
+    fetch(`/api/events/${event.id}`, { method: "DELETE" }).then((res) => {
+      if (res.ok) window.location.reload();
+    });
+  }
 
   return (
     <div className="rounded-2xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
@@ -31,13 +39,40 @@ export function EventListCard({ event }: EventListCardProps) {
         {formatDateLong(event.dateStart, locale)}
         {event.dateEnd && ` \u2013 ${formatDateLong(event.dateEnd, locale)}`}
       </p>
+      {event.active === 0 && (
+        <span
+          className={`mt-1.5 inline-block rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+            event.approved === 0
+              ? "bg-amber-50 text-amber-700"
+              : "bg-red-50 text-red-700"
+          }`}
+        >
+          {event.approved === 0
+            ? t("profile.pendingApproval")
+            : t("profile.disabledByAdmin")}
+        </span>
+      )}
       <div className="mt-3 flex gap-3">
         <a
           href={`/events/${event.id}`}
           className="text-[12px] font-semibold text-muted no-underline transition-colors hover:text-primary"
         >
-          Anteprima
+          {t("profile.previewCard")}
         </a>
+        <Link
+          to="/event/$id/edit"
+          params={{ id: String(event.id) }}
+          className="text-[12px] font-semibold text-accent no-underline transition-colors hover:text-accent-hover"
+        >
+          {t("common.edit")}
+        </Link>
+        <button
+          type="button"
+          onClick={handleDelete}
+          className="text-[12px] font-semibold text-danger transition-colors hover:text-danger/80"
+        >
+          {t("common.delete")}
+        </button>
       </div>
     </div>
   );

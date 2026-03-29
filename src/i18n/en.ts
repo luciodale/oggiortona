@@ -151,6 +151,13 @@ export const en: Translations = {
   "profile.backToVenue": "Back to venue",
   "profile.editVenue": "Edit venue",
   "profile.addVenueTitle": "Add venue",
+  "profile.editEventTitle": "Edit event",
+  "profile.backToEvent": "Back to event",
+  "profile.eventNotFound": "Event not found",
+  "profile.confirmDeleteVenue": "Are you sure you want to delete this venue?",
+  "profile.confirmDeleteEvent": "Are you sure you want to delete this event?",
+  "profile.pendingApproval": "Pending approval",
+  "profile.disabledByAdmin": "Disabled",
 
   // Storefront
   "storefront.dish": "Dish",

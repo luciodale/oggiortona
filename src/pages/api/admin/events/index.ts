@@ -16,6 +16,7 @@ export async function GET({ locals }: APIContext): Promise<Response> {
   })
     .from(events)
     .leftJoin(users, eq(events.ownerId, users.id))
+    .where(eq(events.deleted, 0))
     .orderBy(asc(events.active), desc(events.dateStart));
 
   const allEvents = rows.map(({ event, ownerEmail, ownerName }) => ({

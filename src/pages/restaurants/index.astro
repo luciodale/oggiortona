@@ -13,7 +13,7 @@ const db = Astro.locals.db;
 const today = getTodayISO();
 
 const [allRestaurants, allPromotions] = await Promise.all([
-  db.select().from(restaurants).where(eq(restaurants.active, 1)),
+  db.select().from(restaurants).where(dbAnd(eq(restaurants.active, 1), eq(restaurants.deleted, 0))),
   db
     .select()
     .from(promotions)

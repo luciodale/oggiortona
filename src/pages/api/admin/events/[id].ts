@@ -13,11 +13,12 @@ export async function PUT({ locals, params }: APIContext): Promise<Response> {
 
   const [event] = await db.select().from(events).where(eq(events.id, id)).limit(1);
   if (!event) return Response.json({ error: "Non trovato" }, { status: 404 });
+  if (event.deleted === 1) return Response.json({ error: "Evento eliminato" }, { status: 404 });
 
   const newActive = event.active === 1 ? 0 : 1;
 
   const [updated] = await db.update(events)
-    .set({ active: newActive, updatedAt: nowItalyFormatted() })
+    .set({ active: newActive, approved: 1, updatedAt: nowItalyFormatted() })
     .where(eq(events.id, id))
     .returning();
 
