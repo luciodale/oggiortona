@@ -1,4 +1,4 @@
-import { useParams, Link } from "@tanstack/react-router";
+import { Link, useParams } from "@tanstack/react-router";
 import { usePromotions } from "../../hooks/usePromotions";
 import { ArrowLeftIcon } from "../../icons/ArrowLeftIcon";
 import { Button } from "../ui/Button";
@@ -44,7 +44,7 @@ export function ProfileStorefront() {
         Indietro
       </Link>
 
-      <h1 className="font-[family-name:var(--font-family-display)] text-xl font-medium tracking-tight text-primary">
+      <h1 className="font-family-display text-xl font-medium tracking-tight text-primary">
         Vetrina
       </h1>
       {restaurantName && (

@@ -1,9 +1,9 @@
 import { useRef } from "react";
-import type { RestaurantWithStatus } from "../../types/domain";
 import { useRestaurantFilters } from "../../hooks/useRestaurantFilters";
 import { useZipperScroll } from "../../hooks/useZipperScroll";
-import { RestaurantCard } from "./RestaurantCard";
+import type { RestaurantWithStatus } from "../../types/domain";
 import { Pill } from "../ui/Pill";
+import { RestaurantCard } from "./RestaurantCard";
 
 type RestaurantListProps = {
   restaurants: Array<RestaurantWithStatus>;
@@ -39,7 +39,7 @@ export function RestaurantList({ restaurants }: RestaurantListProps) {
 
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <p className="font-[family-name:var(--font-family-display)] text-lg italic text-muted/50">
+          <p className="font-family-display text-lg italic text-muted/50">
             Nessun risultato
           </p>
           <p className="mt-1 text-xs text-muted/40">Prova a cambiare i filtri</p>

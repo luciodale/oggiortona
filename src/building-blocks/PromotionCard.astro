@@ -1,15 +1,23 @@
 ---
-import { formatDateShort } from "../utils/date";
 import type { PromotionRow } from "../types/database";
+import { formatDateShort } from "../utils/date";
 
 type Props = { item: PromotionRow };
 const { item } = Astro.props;
 const isMultiDay = item.dateStart !== item.dateEnd;
 
 type Style = { bg: string; label: string; labelColor: string };
-const fallback: Style = { bg: "bg-sky-50", label: "News", labelColor: "text-sky-700" };
+const fallback: Style = {
+  bg: "bg-sky-50",
+  label: "News",
+  labelColor: "text-sky-700",
+};
 const styleMap: Record<string, Style> = {
-  special: { bg: "bg-mangiare-light", label: "Piatto del giorno", labelColor: "text-mangiare" },
+  special: {
+    bg: "bg-mangiare-light",
+    label: "Piatto del giorno",
+    labelColor: "text-mangiare",
+  },
   deal: { bg: "bg-violet-50", label: "Offerta", labelColor: "text-violet-700" },
   news: fallback,
 };
@@ -17,12 +25,37 @@ const style: Style = styleMap[item.type] ?? fallback;
 ---
 
 <div class:list={["rounded-2xl p-4", style.bg]}>
-  <p class:list={["text-[10px] font-semibold uppercase tracking-[0.12em]", style.labelColor]}>{style.label}</p>
-  <p class="mt-1.5 font-[family-name:var(--font-family-display)] text-base font-medium text-primary">{item.title}</p>
-  {item.description && <p class="mt-0.5 text-[12px] text-muted">{item.description}</p>}
+  <p
+    class:list={[
+      "text-[10px] font-semibold uppercase tracking-[0.12em]",
+      style.labelColor,
+    ]}
+  >
+    {style.label}
+  </p>
+  <p class="mt-1.5 font-family-display text-base font-medium text-primary">
+    {item.title}
+  </p>
+  {
+    item.description && (
+      <p class="mt-0.5 text-[12px] text-muted">{item.description}</p>
+    )
+  }
   <div class="mt-1 flex flex-wrap items-center gap-x-2 text-[11px] text-muted">
-    {item.price != null && <span class:list={["font-bold", style.labelColor]}>{item.price.toFixed(2)}&euro;</span>}
-    {item.timeStart && item.timeEnd && <span>{item.timeStart} &ndash; {item.timeEnd}</span>}
+    {
+      item.price != null && (
+        <span class:list={["font-bold", style.labelColor]}>
+          {item.price.toFixed(2)}&euro;
+        </span>
+      )
+    }
+    {
+      item.timeStart && item.timeEnd && (
+        <span>
+          {item.timeStart} &ndash; {item.timeEnd}
+        </span>
+      )
+    }
     {isMultiDay && <span>fino al {formatDateShort(item.dateEnd)}</span>}
   </div>
 </div>

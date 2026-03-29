@@ -1,9 +1,9 @@
 import { Link, useParams } from "@tanstack/react-router";
-import { RestaurantCardPreview } from "../restaurants/RestaurantCardPreview";
 import { restaurantTypeLabels } from "../../config/categories";
-import { formatSchedule, getDayLabel, getOrderedDays } from "../../utils/time";
-import { ArrowLeftIcon } from "../../icons/ArrowLeftIcon";
 import { useRestaurantDetail } from "../../hooks/useRestaurantDetail";
+import { ArrowLeftIcon } from "../../icons/ArrowLeftIcon";
+import { formatSchedule, getDayLabel, getOrderedDays } from "../../utils/time";
+import { RestaurantCardPreview } from "../restaurants/RestaurantCardPreview";
 
 export function ProfileRestaurantPreview() {
   const { id } = useParams({ strict: false });
@@ -36,7 +36,7 @@ export function ProfileRestaurantPreview() {
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h1 className="font-[family-name:var(--font-family-display)] text-2xl font-medium leading-tight text-primary">
+          <h1 className="font-family-display text-2xl font-medium leading-tight text-primary">
             {restaurant.name}
           </h1>
           <div className="mt-1 flex items-center gap-2 text-[11px] text-muted">

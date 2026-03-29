@@ -1,5 +1,5 @@
+import { eventCategoryColors, eventCategoryLabels } from "../../config/categories";
 import type { EventRow } from "../../types/database";
-import { eventCategoryLabels, eventCategoryColors } from "../../config/categories";
 import { formatDateShort } from "../../utils/date";
 
 type AdminEventCardProps = {
@@ -26,7 +26,7 @@ export function AdminEventCard({ event, onToggle }: AdminEventCardProps) {
             {isActive ? "Attivo" : "Inattivo"}
           </span>
         </div>
-        <p className="mt-1 font-[family-name:var(--font-family-display)] text-base font-medium text-primary">
+        <p className="mt-1 font-family-display text-base font-medium text-primary">
           {event.title}
         </p>
         <p className="mt-0.5 text-[11px] text-muted">

@@ -7,5 +7,5 @@ export const siteConfig = {
 
 export const navItems = [
   { label: "Mangiare", href: "/restaurants", icon: "mangiare" },
-  { label: "Fare", href: "/events", icon: "fare" },
+  { label: "Eventi", href: "/events", icon: "fare" },
 ] as const;

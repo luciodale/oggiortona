@@ -3,8 +3,8 @@ import { ClockIcon } from "../../icons/ClockIcon";
 import { MapPinIcon } from "../../icons/MapPinIcon";
 import { MessageIcon } from "../../icons/MessageIcon";
 import { PhoneIcon } from "../../icons/PhoneIcon";
-import { IconBubble } from "../shared/IconBubble";
 import type { EventRow } from "../../types/database";
+import { IconBubble } from "../shared/IconBubble";
 import { EventPriceBadge } from "./EventPriceBadge";
 
 type EventCardProps = {
@@ -55,7 +55,7 @@ export function EventCard({ event }: EventCardProps) {
             <span className="text-[10px] font-semibold uppercase text-fare/60">
               {new Date(event.dateStart).toLocaleDateString("it-IT", { month: "short" })}
             </span>
-            <span className="font-[family-name:var(--font-family-display)] text-2xl font-semibold leading-tight text-fare">
+            <span className="font-family-display text-2xl font-semibold leading-tight text-fare">
               {new Date(event.dateStart).getDate()}
             </span>
           </div>

@@ -1,6 +1,6 @@
-import type { PromotionRow, RestaurantRow } from "../../types/database";
 import { restaurantTypeLabels } from "../../config/categories";
 import { TrashIcon } from "../../icons/TrashIcon";
+import type { PromotionRow, RestaurantRow } from "../../types/database";
 
 type AdminRestaurantCardProps = {
   restaurant: RestaurantRow & { ownerEmail: string | null; promotions: Array<PromotionRow> };
@@ -29,7 +29,7 @@ export function AdminRestaurantCard({
         aria-expanded={expanded}
       >
         <div className="min-w-0 flex-1">
-          <p className="font-[family-name:var(--font-family-display)] text-base font-medium text-primary">
+          <p className="font-family-display text-base font-medium text-primary">
             {restaurant.name}
           </p>
           <p className="mt-0.5 text-[11px] capitalize text-muted">

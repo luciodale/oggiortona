@@ -1,9 +1,9 @@
 import { Link, useParams } from "@tanstack/react-router";
-import { RestaurantForm } from "../restaurants/RestaurantForm";
-import { parseOpeningHours } from "../../utils/time";
-import { parseTypes } from "../../utils/restaurant";
-import { ArrowLeftIcon } from "../../icons/ArrowLeftIcon";
 import { useRestaurantDetail } from "../../hooks/useRestaurantDetail";
+import { ArrowLeftIcon } from "../../icons/ArrowLeftIcon";
+import { parseTypes } from "../../utils/restaurant";
+import { parseOpeningHours } from "../../utils/time";
+import { RestaurantForm } from "../restaurants/RestaurantForm";
 
 export function ProfileRestaurantEdit() {
   const { id } = useParams({ strict: false });
@@ -45,7 +45,7 @@ export function ProfileRestaurantEdit() {
         Torna al locale
       </Link>
 
-      <h1 className="font-[family-name:var(--font-family-display)] text-2xl font-medium tracking-tight text-primary">
+      <h1 className="font-family-display text-2xl font-medium tracking-tight text-primary">
         Modifica locale
       </h1>
 

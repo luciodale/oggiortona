@@ -1,9 +1,9 @@
 import { useAdminData } from "../../hooks/useAdminData";
-import { AdminTabs } from "./AdminTabs";
-import { AdminSearch } from "./AdminSearch";
-import { AdminRestaurantList } from "./AdminRestaurantList";
 import { AdminEventList } from "./AdminEventList";
 import { AdminPushToggle } from "./AdminPushToggle";
+import { AdminRestaurantList } from "./AdminRestaurantList";
+import { AdminSearch } from "./AdminSearch";
+import { AdminTabs } from "./AdminTabs";
 
 export function AdminDashboard() {
   const {
@@ -24,7 +24,7 @@ export function AdminDashboard() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="font-[family-name:var(--font-family-display)] text-2xl font-medium tracking-tight text-primary">
+        <h1 className="font-family-display text-2xl font-medium tracking-tight text-primary">
           Pannello Admin
         </h1>
         <AdminPushToggle />

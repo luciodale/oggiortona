@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { RestaurantForm } from "../restaurants/RestaurantForm";
 import { ArrowLeftIcon } from "../../icons/ArrowLeftIcon";
+import { RestaurantForm } from "../restaurants/RestaurantForm";
 
 export function ProfileAddRestaurant() {
   return (
@@ -13,7 +13,7 @@ export function ProfileAddRestaurant() {
         Profilo
       </Link>
 
-      <h1 className="font-[family-name:var(--font-family-display)] text-2xl font-medium tracking-tight text-primary">
+      <h1 className="font-family-display text-2xl font-medium tracking-tight text-primary">
         Aggiungi locale
       </h1>
 

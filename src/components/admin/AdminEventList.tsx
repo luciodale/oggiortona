@@ -18,7 +18,7 @@ export function AdminEventList({ events, loading, onToggle }: AdminEventListProp
 
   if (events.length === 0) {
     return (
-      <p className="py-12 text-center font-[family-name:var(--font-family-display)] text-lg italic text-muted/50">
+      <p className="py-12 text-center font-family-display text-lg italic text-muted/50">
         Nessun risultato
       </p>
     );

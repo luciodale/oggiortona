@@ -1,6 +1,6 @@
 import { useRef } from "react";
-import type { EventRow } from "../../types/database";
 import { useZipperScroll } from "../../hooks/useZipperScroll";
+import type { EventRow } from "../../types/database";
 import { EventCard, SectionDivider } from "./EventCard";
 
 type EventGroups = {
@@ -19,7 +19,7 @@ export function EventList({ grouped }: EventListProps) {
   if (grouped.thisWeek.length === 0 && grouped.upcoming.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
-        <p className="font-[family-name:var(--font-family-display)] text-lg italic text-muted/50">
+        <p className="font-family-display text-lg italic text-muted/50">
           Nessun evento in programma
         </p>
       </div>

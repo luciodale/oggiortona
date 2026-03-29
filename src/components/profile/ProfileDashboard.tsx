@@ -1,13 +1,13 @@
 import { Link } from "@tanstack/react-router";
-import { useProfileUser } from "./ProfileApp";
-import { LogoutButton } from "../auth/LogoutButton";
-import { ExpiredPromotionsNotice } from "./ExpiredPromotionsNotice";
-import { RestaurantListCard } from "./RestaurantListCard";
-import { EventListCard } from "./EventListCard";
-import { CupIcon } from "../../icons/CupIcon";
-import { CalendarIcon } from "../../icons/CalendarIcon";
-import { useUserRestaurants } from "../../hooks/useUserRestaurants";
 import { useUserEvents } from "../../hooks/useUserEvents";
+import { useUserRestaurants } from "../../hooks/useUserRestaurants";
+import { CalendarIcon } from "../../icons/CalendarIcon";
+import { CupIcon } from "../../icons/CupIcon";
+import { LogoutButton } from "../auth/LogoutButton";
+import { EventListCard } from "./EventListCard";
+import { ExpiredPromotionsNotice } from "./ExpiredPromotionsNotice";
+import { useProfileUser } from "./ProfileApp";
+import { RestaurantListCard } from "./RestaurantListCard";
 
 export function ProfileDashboard() {
   const user = useProfileUser();
@@ -18,7 +18,7 @@ export function ProfileDashboard() {
 
   return (
     <div>
-      <h1 className="font-[family-name:var(--font-family-display)] text-2xl font-medium tracking-tight text-primary">
+      <h1 className="font-family-display text-2xl font-medium tracking-tight text-primary">
         Ciao{user.name ? `, ${user.name}` : ""}!
       </h1>
       {user.email && <p className="mt-1 text-sm text-muted">{user.email}</p>}

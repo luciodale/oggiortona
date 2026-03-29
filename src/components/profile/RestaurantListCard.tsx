@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import type { RestaurantWithStatus } from "../../types/domain";
 import { restaurantTypeLabels } from "../../config/categories";
+import type { RestaurantWithStatus } from "../../types/domain";
 
 type RestaurantListCardProps = {
   restaurant: RestaurantWithStatus;
@@ -9,7 +9,7 @@ type RestaurantListCardProps = {
 export function RestaurantListCard({ restaurant }: RestaurantListCardProps) {
   return (
     <div className="rounded-2xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-      <p className="font-[family-name:var(--font-family-display)] text-base font-medium text-primary">
+      <p className="font-family-display text-base font-medium text-primary">
         {restaurant.name}
       </p>
       <p className="mt-0.5 text-[11px] capitalize text-muted">

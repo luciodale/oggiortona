@@ -1,5 +1,5 @@
-import type { RestaurantWithStatus } from "../../types/domain";
 import { restaurantTypeLabels } from "../../config/categories";
+import type { RestaurantWithStatus } from "../../types/domain";
 import { formatDateShort } from "../../utils/date";
 
 type RestaurantCardPreviewProps = {
@@ -15,7 +15,7 @@ export function RestaurantCardPreview({ restaurant }: RestaurantCardPreviewProps
       <div className="p-4 pb-0">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
-            <h3 className="font-[family-name:var(--font-family-display)] text-lg font-medium leading-tight text-primary">
+            <h3 className="font-family-display text-lg font-medium leading-tight text-primary">
               {restaurant.name}
             </h3>
             <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-muted">
