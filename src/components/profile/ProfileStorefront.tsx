@@ -1,5 +1,7 @@
 import { Link, useParams } from "@tanstack/react-router";
-import { usePromotions } from "../../hooks/usePromotions";
+import { usePromotionsQuery } from "../../hooks/usePromotionsQuery";
+import { usePromotionMutations } from "../../hooks/usePromotionMutations";
+import { usePromotionForms } from "../../hooks/usePromotionForms";
 import { useLocale } from "../../i18n/useLocale";
 import { ArrowLeftIcon } from "../../icons/ArrowLeftIcon";
 import { Button } from "../ui/Button";
@@ -12,21 +14,28 @@ type PromotionTab = "special" | "deal" | "news";
 export function ProfileStorefront() {
   const { t } = useLocale();
   const { id } = useParams({ strict: false });
+  const { items, restaurantName, loading } = usePromotionsQuery(id);
+  const { createPromotion, deletePromotion, renewPromotion, submitting } = usePromotionMutations(id);
   const {
     tab, setTab,
-    data, loading, submitting, errorMessage,
-    restaurantName,
+    errorMessage,
     specialForm, setSpecialForm,
     dealForm, setDealForm,
     newsForm, setNewsForm,
-    handleCreate, handleDelete, handleRenew,
-  } = usePromotions(id);
+    buildCreateBody, resetCurrentForm,
+  } = usePromotionForms();
 
   const TAB_LABELS: Record<PromotionTab, string> = {
     special: t("storefront.dish"),
     deal: t("storefront.deal"),
     news: t("storefront.news"),
   };
+
+  function handleCreate() {
+    const body = buildCreateBody();
+    if (!body) return;
+    createPromotion(body, { onSuccess: resetCurrentForm });
+  }
 
   if (loading) {
     return (
@@ -39,8 +48,7 @@ export function ProfileStorefront() {
   return (
     <div>
       <Link
-        to="/restaurant/$id"
-        params={{ id }}
+        to={`/profile/restaurant/${id}`}
         className="mb-4 inline-flex items-center gap-1 text-xs font-medium text-muted no-underline hover:text-primary"
       >
         <ArrowLeftIcon className="h-3.5 w-3.5" />
@@ -117,9 +125,9 @@ export function ProfileStorefront() {
       </div>
 
       <PromotionsList
-        items={data.items}
-        onRenew={handleRenew}
-        onDelete={handleDelete}
+        items={items}
+        onRenew={renewPromotion}
+        onDelete={deletePromotion}
       />
     </div>
   );

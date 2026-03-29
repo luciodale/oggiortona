@@ -1,4 +1,4 @@
-import { useParams } from "@tanstack/react-router";
+import { Link, useParams } from "@tanstack/react-router";
 import { useEventDetail } from "../../hooks/useEventDetail";
 import { useLocale } from "../../i18n/useLocale";
 import { ArrowLeftIcon } from "../../icons/ArrowLeftIcon";
@@ -7,7 +7,7 @@ import { EventForm } from "../events/EventForm";
 export function ProfileEventEdit() {
   const { id } = useParams({ strict: false });
   const { event, loading } = useEventDetail(id);
-  const { locale, t } = useLocale();
+  const { t } = useLocale();
 
   if (loading) {
     return (
@@ -34,24 +34,26 @@ export function ProfileEventEdit() {
     latitude: event.latitude,
     longitude: event.longitude,
     price: event.price,
+    link: event.link,
   };
 
   return (
     <div>
-      <a
-        href={`/events/${event.id}`}
+      <Link
+        to="/profile/event/$id"
+        params={{ id: String(event.id) }}
         className="mb-4 inline-flex items-center gap-1 text-xs font-medium text-muted no-underline hover:text-primary"
       >
         <ArrowLeftIcon className="h-3.5 w-3.5" />
         {t("profile.backToEvent")}
-      </a>
+      </Link>
 
       <h1 className="font-family-display text-2xl font-medium tracking-tight text-primary">
         {t("profile.editEventTitle")}
       </h1>
 
       <div className="mt-6">
-        <EventForm locale={locale} eventId={event.id} initialData={initialData} />
+        <EventForm eventId={event.id} initialData={initialData} />
       </div>
     </div>
   );

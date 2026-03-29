@@ -37,7 +37,7 @@ export function ProfileRestaurantEdit() {
   return (
     <div>
       <Link
-        to="/restaurant/$id"
+        to="/profile/restaurant/$id"
         params={{ id: String(restaurant.id) }}
         className="mb-4 inline-flex items-center gap-1 text-xs font-medium text-muted no-underline hover:text-primary"
       >

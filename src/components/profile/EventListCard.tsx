@@ -1,8 +1,10 @@
-import { Link } from "@tanstack/react-router";
 import { eventCategoryColors, eventCategoryLabels } from "../../config/categories";
+import { useDeleteEntity } from "../../hooks/useDeleteEntity";
 import { useLocale } from "../../i18n/useLocale";
+import { XIcon } from "../../icons/XIcon";
 import type { EventRow } from "../../types/database";
 import { formatDateLong } from "../../utils/date";
+import { PillActionLink } from "../shared/PillAction";
 
 type EventListCardProps = {
   event: EventRow;
@@ -12,17 +14,19 @@ export function EventListCard({ event }: EventListCardProps) {
   const { locale, t } = useLocale();
   const catLabels = eventCategoryLabels(locale);
   const categories = event.category.split(",").map((c) => c.trim());
-
-  function handleDelete() {
-    if (!window.confirm(t("profile.confirmDeleteEvent"))) return;
-    fetch(`/api/events/${event.id}`, { method: "DELETE" }).then((res) => {
-      if (res.ok) window.location.reload();
-    });
-  }
+  const { handleDelete } = useDeleteEntity("event");
 
   return (
-    <div className="rounded-2xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-      <div className="flex flex-wrap gap-1">
+    <div className="relative rounded-2xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+      <button
+        type="button"
+        onClick={() => handleDelete(event.id)}
+        aria-label={t("common.delete")}
+        className="absolute top-2 right-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-danger/10 text-danger transition-colors hover:bg-danger/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+      >
+        <XIcon className="h-3.5 w-3.5" strokeWidth={2.5} />
+      </button>
+      <div className="flex flex-wrap gap-1 pr-8">
         {categories.map((cat) => (
           <span
             key={cat}
@@ -52,27 +56,18 @@ export function EventListCard({ event }: EventListCardProps) {
             : t("profile.disabledByAdmin")}
         </span>
       )}
-      <div className="mt-3 flex gap-3">
-        <a
-          href={`/events/${event.id}`}
-          className="text-[12px] font-semibold text-muted no-underline transition-colors hover:text-primary"
-        >
-          {t("profile.previewCard")}
-        </a>
-        <Link
-          to="/event/$id/edit"
+      <div className="mt-3 flex flex-wrap gap-2">
+        <PillActionLink
+          to="/profile/event/$id"
           params={{ id: String(event.id) }}
-          className="text-[12px] font-semibold text-accent no-underline transition-colors hover:text-accent-hover"
-        >
-          {t("common.edit")}
-        </Link>
-        <button
-          type="button"
-          onClick={handleDelete}
-          className="text-[12px] font-semibold text-danger transition-colors hover:text-danger/80"
-        >
-          {t("common.delete")}
-        </button>
+          label={t("profile.previewCard")}
+        />
+        <PillActionLink
+          to="/profile/event/$id/edit"
+          params={{ id: String(event.id) }}
+          label={t("common.edit")}
+          variant="accent"
+        />
       </div>
     </div>
   );

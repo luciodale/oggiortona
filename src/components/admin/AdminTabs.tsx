@@ -1,4 +1,4 @@
-import type { AdminTab } from "../../hooks/useAdminData";
+import type { AdminTab } from "./AdminDashboard";
 
 type AdminTabsProps = {
   tab: AdminTab;

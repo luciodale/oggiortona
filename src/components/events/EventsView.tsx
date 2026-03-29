@@ -1,6 +1,5 @@
 import { lazy, Suspense } from "react";
 import type { EventRow } from "../../types/database";
-import type { Locale } from "../../types/domain";
 import { EventList } from "./EventList";
 import { ViewToggle } from "../shared/ViewToggle";
 import { useViewMode } from "../../hooks/useViewMode";
@@ -8,29 +7,22 @@ import { useRefresh } from "../../hooks/useRefresh";
 import { useEventFilters } from "../../hooks/useEventFilters";
 import { useEventMapPins } from "../../hooks/useEventMapPins";
 import { eventFilterCategories, eventCategoryLabels } from "../../config/categories";
+import { ContentLoader } from "../shared/ContentLoader";
 import { Pill } from "../ui/Pill";
 import { RefreshIcon } from "../../icons/RefreshIcon";
-import { LocaleProvider, useLocale } from "../../i18n/useLocale";
+import { useLocale } from "../../i18n/useLocale";
 
 const MapView = lazy(() => import("../shared/MapView").then((m) => ({ default: m.MapView })));
 
 type EventsViewProps = {
   events: Array<EventRow>;
-  locale: Locale;
+  isLoading: boolean;
 };
 
-export function EventsView({ events, locale }: EventsViewProps) {
-  return (
-    <LocaleProvider locale={locale}>
-      <EventsViewInner events={events} />
-    </LocaleProvider>
-  );
-}
-
-function EventsViewInner({ events }: { events: Array<EventRow> }) {
+export function EventsView({ events, isLoading }: EventsViewProps) {
   const { locale, t } = useLocale();
   const { mode, handleToggle, anchorRef, mapTop } = useViewMode();
-  const { isRefreshing, handleRefresh } = useRefresh();
+  const { isRefreshing, handleRefresh } = useRefresh([["events"]]);
   const { timeFilter, setTimeFilter, category, setCategory, filtered, grouped } = useEventFilters(events);
   const pins = useEventMapPins(filtered);
   const catLabels = eventCategoryLabels(locale);
@@ -80,7 +72,9 @@ function EventsViewInner({ events }: { events: Array<EventRow> }) {
         </div>
       </div>
 
-      {mode === "list" ? (
+      {isLoading ? (
+        <ContentLoader />
+      ) : mode === "list" ? (
         <EventList grouped={grouped} />
       ) : (
         mapTop > 0 && (

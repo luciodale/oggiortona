@@ -1,22 +1,9 @@
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import { useNotificationPrompt } from "../../hooks/useNotificationPrompt";
 import { BellIcon } from "../../icons/BellIcon";
-import { LocaleProvider, useLocale } from "../../i18n/useLocale";
-import type { Locale } from "../../types/domain";
+import { useLocale } from "../../i18n/useLocale";
 
-type NotificationPromptProps = {
-  locale: Locale;
-};
-
-export function NotificationPrompt({ locale }: NotificationPromptProps) {
-  return (
-    <LocaleProvider locale={locale}>
-      <NotificationPromptInner />
-    </LocaleProvider>
-  );
-}
-
-function NotificationPromptInner() {
+export function NotificationPrompt() {
   const { t } = useLocale();
   const { visible, busy, handleEnable, handleDismiss } =
     useNotificationPrompt();
@@ -28,16 +15,6 @@ function NotificationPromptInner() {
 
   return (
     <>
-      <Toaster
-        position="top-center"
-        toastOptions={{
-          style: {
-            fontFamily: "var(--font-family)",
-            fontSize: "13px",
-            borderRadius: "12px",
-          },
-        }}
-      />
       {visible && (
         <div
           role="alertdialog"

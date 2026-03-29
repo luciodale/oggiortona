@@ -3,6 +3,7 @@ import { useLocale } from "../../i18n/useLocale";
 import { ClockIcon } from "../../icons/ClockIcon";
 import type { EventRow } from "../../types/database";
 import { CardContactButtons } from "../shared/CardContactButtons";
+import { EventLink } from "./EventLink";
 import { EventPriceBadge } from "./EventPriceBadge";
 
 type EventCardProps = {
@@ -62,6 +63,7 @@ export function EventCard({ event }: EventCardProps) {
             </span>
           )}
           <EventPriceBadge price={event.price} />
+          {event.link && <EventLink href={event.link} />}
         </div>
         <CardContactButtons
           phone={event.phone}

@@ -1,7 +1,7 @@
 export const it = {
   // Navigation
   "nav.today": "Oggi",
-  "nav.restaurants": "Mangiare",
+  "nav.restaurants": "Locali",
   "nav.events": "Eventi",
   "nav.profile": "Profilo",
   "nav.signIn": "Accedi",
@@ -54,6 +54,8 @@ export const it = {
   "home.today": "oggi?",
   "home.whereToEat": "Dove mangiare",
   "home.whatToDo": "Cosa fare",
+  "home.restaurantsInitial": "L",
+  "home.eventsInitial": "E",
   "home.venuesInOrtona": "{count} locali a Ortona",
   "home.specialOne": "{count} piatto del giorno",
   "home.specialMany": "{count} piatti del giorno",
@@ -105,7 +107,7 @@ export const it = {
   "events.categoryFilter": "Filtri categoria",
 
   // Restaurants
-  "restaurants.pageTitle": "Mangiare",
+  "restaurants.pageTitle": "Locali",
   "restaurants.pageDesc": "Dove mangiare a Ortona. Ristoranti, pizzerie, bar e altro.",
   "restaurants.filters": "Filtri",
   "restaurants.openNow": "Aperto ora",
@@ -177,10 +179,14 @@ export const it = {
   "auth.signingOut": "Uscita...",
 
   // PWA
-  "pwa.install": "Installa Oggi a Ortona",
-  "pwa.quickAccess": "Accesso rapido dalla schermata home",
+  "pwa.title": "Aggiungi Oggi a Ortona",
+  "pwa.subtitle": "Tieni tutto a portata di mano, come un'app vera.",
   "pwa.notNow": "Non ora",
   "pwa.installBtn": "Installa",
+  "pwa.iosStep1": "Tocca \"Condividi\"",
+  "pwa.iosStep1detail": "nella barra in basso di Safari",
+  "pwa.iosStep2": "Seleziona \"Aggiungi alla schermata Home\"",
+  "pwa.gotIt": "Ho capito",
 
   // UI Components
   "ui.view": "Vista",

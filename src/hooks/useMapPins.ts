@@ -9,9 +9,6 @@ export function restaurantsToMapPins(restaurants: Array<RestaurantWithStatus>, l
   return restaurants
     .filter((r) => r.latitude != null && r.longitude != null)
     .map((r) => {
-      const special = r.promotions.find((p) => p.type === "special");
-      const deal = r.promotions.find((p) => p.type === "deal");
-      const news = r.promotions.find((p) => p.type === "news");
       return {
         id: r.id,
         lat: r.latitude!,
@@ -27,22 +24,7 @@ export function restaurantsToMapPins(restaurants: Array<RestaurantWithStatus>, l
         variant: "restaurant" as const,
         isOpen: r.isOpen,
         priceRange: r.priceRange,
-        special: special
-          ? { description: special.title, price: special.price }
-          : null,
-        deal: deal
-          ? {
-              title: deal.title,
-              description: deal.description,
-              validUntil: deal.dateEnd,
-            }
-          : null,
-        news: news
-          ? {
-              title: news.title,
-              description: news.description,
-            }
-          : null,
+        promotions: r.promotions,
       };
     });
 }

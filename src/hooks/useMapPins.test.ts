@@ -70,56 +70,40 @@ describe("restaurantsToMapPins", () => {
     expect(pins[0]?.color).toBe("#8c7e6f");
   });
 
-  it("maps special promotion to pin special", () => {
+  it("passes promotions array through to pin", () => {
+    const promotions = [
+      {
+        id: 1,
+        restaurantId: 1,
+        type: "special",
+        title: "Pasta",
+        description: null,
+        price: 8.5,
+        dateStart: "2026-03-28",
+        dateEnd: "2026-03-29",
+        timeStart: null,
+        timeEnd: null,
+        createdAt: "2026-03-28",
+      },
+      {
+        id: 2,
+        restaurantId: 1,
+        type: "deal",
+        title: "2x1",
+        description: "Birra",
+        price: null,
+        dateStart: "2026-03-28",
+        dateEnd: "2026-04-01",
+        timeStart: null,
+        timeEnd: null,
+        createdAt: "2026-03-28",
+      },
+    ];
     const pins = restaurantsToMapPins([
-      makeRestaurant({
-        promotions: [
-          {
-            id: 1,
-            restaurantId: 1,
-            type: "special",
-            title: "Pasta",
-            description: null,
-            price: 8.5,
-            dateStart: "2026-03-28",
-            dateEnd: "2026-03-29",
-            timeStart: null,
-            timeEnd: null,
-            createdAt: "2026-03-28",
-          },
-        ],
-      }),
+      makeRestaurant({ promotions }),
     ], "it");
 
-    expect(pins[0]?.special).toEqual({ description: "Pasta", price: 8.5 });
-  });
-
-  it("maps deal promotion to pin deal", () => {
-    const pins = restaurantsToMapPins([
-      makeRestaurant({
-        promotions: [
-          {
-            id: 2,
-            restaurantId: 1,
-            type: "deal",
-            title: "2x1",
-            description: "Birra",
-            price: null,
-            dateStart: "2026-03-28",
-            dateEnd: "2026-04-01",
-            timeStart: null,
-            timeEnd: null,
-            createdAt: "2026-03-28",
-          },
-        ],
-      }),
-    ], "it");
-
-    expect(pins[0]?.deal).toEqual({
-      title: "2x1",
-      description: "Birra",
-      validUntil: "2026-04-01",
-    });
+    expect(pins[0]?.promotions).toEqual(promotions);
   });
 
   it("builds directions URL from coordinates", () => {

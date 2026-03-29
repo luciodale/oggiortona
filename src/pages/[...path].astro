@@ -1,0 +1,76 @@
+---
+import AppHead from "../building-blocks/AppHead.astro";
+import { siteConfig } from "../config/site";
+import { t } from "../i18n/t";
+import { SpaApp } from "../App";
+import "../styles/global.css";
+
+const locale = Astro.locals.locale;
+const user = Astro.locals.user;
+const isAdmin = Astro.locals.isAdmin;
+
+function getThemeColor() {
+  return "#fdfaf6";
+}
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <AppHead
+      title={siteConfig.title}
+      description={t("common.siteName", locale)}
+      themeColor={getThemeColor()}
+    />
+  </head>
+  <body class="min-h-dvh bg-surface">
+    <a href="#main-content" class="skip-link"
+      >{t("common.skipToContent", locale)}</a
+    >
+
+    <div
+      id="app-loader"
+      aria-hidden="true"
+      style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#fdfaf6;transition:opacity 0.4s ease-out;"
+    >
+      <img
+        src="/icon.svg"
+        alt=""
+        width="64"
+        height="64"
+        style="border-radius:16px;animation:logo-bounce 0.8s ease-in-out infinite;"
+      />
+    </div>
+    <style>
+      @keyframes logo-bounce {
+        0%,
+        100% {
+          transform: translateY(0) scale(1);
+        }
+        50% {
+          transform: translateY(-10px) scale(1.05);
+        }
+      }
+    </style>
+
+    <SpaApp
+      client:only="react"
+      locale={locale}
+      user={user
+        ? {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            avatarUrl: user.avatarUrl,
+          }
+        : null}
+      isAdmin={isAdmin}
+    />
+
+    <script is:inline>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/sw.js");
+      }
+    </script>
+  </body>
+</html>

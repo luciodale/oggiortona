@@ -1,7 +1,9 @@
-import { Link } from "@tanstack/react-router";
 import { restaurantTypeLabels } from "../../config/categories";
+import { useDeleteEntity } from "../../hooks/useDeleteEntity";
 import { useLocale } from "../../i18n/useLocale";
+import { XIcon } from "../../icons/XIcon";
 import type { RestaurantWithStatus } from "../../types/domain";
+import { PillActionLink } from "../shared/PillAction";
 
 type RestaurantListCardProps = {
   restaurant: RestaurantWithStatus;
@@ -10,17 +12,19 @@ type RestaurantListCardProps = {
 export function RestaurantListCard({ restaurant }: RestaurantListCardProps) {
   const { locale, t } = useLocale();
   const labels = restaurantTypeLabels(locale);
-
-  function handleDelete() {
-    if (!window.confirm(t("profile.confirmDeleteVenue"))) return;
-    fetch(`/api/restaurants/${restaurant.id}`, { method: "DELETE" }).then((res) => {
-      if (res.ok) window.location.reload();
-    });
-  }
+  const { handleDelete } = useDeleteEntity("restaurant");
 
   return (
-    <div className="rounded-2xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-      <p className="font-family-display text-base font-medium text-primary">
+    <div className="relative rounded-2xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+      <button
+        type="button"
+        onClick={() => handleDelete(restaurant.id)}
+        aria-label={t("common.delete")}
+        className="absolute top-2 right-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-danger/10 text-danger transition-colors hover:bg-danger/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+      >
+        <XIcon className="h-3.5 w-3.5" strokeWidth={2.5} />
+      </button>
+      <p className="pr-8 font-family-display text-base font-medium text-primary">
         {restaurant.name}
       </p>
       <p className="mt-0.5 text-[11px] capitalize text-muted">
@@ -39,35 +43,21 @@ export function RestaurantListCard({ restaurant }: RestaurantListCardProps) {
             : t("profile.disabledByAdmin")}
         </span>
       )}
-      <div className="mt-3 flex gap-3">
-        <Link
-          to="/restaurant/$id"
-          params={{ id: String(restaurant.id) }}
-          className="text-[12px] font-semibold text-muted no-underline transition-colors hover:text-primary"
-        >
-          {t("profile.previewCard")}
-        </Link>
-        <Link
-          to="/restaurant/$id/edit"
-          params={{ id: String(restaurant.id) }}
-          className="text-[12px] font-semibold text-accent no-underline transition-colors hover:text-accent-hover"
-        >
-          {t("common.edit")}
-        </Link>
-        <Link
-          to="/restaurant/$id/storefront"
-          params={{ id: String(restaurant.id) }}
-          className="text-[12px] font-semibold text-violet-600 no-underline transition-colors hover:text-violet-800"
-        >
-          {t("profile.storefront")}
-        </Link>
-        <button
-          type="button"
-          onClick={handleDelete}
-          className="text-[12px] font-semibold text-danger transition-colors hover:text-danger/80"
-        >
-          {t("common.delete")}
-        </button>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <PillActionLink
+          to={`/profile/restaurant/${restaurant.id}`}
+          label={t("profile.previewCard")}
+        />
+        <PillActionLink
+          to={`/profile/restaurant/${restaurant.id}/edit`}
+          label={t("common.edit")}
+          variant="accent"
+        />
+        <PillActionLink
+          to={`/profile/restaurant/${restaurant.id}/storefront`}
+          label={t("profile.storefront")}
+          variant="violet"
+        />
       </div>
     </div>
   );

@@ -1,20 +1,12 @@
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import type { RestaurantWithStatus } from "../types/domain";
 
 export function useRestaurantDetail(id: string | undefined) {
-  const [restaurant, setRestaurant] = useState<RestaurantWithStatus | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading } = useQuery<{ restaurant: RestaurantWithStatus }>({
+    queryKey: ["restaurant", id],
+    queryFn: () => fetch(`/api/restaurants/${id}`).then((r) => r.json()),
+    enabled: !!id,
+  });
 
-  useEffect(() => {
-    if (!id) {
-      setLoading(false);
-      return;
-    }
-    fetch(`/api/restaurants/${id}`)
-      .then((res) => res.json() as Promise<{ restaurant: RestaurantWithStatus }>)
-      .then((data) => setRestaurant(data.restaurant))
-      .finally(() => setLoading(false));
-  }, [id]);
-
-  return { restaurant, loading };
+  return { restaurant: data?.restaurant ?? null, loading: isLoading };
 }

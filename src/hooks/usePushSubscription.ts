@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import type { PushScope } from "../types/domain";
+import { urlBase64ToUint8Array } from "../utils/base64";
 
 type PushState = "loading" | "unsupported" | "denied" | "subscribed" | "unsubscribed";
 
@@ -92,54 +93,3 @@ export function usePushSubscription(scope: PushScope) {
   return { state, busy, subscribe, unsubscribe };
 }
 
-export function useAutoEnroll() {
-  const [busy, setBusy] = useState(false);
-  const [enrolled, setEnrolled] = useState(false);
-
-  const enroll = useCallback(async () => {
-    setBusy(true);
-    try {
-      const res = await fetch("/api/push/vapid-public-key");
-      if (!res.ok) throw new Error("Impossibile ottenere chiave VAPID");
-      const { publicKey } = await res.json() as { publicKey: string };
-
-      const reg = await navigator.serviceWorker.ready;
-      let subscription = await reg.pushManager.getSubscription();
-
-      if (!subscription) {
-        subscription = await reg.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(publicKey),
-        });
-      }
-
-      const subJson = subscription.toJSON();
-      const saveRes = await fetch("/api/push/auto-enroll", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          endpoint: subJson.endpoint,
-          keys: subJson.keys,
-        }),
-      });
-
-      if (!saveRes.ok) throw new Error("Impossibile salvare sottoscrizione");
-      setEnrolled(true);
-    } catch (err) {
-      console.error("Auto-enroll failed:", err);
-    } finally {
-      setBusy(false);
-    }
-  }, []);
-
-  return { enroll, busy, enrolled };
-}
-
-function urlBase64ToUint8Array(base64String: string) {
-  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
-  const raw = atob(base64);
-  const output = new Uint8Array(raw.length);
-  for (let i = 0; i < raw.length; i++) output[i] = raw.charCodeAt(i);
-  return output;
-}

@@ -1,8 +1,7 @@
 import { useWatch } from "react-hook-form";
 import { useEventForm } from "../../hooks/useEventForm";
 import { eventFormCategories, eventCategoryLabels } from "../../config/categories";
-import { LocaleProvider, useLocale } from "../../i18n/useLocale";
-import type { Locale } from "../../types/domain";
+import { useLocale } from "../../i18n/useLocale";
 import { toast } from "sonner";
 import { Input } from "../ui/Input";
 import { Textarea } from "../ui/Textarea";
@@ -14,20 +13,11 @@ import { DatePicker } from "../ui/DatePicker";
 import { LocationPickerField } from "../shared/LocationPickerField";
 
 type EventFormProps = {
-  locale: Locale;
   eventId?: number;
   initialData?: Parameters<typeof useEventForm>[0];
 };
 
-export function EventForm({ locale, eventId, initialData }: EventFormProps) {
-  return (
-    <LocaleProvider locale={locale}>
-      <EventFormInner eventId={eventId} initialData={initialData} />
-    </LocaleProvider>
-  );
-}
-
-function EventFormInner({ eventId, initialData }: Omit<EventFormProps, "locale">) {
+export function EventForm({ eventId, initialData }: EventFormProps) {
   const {
     form,
     toggleCategory,
@@ -160,6 +150,13 @@ function EventFormInner({ eventId, initialData }: Omit<EventFormProps, "locale">
         placeholder="Lascia vuoto se gratuito"
         error={form.formState.errors.price?.message}
         {...form.register("price", { valueAsNumber: true })}
+      />
+
+      <Input
+        label="Link"
+        type="url"
+        placeholder="https://..."
+        {...form.register("link")}
       />
 
       {errorMessage && <SummaryFormError message={errorMessage} />}

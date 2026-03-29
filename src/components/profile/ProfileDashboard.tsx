@@ -5,15 +5,16 @@ import { useLocale } from "../../i18n/useLocale";
 import { CalendarIcon } from "../../icons/CalendarIcon";
 import { CupIcon } from "../../icons/CupIcon";
 import { LogoutButton } from "../auth/LogoutButton";
+import { ContentLoader } from "../shared/ContentLoader";
 import { PushToggle } from "../shared/PushToggle";
 import { EventListCard } from "./EventListCard";
 import { ExpiredPromotionsNotice } from "./ExpiredPromotionsNotice";
-import { useProfileUser } from "./ProfileApp";
+import { useSpaAuth } from "../../hooks/useSpaAuth";
 import { RestaurantListCard } from "./RestaurantListCard";
 
 export function ProfileDashboard() {
   const { locale, t } = useLocale();
-  const user = useProfileUser();
+  const { user } = useSpaAuth();
   const { restaurants, loading: loadingRestaurants } = useUserRestaurants();
   const { events, loading: loadingEvents } = useUserEvents();
 
@@ -22,9 +23,9 @@ export function ProfileDashboard() {
   return (
     <div>
       <h1 className="font-family-display text-2xl font-medium tracking-tight text-primary">
-        {t("profile.hello")}{user.name ? `, ${user.name}` : ""}!
+        {t("profile.hello")}{user?.name ? `, ${user.name}` : ""}!
       </h1>
-      {user.email && <p className="mt-1 text-sm text-muted">{user.email}</p>}
+      {user?.email && <p className="mt-1 text-sm text-muted">{user.email}</p>}
 
       <div className="mt-4 flex items-center gap-3">
         <label htmlFor="locale-select" className="text-sm font-medium text-muted">
@@ -70,9 +71,7 @@ export function ProfileDashboard() {
       </div>
 
       {loading ? (
-        <div className="mt-8 flex justify-center">
-          <div className="h-5 w-5 animate-spin rounded-full border-2 border-border border-t-accent" />
-        </div>
+        <ContentLoader className="mt-8" />
       ) : (
         <>
           {restaurants.length > 0 && (

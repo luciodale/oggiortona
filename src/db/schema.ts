@@ -100,6 +100,7 @@ export const events = sqliteTable("events", {
   longitude: real("longitude"),
   category: text("category").notNull(),
   price: real("price"),
+  link: text("link"),
   ownerId: text("owner_id").notNull().references(() => users.id),
   active: integer("active").notNull().default(1),
   deleted: integer("deleted").notNull().default(0),

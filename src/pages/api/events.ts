@@ -1,7 +1,27 @@
 import type { APIContext } from "astro";
 import { events } from "../../db/schema";
+import { gte, asc, eq, and as dbAnd, or } from "drizzle-orm";
 import { createEventApiSchema } from "../../schemas/event";
 import { notifyAdmins } from "../../utils/adminNotify";
+
+export async function GET({ locals }: APIContext): Promise<Response> {
+  const db = locals.db;
+  const today = new Date().toISOString().split("T")[0]!;
+
+  const allEvents = await db
+    .select()
+    .from(events)
+    .where(
+      dbAnd(
+        eq(events.active, 1),
+        eq(events.deleted, 0),
+        or(gte(events.dateStart, today), gte(events.dateEnd, today)),
+      ),
+    )
+    .orderBy(asc(events.dateStart), asc(events.timeStart));
+
+  return Response.json({ events: allEvents });
+}
 
 export async function POST({ locals, request }: APIContext): Promise<Response> {
   const user = locals.user;
@@ -37,6 +57,7 @@ export async function POST({ locals, request }: APIContext): Promise<Response> {
     latitude: body.latitude ?? null,
     longitude: body.longitude ?? null,
     price: body.price ?? null,
+    link: body.link?.trim() || null,
     ownerId: user.id,
     active: 1,
   }).returning();

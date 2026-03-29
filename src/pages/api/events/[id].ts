@@ -61,6 +61,7 @@ export async function PUT({ locals, params, request }: APIContext): Promise<Resp
   if (body.latitude !== undefined) updates.latitude = body.latitude;
   if (body.longitude !== undefined) updates.longitude = body.longitude;
   if (body.price !== undefined) updates.price = body.price ?? null;
+  if (body.link !== undefined) updates.link = body.link?.trim() || null;
 
   if (Object.keys(updates).length === 0) {
     return Response.json({ error: "Nessun campo da aggiornare" }, { status: 400 });

@@ -29,7 +29,7 @@ export function ProfileRestaurantPreview() {
   return (
     <div>
       <Link
-        to="/"
+        to="/profile"
         className="mb-4 inline-flex items-center gap-1 text-xs font-medium text-muted no-underline hover:text-primary"
       >
         <ArrowLeftIcon className="h-3.5 w-3.5" />
@@ -71,14 +71,14 @@ export function ProfileRestaurantPreview() {
 
       <div className="mt-3 flex gap-2">
         <Link
-          to="/restaurant/$id/edit"
+          to="/profile/restaurant/$id/edit"
           params={{ id: String(restaurant.id) }}
           className="inline-flex items-center gap-1.5 rounded-full bg-accent/10 px-3 py-1.5 text-[11px] font-semibold text-accent no-underline transition-colors hover:bg-accent/20"
         >
           {t("common.edit")}
         </Link>
         <Link
-          to="/restaurant/$id/storefront"
+          to="/profile/restaurant/$id/storefront"
           params={{ id: String(restaurant.id) }}
           className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-[11px] font-semibold text-primary no-underline transition-colors hover:bg-primary/20"
         >

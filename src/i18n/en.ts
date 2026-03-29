@@ -5,7 +5,7 @@ type Translations = { [K in keyof typeof it]: string };
 export const en: Translations = {
   // Navigation
   "nav.today": "Today",
-  "nav.restaurants": "Eat",
+  "nav.restaurants": "Venues",
   "nav.events": "Events",
   "nav.profile": "Profile",
   "nav.signIn": "Sign in",
@@ -58,6 +58,8 @@ export const en: Translations = {
   "home.today": "today?",
   "home.whereToEat": "Where to eat",
   "home.whatToDo": "Things to do",
+  "home.restaurantsInitial": "V",
+  "home.eventsInitial": "E",
   "home.venuesInOrtona": "{count} venues in Ortona",
   "home.specialOne": "{count} daily special",
   "home.specialMany": "{count} daily specials",
@@ -109,7 +111,7 @@ export const en: Translations = {
   "events.categoryFilter": "Category filters",
 
   // Restaurants
-  "restaurants.pageTitle": "Eat",
+  "restaurants.pageTitle": "Venues",
   "restaurants.pageDesc": "Where to eat in Ortona. Restaurants, pizzerias, bars and more.",
   "restaurants.filters": "Filters",
   "restaurants.openNow": "Open now",
@@ -181,10 +183,14 @@ export const en: Translations = {
   "auth.signingOut": "Signing out...",
 
   // PWA
-  "pwa.install": "Install Oggi a Ortona",
-  "pwa.quickAccess": "Quick access from your home screen",
+  "pwa.title": "Add Oggi a Ortona",
+  "pwa.subtitle": "Keep everything at your fingertips, like a real app.",
   "pwa.notNow": "Not now",
   "pwa.installBtn": "Install",
+  "pwa.iosStep1": "Tap \"Share\"",
+  "pwa.iosStep1detail": "in Safari's bottom bar",
+  "pwa.iosStep2": "Select \"Add to Home Screen\"",
+  "pwa.gotIt": "Got it",
 
   // UI Components
   "ui.view": "View",

@@ -1,4 +1,7 @@
-import { useAdminData } from "../../hooks/useAdminData";
+import { useState, useMemo } from "react";
+import { useAdminRestaurants } from "../../hooks/useAdminRestaurants";
+import { useAdminEvents } from "../../hooks/useAdminEvents";
+import { filterBySearch } from "../../utils/adminFilter";
 import { AdminBroadcast } from "./AdminBroadcast";
 import { AdminEventList } from "./AdminEventList";
 import { AdminPushToggle } from "./AdminPushToggle";
@@ -6,21 +9,27 @@ import { AdminRestaurantList } from "./AdminRestaurantList";
 import { AdminSearch } from "./AdminSearch";
 import { AdminTabs } from "./AdminTabs";
 
+export type AdminTab = "restaurants" | "events";
+
 export function AdminDashboard() {
-  const {
-    tab,
-    setTab,
-    search,
-    setSearch,
-    filteredRestaurants,
-    filteredEvents,
-    loading,
-    toggleRestaurant,
-    toggleEvent,
-    deletePromotion,
-    expandedId,
-    setExpandedId,
-  } = useAdminData();
+  const [tab, setTab] = useState<AdminTab>("restaurants");
+  const [search, setSearch] = useState("");
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+
+  const { restaurants, loading: loadingRestaurants, toggleRestaurant, deletePromotion } = useAdminRestaurants();
+  const { events, loading: loadingEvents, toggleEvent } = useAdminEvents();
+
+  const filteredRestaurants = useMemo(
+    () => filterBySearch(restaurants, search, (r) => r.name),
+    [restaurants, search],
+  );
+
+  const filteredEvents = useMemo(
+    () => filterBySearch(events, search, (e) => e.title),
+    [events, search],
+  );
+
+  const loading = loadingRestaurants || loadingEvents;
 
   return (
     <div>

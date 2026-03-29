@@ -39,7 +39,7 @@ export function RestaurantForm({ restaurantId, initialData }: RestaurantFormProp
 
   if (submitState === "success" && createdId) {
     toast.success(isEdit ? "Locale aggiornato!" : "Locale inviato per approvazione!");
-    navigate({ to: isEdit ? "/" : "/restaurant/$id", params: isEdit ? undefined : { id: String(createdId) } });
+    navigate({ to: isEdit ? "/" : "/profile/restaurant/$id", params: isEdit ? undefined : { id: String(createdId) } });
     return null;
   }
 

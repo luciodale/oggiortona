@@ -1,14 +1,15 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
+import { useQueryClient, useIsFetching } from "@tanstack/react-query";
 
-export function useRefresh() {
-  const [isRefreshing, setIsRefreshing] = useState(false);
+export function useRefresh(queryKeys: Array<ReadonlyArray<string>>) {
+  const queryClient = useQueryClient();
+  const isFetching = useIsFetching();
 
-  const handleRefresh = useCallback(async function handleRefresh() {
-    setIsRefreshing(true);
-    const reg = await navigator.serviceWorker?.getRegistration();
-    if (reg) await reg.update();
-    window.location.reload();
-  }, []);
+  const handleRefresh = useCallback(function handleRefresh() {
+    for (const key of queryKeys) {
+      queryClient.invalidateQueries({ queryKey: key });
+    }
+  }, [queryClient, queryKeys]);
 
-  return { isRefreshing, handleRefresh };
+  return { isRefreshing: isFetching > 0, handleRefresh };
 }

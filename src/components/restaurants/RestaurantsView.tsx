@@ -1,40 +1,27 @@
 import { lazy, Suspense } from "react";
-import type { RestaurantWithStatus, Locale } from "../../types/domain";
+import type { RestaurantWithStatus } from "../../types/domain";
 import { RestaurantList } from "./RestaurantList";
 import { ViewToggle } from "../shared/ViewToggle";
 import { useViewMode } from "../../hooks/useViewMode";
 import { useRefresh } from "../../hooks/useRefresh";
 import { useMapPins } from "../../hooks/useMapPins";
+import { ContentLoader } from "../shared/ContentLoader";
 import { RefreshIcon } from "../../icons/RefreshIcon";
-import { LocaleProvider, useLocale } from "../../i18n/useLocale";
+import { useLocale } from "../../i18n/useLocale";
 
 const MapView = lazy(() => import("../shared/MapView").then((m) => ({ default: m.MapView })));
 
 type RestaurantsViewProps = {
   restaurants: Array<RestaurantWithStatus>;
-  locale: Locale;
+  isLoading: boolean;
   isLoggedIn: boolean;
   initialPinnedIds: Array<number>;
 };
 
-export function RestaurantsView({ restaurants, locale, isLoggedIn, initialPinnedIds }: RestaurantsViewProps) {
-  return (
-    <LocaleProvider locale={locale}>
-      <RestaurantsViewInner restaurants={restaurants} isLoggedIn={isLoggedIn} initialPinnedIds={initialPinnedIds} />
-    </LocaleProvider>
-  );
-}
-
-type InnerProps = {
-  restaurants: Array<RestaurantWithStatus>;
-  isLoggedIn: boolean;
-  initialPinnedIds: Array<number>;
-};
-
-function RestaurantsViewInner({ restaurants, isLoggedIn, initialPinnedIds }: InnerProps) {
+export function RestaurantsView({ restaurants, isLoading, isLoggedIn, initialPinnedIds }: RestaurantsViewProps) {
   const { t } = useLocale();
   const { mode, handleToggle, anchorRef, mapTop } = useViewMode();
-  const { isRefreshing, handleRefresh } = useRefresh();
+  const { isRefreshing, handleRefresh } = useRefresh([["restaurants"], ["pins"]]);
   const pins = useMapPins(restaurants);
 
   return (
@@ -57,7 +44,9 @@ function RestaurantsViewInner({ restaurants, isLoggedIn, initialPinnedIds }: Inn
       </div>
 
       {mode === "list" ? (
-        <RestaurantList restaurants={restaurants} isLoggedIn={isLoggedIn} initialPinnedIds={initialPinnedIds} />
+        <RestaurantList restaurants={restaurants} isLoading={isLoading} isLoggedIn={isLoggedIn} initialPinnedIds={initialPinnedIds} />
+      ) : isLoading ? (
+        <ContentLoader />
       ) : (
         mapTop > 0 && (
           <Suspense fallback={<div className="fixed inset-x-0 bottom-0 flex items-center justify-center bg-surface-alt" style={{ top: `${mapTop}px` }}><p className="text-sm text-muted">{t("common.loadingMap")}</p></div>}>

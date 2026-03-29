@@ -1,30 +1,24 @@
 import { describe, it, expect } from "vitest";
-import { escapeHtml, buildPopupHtml } from "./map";
+import { buildPopupHtml } from "./map";
 import type { MapPin } from "./map";
+import type { PromotionRow } from "../types/database";
 
-describe("escapeHtml", () => {
-  it("escapes ampersands", () => {
-    expect(escapeHtml("foo & bar")).toBe("foo &amp; bar");
-  });
-
-  it("escapes angle brackets", () => {
-    expect(escapeHtml("<script>alert('xss')</script>")).toBe(
-      "&lt;script&gt;alert('xss')&lt;/script&gt;",
-    );
-  });
-
-  it("escapes double quotes", () => {
-    expect(escapeHtml('a "b" c')).toBe("a &quot;b&quot; c");
-  });
-
-  it("handles empty string", () => {
-    expect(escapeHtml("")).toBe("");
-  });
-
-  it("handles multiple special characters together", () => {
-    expect(escapeHtml('x<y&z>"')).toBe("x&lt;y&amp;z&gt;&quot;");
-  });
-});
+function makePromotion(overrides: Partial<PromotionRow> = {}): PromotionRow {
+  return {
+    id: 1,
+    restaurantId: 1,
+    type: "special",
+    title: "",
+    description: null,
+    price: null,
+    dateStart: "2026-03-30",
+    dateEnd: "2026-03-30",
+    timeStart: null,
+    timeEnd: null,
+    createdAt: "2026-03-30T00:00:00Z",
+    ...overrides,
+  };
+}
 
 describe("buildPopupHtml", () => {
   const basePin: MapPin = {
@@ -64,7 +58,7 @@ describe("buildPopupHtml", () => {
 
   it("renders price range euros", () => {
     const html = buildPopupHtml({ ...basePin, priceRange: 2 });
-    expect(html).toContain("&euro;");
+    expect(html).toContain("€");
   });
 
   it("renders subtitle when provided", () => {
@@ -75,7 +69,7 @@ describe("buildPopupHtml", () => {
   it("renders special section", () => {
     const html = buildPopupHtml({
       ...basePin,
-      special: { description: "Pasta al forno", price: 8.5 },
+      promotions: [makePromotion({ type: "special", title: "Pasta al forno", price: 8.5 })],
     });
     expect(html).toContain("Piatto del giorno");
     expect(html).toContain("Pasta al forno");
@@ -85,7 +79,7 @@ describe("buildPopupHtml", () => {
   it("renders deal section", () => {
     const html = buildPopupHtml({
       ...basePin,
-      deal: { title: "2x1 Birra", description: "Solo stasera", validUntil: "2026-04-01" },
+      promotions: [makePromotion({ type: "deal", title: "2x1 Birra", description: "Solo stasera" })],
     });
     expect(html).toContain("Offerta");
     expect(html).toContain("2x1 Birra");

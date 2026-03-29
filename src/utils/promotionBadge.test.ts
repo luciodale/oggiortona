@@ -1,6 +1,6 @@
-import { describe, it, expect } from "vitest";
-import { isPromotionExpired, getBadgeStyle } from "./promotionBadge";
+import { describe, expect, it } from "vitest";
 import type { PromotionRow } from "../types/database";
+import { getBadgeStyle, isPromotionExpired } from "./promotionBadge";
 
 function makePromotion(dateEnd: string): PromotionRow {
   return {

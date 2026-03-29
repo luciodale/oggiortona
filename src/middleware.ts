@@ -8,8 +8,6 @@ import type { Locale } from "./types/domain";
 const isProtectedRoute = createRouteMatcher([
   "/profile(.*)",
   "/add(.*)",
-  "/api/restaurants",
-  "/api/events",
   "/api/my-events",
   "/api/push(.*)",
   "/admin(.*)",

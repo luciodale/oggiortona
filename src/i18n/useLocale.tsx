@@ -1,32 +1,13 @@
-import { createContext, useContext, useMemo } from "react";
+import { atom, useAtomValue } from "jotai";
 import type { Locale } from "../types/domain";
 import { t as tFn, type TranslationKey } from "./t";
 
-type LocaleContextValue = {
-  locale: Locale;
-  t: (key: TranslationKey, params?: Record<string, string | number>) => string;
-};
-
-const LocaleContext = createContext<LocaleContextValue | null>(null);
-
-type LocaleProviderProps = {
-  locale: Locale;
-  children: React.ReactNode;
-};
-
-export function LocaleProvider({ locale, children }: LocaleProviderProps) {
-  const value = useMemo<LocaleContextValue>(
-    () => ({
-      locale,
-      t: (key, params) => tFn(key, locale, params),
-    }),
-    [locale],
-  );
-  return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;
-}
+export const localeAtom = atom<Locale>("it");
 
 export function useLocale() {
-  const ctx = useContext(LocaleContext);
-  if (!ctx) throw new Error("useLocale must be used within LocaleProvider");
-  return ctx;
+  const locale = useAtomValue(localeAtom);
+  return {
+    locale,
+    t: (key: TranslationKey, params?: Record<string, string | number>) => tFn(key, locale, params),
+  };
 }

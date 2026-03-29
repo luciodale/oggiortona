@@ -1,18 +1,7 @@
-type PinSpecial = {
-  description: string;
-  price: number | null;
-};
-
-type PinDeal = {
-  title: string;
-  description: string | null;
-  validUntil: string;
-};
-
-type PinNews = {
-  title: string;
-  description: string | null;
-};
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { MapPopup } from "../components/shared/MapPopup";
+import type { PromotionRow } from "../types/database";
 
 export type PinVariant = "restaurant" | "event" | "default";
 
@@ -28,112 +17,15 @@ export type MapPin = {
   variant?: PinVariant;
   isOpen?: boolean;
   priceRange?: number;
-  special?: PinSpecial | null;
-  deal?: PinDeal | null;
-  news?: PinNews | null;
+  promotions?: Array<PromotionRow>;
 };
 
 export const ORTONA_CENTER: [number, number] = [42.3548, 14.4030];
 export const DEFAULT_ZOOM = 15;
 export const TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 
-export function escapeHtml(str: string) {
-  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
-
 export function buildPopupHtml(pin: MapPin) {
-  const statusBadge = pin.isOpen != null
-    ? `<span style="
-        display: inline-flex; align-items: center; gap: 4px;
-        padding: 2px 8px; border-radius: 20px;
-        font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
-        ${pin.isOpen
-          ? "background: rgba(74,124,89,0.1); color: #4a7c59;"
-          : "background: rgba(184,66,51,0.1); color: #b84233;"
-        }
-      ">
-        <span style="width:6px;height:6px;border-radius:50%;background:${pin.isOpen ? "#4a7c59" : "#b84233"}"></span>
-        ${pin.isOpen ? "Aperto" : "Chiuso"}
-      </span>`
-    : "";
-
-  const priceHtml = pin.priceRange
-    ? `<span style="font-size:12px;margin-left:6px;">${
-        [1, 2, 3].map(i => `<span style="color:${i <= pin.priceRange! ? "#2c1810" : "#e0d5c5"}">&euro;</span>`).join("")
-      }</span>`
-    : "";
-
-  const specialHtml = pin.special
-    ? `<div style="
-        margin-top: 8px; padding: 8px 10px; border-radius: 10px;
-        background: #fdf2ed; text-align: left;
-      ">
-        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#c4512a;">Piatto del giorno</div>
-        <div style="font-size:12px;color:#2c1810;margin-top:2px;">
-          ${escapeHtml(pin.special.description)}${pin.special.price != null ? ` <b>${pin.special.price.toFixed(2)}&euro;</b>` : ""}
-        </div>
-      </div>`
-    : "";
-
-  const dealHtml = pin.deal
-    ? `<div style="
-        margin-top: 8px; padding: 8px 10px; border-radius: 10px;
-        background: #f3f0ff; text-align: left;
-      ">
-        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#6d28d9;">Offerta</div>
-        <div style="font-size:12px;font-weight:500;color:#2c1810;margin-top:2px;">${escapeHtml(pin.deal.title)}</div>
-        ${pin.deal.description ? `<div style="font-size:11px;color:#8c7e6f;margin-top:1px;">${escapeHtml(pin.deal.description)}</div>` : ""}
-      </div>`
-    : "";
-
-  const newsHtml = pin.news
-    ? `<div style="
-        margin-top: 8px; padding: 8px 10px; border-radius: 10px;
-        background: #eef6f1; text-align: left;
-      ">
-        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#4a7c59;">Novità</div>
-        <div style="font-size:12px;font-weight:500;color:#2c1810;margin-top:2px;">${escapeHtml(pin.news.title)}</div>
-        ${pin.news.description ? `<div style="font-size:11px;color:#8c7e6f;margin-top:1px;">${escapeHtml(pin.news.description)}</div>` : ""}
-      </div>`
-    : "";
-
-  const directionsHtml = pin.directionsUrl
-    ? `<a href="${pin.directionsUrl}" target="_blank" rel="noopener noreferrer" style="
-        display: inline-flex; align-items: center; gap: 5px;
-        margin-top: 10px; padding: 8px 16px;
-        font-size: 12px; font-weight: 600; font-family: var(--font-family);
-        color: #fdfaf6; background: #2c1810; border-radius: 10px;
-        text-decoration: none; letter-spacing: 0.02em;
-      ">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-          <circle cx="12" cy="10" r="3"/>
-        </svg>
-        Indicazioni
-      </a>`
-    : "";
-
-  return `<div style="font-family: var(--font-family); text-align: center; padding: 4px 0; min-width: 180px;">
-    <div style="display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;">
-      ${statusBadge}
-      ${priceHtml}
-    </div>
-    <a href="${pin.href}" style="
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 17px;
-      font-weight: 500;
-      color: #2c1810;
-      text-decoration: none;
-      display: block;
-      margin-top: 6px;
-      line-height: 1.2;
-    ">${escapeHtml(pin.label)}</a>
-    ${pin.subtitle ? `<span style="font-size: 12px; color: #8c7e6f; margin-top: 2px; display: block;">${escapeHtml(pin.subtitle)}</span>` : ""}
-    ${specialHtml}
-    ${dealHtml}
-    ${newsHtml}
-    ${directionsHtml}
-  </div>`;
+  return renderToStaticMarkup(createElement(MapPopup, { pin }));
 }
 
 export const MAP_CSS = `

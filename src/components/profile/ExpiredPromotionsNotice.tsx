@@ -27,7 +27,7 @@ export function ExpiredPromotionsNotice() {
         {notifications.map((n) => (
           <Link
             key={`${n.kind}-${n.id}`}
-            to="/restaurant/$id/storefront"
+            to="/profile/restaurant/$id/storefront"
             params={{ id: String(n.restaurantId) }}
             className="flex items-center justify-between gap-2 rounded-xl bg-white px-3 py-2.5 no-underline transition-all hover:bg-surface-alt active:scale-[0.98]"
           >

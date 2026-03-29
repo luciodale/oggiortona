@@ -1,20 +1,7 @@
 import { useOAuthSignIn } from "../../hooks/useOAuthSignIn";
-import type { Locale } from "../../types/domain";
-import { LocaleProvider, useLocale } from "../../i18n/useLocale";
+import { useLocale } from "../../i18n/useLocale";
 
-type SignInFormProps = {
-  locale: Locale;
-};
-
-export function SignInForm({ locale }: SignInFormProps) {
-  return (
-    <LocaleProvider locale={locale}>
-      <SignInFormInner />
-    </LocaleProvider>
-  );
-}
-
-function SignInFormInner() {
+export function SignInForm() {
   const { t } = useLocale();
   const { loading, error, handleOAuth, providers } = useOAuthSignIn();
 

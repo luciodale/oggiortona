@@ -20,10 +20,27 @@ type NavItem = {
 
 const items: Array<NavItem> = [
   { label: t("nav.today", locale), href: "/", section: "home", Icon: HomeIcon },
-  { label: t("nav.restaurants", locale), href: "/restaurants", section: "mangiare", Icon: CupIcon },
-  { label: t("nav.events", locale), href: "/events", section: "fare", Icon: CalendarIcon },
-  { label: user ? t("nav.profile", locale) : t("nav.signIn", locale), href: "/profile", section: "profilo", Icon: UserIcon },
-  ...(isAdmin ? [{ label: "Admin", href: "/admin", section: "admin", Icon: ShieldIcon }] : []),
+  {
+    label: t("nav.restaurants", locale),
+    href: "/restaurants",
+    section: "locali",
+    Icon: CupIcon,
+  },
+  {
+    label: t("nav.events", locale),
+    href: "/events",
+    section: "fare",
+    Icon: CalendarIcon,
+  },
+  {
+    label: user ? t("nav.profile", locale) : t("nav.signIn", locale),
+    href: "/profile",
+    section: "profilo",
+    Icon: UserIcon,
+  },
+  ...(isAdmin
+    ? [{ label: "Admin", href: "/admin", section: "admin", Icon: ShieldIcon }]
+    : []),
 ];
 
 function isActive(item: NavItem) {
@@ -39,7 +56,7 @@ function isActive(item: NavItem) {
 }
 
 function getActiveColor(section: string) {
-  if (section === "mangiare") return "text-mangiare";
+  if (section === "locali") return "text-mangiare";
   if (section === "fare") return "text-fare";
   return "text-accent";
 }
@@ -78,20 +95,28 @@ function getActiveColor(section: string) {
 </div>
 
 <script is:inline>
-(function () {
-  var nav = document.querySelector("[data-bottom-nav]");
-  if (!nav) return;
-  var startY = 0;
-  nav.addEventListener("touchstart", function (e) {
-    startY = e.touches[0].clientY;
-  }, { passive: true });
-  nav.addEventListener("touchend", function (e) {
-    if (Math.abs(e.changedTouches[0].clientY - startY) > 10) return;
-    var link = e.target.closest("a");
-    if (link && link.href) {
-      e.preventDefault();
-      window.location.href = link.href;
-    }
-  }, { passive: false });
-})();
+  (function () {
+    var nav = document.querySelector("[data-bottom-nav]");
+    if (!nav) return;
+    var startY = 0;
+    nav.addEventListener(
+      "touchstart",
+      function (e) {
+        startY = e.touches[0].clientY;
+      },
+      { passive: true },
+    );
+    nav.addEventListener(
+      "touchend",
+      function (e) {
+        if (Math.abs(e.changedTouches[0].clientY - startY) > 10) return;
+        var link = e.target.closest("a");
+        if (link && link.href) {
+          e.preventDefault();
+          window.location.href = link.href;
+        }
+      },
+      { passive: false },
+    );
+  })();
 </script>
