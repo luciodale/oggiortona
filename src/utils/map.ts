@@ -35,7 +35,7 @@ export type MapPin = {
 
 export const ORTONA_CENTER: [number, number] = [42.3548, 14.4030];
 export const DEFAULT_ZOOM = 15;
-export const TILE_URL = "https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}.png";
+export const TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 
 export function escapeHtml(str: string) {
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
