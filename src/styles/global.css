@@ -47,7 +47,6 @@ html,
 body {
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
 }
 
 html {
@@ -61,6 +60,7 @@ body {
   background-color: var(--color-surface);
   min-height: 100dvh;
   color: var(--color-primary);
+  overflow-x: clip;
 }
 
 /* ==============================
