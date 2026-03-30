@@ -82,7 +82,7 @@ export const it = {
   "events.upcoming": "Prossimamente",
   "events.all": "Tutti",
   "events.today": "Oggi",
-  "events.allCategories": "Tutte",
+  "events.allCategories": "Tutti",
   "events.past": "Passati",
   "events.allEvents": "Tutti gli eventi",
   "events.updated": "Evento aggiornato!",

@@ -45,10 +45,10 @@ export function EventCard({ event }: EventCardProps) {
 
           <div className="flex shrink-0 flex-col items-center rounded-xl bg-fare-light px-3 py-2">
             <span className="text-[10px] font-semibold uppercase text-fare/60">
-              {new Date(event.dateStart).toLocaleDateString(locale === "it" ? "it-IT" : "en-GB", { month: "short" })}
+              {new Date(event.dateStart + "T00:00:00Z").toLocaleDateString(locale === "it" ? "it-IT" : "en-GB", { month: "short", timeZone: "Europe/Rome" })}
             </span>
             <span className="font-family-display text-2xl font-semibold leading-tight text-fare">
-              {new Date(event.dateStart).getDate()}
+              {parseInt(event.dateStart.substring(8, 10), 10)}
             </span>
           </div>
         </div>

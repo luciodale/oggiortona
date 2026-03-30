@@ -26,7 +26,7 @@ entity Promotion {
     time_end: String?,             -- HH:MM
     created_at: Timestamp,
 
-    -- Derived
+    -- Derived (all use getTodayISO() — Europe/Rome timezone)
     is_active: date_start <= today and date_end >= today,
     is_expired: date_end < today,
     duration_days: day_diff(date_end, date_start) + 1
@@ -42,6 +42,18 @@ config {
     max_promotions_in_admin: Integer = 60,
     max_expired_notifications: Integer = 10,
     timezone: String = "Europe/Rome"
+}
+
+-- ---------------------------------------------------------------
+-- Invariants
+-- ---------------------------------------------------------------
+
+invariant TimezoneAwareDates {
+    "All date boundary checks (is_active, is_expired, creation, renewal)"
+    "use getTodayISO() which resolves 'today' in Europe/Rome timezone."
+    "No raw new Date() for date comparisons — prevents UTC drift on Cloudflare Workers."
+    "ISO string comparison (YYYY-MM-DD lexicographic) used for all date predicates."
+    "Same utils (getTodayISO, isToday, isThisWeek) used across public and owner surfaces."
 }
 
 -- ---------------------------------------------------------------

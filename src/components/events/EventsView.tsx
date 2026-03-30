@@ -62,7 +62,7 @@ export function EventsView({ events, isLoading }: EventsViewProps) {
         </div>
 
         <div className="space-y-2">
-          <div className="scroll-hide -mx-5 flex gap-2 overflow-x-auto px-5" role="toolbar" aria-label={t("events.timeFilter")}>
+          <div className="flex flex-wrap gap-2" role="toolbar" aria-label={t("events.timeFilter")}>
             <Pill active={timeFilter === "tutti"} onClick={() => setTimeFilter("tutti")}>
               {t("events.all")}
             </Pill>
@@ -74,7 +74,7 @@ export function EventsView({ events, isLoading }: EventsViewProps) {
             </Pill>
           </div>
 
-          <div className="scroll-hide -mx-5 flex gap-2 overflow-x-auto px-5" role="toolbar" aria-label={t("events.categoryFilter")}>
+          <div className="flex flex-wrap gap-2" role="toolbar" aria-label={t("events.categoryFilter")}>
             <Pill active={category === "all"} onClick={() => setCategory("all")}>
               {t("events.allCategories")}
             </Pill>

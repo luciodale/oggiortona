@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { ChevronLeftIcon } from "../../icons/ChevronLeftIcon";
 import { ChevronRightIcon } from "../../icons/ChevronRightIcon";
+import { getTodayISO } from "../../utils/date";
 
 const WEEKDAYS = ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"];
 const MONTH_NAMES = [
@@ -42,16 +43,13 @@ type CalendarGridProps = {
 };
 
 export function CalendarGrid({ value, onChange, onClose }: CalendarGridProps) {
-  const initial = value ? parseISO(value) : (() => {
-    const now = new Date();
-    return [now.getFullYear(), now.getMonth(), now.getDate()] as [number, number, number];
-  })();
+  const initial = parseISO(value || getTodayISO());
 
   const [viewYear, setViewYear] = useState(initial[0]);
   const [viewMonth, setViewMonth] = useState(initial[1]);
 
   const cells = getMonthDays(viewYear, viewMonth);
-  const todayISO = formatISO(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+  const todayISO = getTodayISO();
 
   const goPrev = useCallback(() => {
     if (viewMonth === 0) {

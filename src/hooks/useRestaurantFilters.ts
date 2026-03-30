@@ -5,15 +5,15 @@ import { getTodayISO } from "../utils/date";
 
 type Filters = {
   openNow: boolean;
-  hasSpecial: boolean;
-  hasDeals: boolean;
+  hasPromo: boolean;
+  hasNews: boolean;
 };
 
 export function useRestaurantFilters(restaurants: Array<RestaurantWithStatus>, pinnedIds: Set<number>) {
   const [filters, setFilters] = useState<Filters>({
     openNow: false,
-    hasSpecial: false,
-    hasDeals: false,
+    hasPromo: false,
+    hasNews: false,
   });
 
   // Tick every 60s to re-evaluate open status
@@ -40,11 +40,11 @@ export function useRestaurantFilters(restaurants: Array<RestaurantWithStatus>, p
     if (filters.openNow) {
       result = result.filter((r) => r.isOpen);
     }
-    if (filters.hasSpecial) {
-      result = result.filter((r) => r.promotions.some((p) => p.type === "special"));
+    if (filters.hasPromo) {
+      result = result.filter((r) => r.promotions.some((p) => p.type === "special" || p.type === "deal"));
     }
-    if (filters.hasDeals) {
-      result = result.filter((r) => r.promotions.some((p) => p.type === "deal"));
+    if (filters.hasNews) {
+      result = result.filter((r) => r.promotions.some((p) => p.type === "news"));
     }
 
     result.sort((a, b) => {
@@ -83,25 +83,33 @@ export function useRestaurantFilters(restaurants: Array<RestaurantWithStatus>, p
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [restaurants, filters, tick, pinnedIds]);
 
-  const noFilter: Filters = { openNow: false, hasSpecial: false, hasDeals: false };
+  const noFilter: Filters = { openNow: false, hasPromo: false, hasNews: false };
 
   function toggleOpenNow() {
     setFilters((prev) => prev.openNow ? noFilter : { ...noFilter, openNow: true });
   }
 
-  function toggleHasSpecial() {
-    setFilters((prev) => prev.hasSpecial ? noFilter : { ...noFilter, hasSpecial: true });
+  function toggleHasPromo() {
+    setFilters((prev) => prev.hasPromo ? noFilter : { ...noFilter, hasPromo: true });
   }
 
-  function toggleHasDeals() {
-    setFilters((prev) => prev.hasDeals ? noFilter : { ...noFilter, hasDeals: true });
+  function toggleHasNews() {
+    setFilters((prev) => prev.hasNews ? noFilter : { ...noFilter, hasNews: true });
   }
+
+  function clearFilters() {
+    setFilters(noFilter);
+  }
+
+  const hasActiveFilter = filters.openNow || filters.hasPromo || filters.hasNews;
 
   return {
     filters,
     filtered,
+    hasActiveFilter,
+    clearFilters,
     toggleOpenNow,
-    toggleHasSpecial,
-    toggleHasDeals,
+    toggleHasPromo,
+    toggleHasNews,
   };
 }

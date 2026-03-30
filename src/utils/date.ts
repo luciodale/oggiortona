@@ -6,23 +6,24 @@ export function isToday(dateStart: string, dateEnd: string | null) {
 }
 
 export function isThisWeek(dateStr: string) {
-  const date = new Date(dateStr);
-  const now = new Date();
-  const startOfWeek = new Date(now);
-  startOfWeek.setDate(now.getDate() - now.getDay() + 1); // Monday
-  startOfWeek.setHours(0, 0, 0, 0);
+  const today = getTodayISO();
+  const d = new Date(today + "T00:00:00Z");
+  const dow = d.getUTCDay();
+  const mondayOffset = dow === 0 ? 6 : dow - 1;
 
-  const endOfWeek = new Date(startOfWeek);
-  endOfWeek.setDate(startOfWeek.getDate() + 7);
+  const monday = new Date(d);
+  monday.setUTCDate(d.getUTCDate() - mondayOffset);
+  const mondayISO = monday.toISOString().substring(0, 10);
 
-  return date >= startOfWeek && date < endOfWeek;
+  const sunday = new Date(monday);
+  sunday.setUTCDate(monday.getUTCDate() + 6);
+  const sundayISO = sunday.toISOString().substring(0, 10);
+
+  return dateStr >= mondayISO && dateStr <= sundayISO;
 }
 
 export function isUpcoming(dateStr: string) {
-  const date = new Date(dateStr);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return date >= today;
+  return dateStr >= getTodayISO();
 }
 
 import type { Locale } from "../types/domain";
@@ -31,19 +32,21 @@ import { t } from "../i18n/t";
 const LOCALE_MAP: Record<Locale, string> = { it: "it-IT", en: "en-GB" };
 
 export function formatDateLong(dateStr: string, locale: Locale) {
-  const date = new Date(dateStr);
+  const date = new Date(dateStr + "T00:00:00Z");
   return date.toLocaleDateString(LOCALE_MAP[locale], {
     weekday: "long",
     day: "numeric",
     month: "long",
+    timeZone: "Europe/Rome",
   });
 }
 
 export function formatDateShort(dateStr: string, locale: Locale) {
-  const date = new Date(dateStr);
+  const date = new Date(dateStr + "T00:00:00Z");
   return date.toLocaleDateString(LOCALE_MAP[locale], {
     day: "numeric",
     month: "short",
+    timeZone: "Europe/Rome",
   });
 }
 
@@ -59,7 +62,7 @@ export function relativeTime(dateStr: string, locale: Locale) {
   if (diffMinutes < 60) return t("date.minutesAgo", locale, { count: diffMinutes });
   if (diffHours < 24) return t("date.hoursAgo", locale, { count: diffHours });
   if (diffDays < 7) return t("date.daysAgo", locale, { count: diffDays });
-  return formatDateShort(dateStr, locale);
+  return formatDateShort(dateStr.substring(0, 10), locale);
 }
 
 export function getTodayISO() {

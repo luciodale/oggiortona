@@ -10,13 +10,14 @@ import { CupIcon } from "../icons/CupIcon";
 import { StarIcon } from "../icons/StarIcon";
 import { TagIcon } from "../icons/TagIcon";
 import { DAY_NAMES, MONTH_NAMES_LOWER as MONTH_NAMES } from "../i18n/t";
+import { getNowInItaly } from "../utils/time";
 
 export function HomeRoute() {
   const { t, locale } = useLocale();
   const { user } = useSpaAuth();
   const { data, isLoading } = useHomeData();
 
-  const d = new Date();
+  const d = getNowInItaly();
 
   if (isLoading || !data) {
     return <ContentLoader />;

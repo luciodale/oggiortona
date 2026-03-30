@@ -27,10 +27,10 @@ entity Event {
     created_at: Timestamp,
     updated_at: Timestamp,
 
-    -- Derived
-    is_today: date_start = today,
-    is_this_week: date_start >= start_of_week and date_start < end_of_week,
-    is_upcoming: date_start > today
+    -- Derived (all use getTodayISO() — Europe/Rome timezone)
+    is_today: date_start = today or (date_start <= today and date_end >= today),
+    is_this_week: date_start >= monday_iso and date_start <= sunday_iso,
+    is_upcoming: date_start >= today
 }
 
 -- ---------------------------------------------------------------
@@ -39,6 +39,17 @@ entity Event {
 
 config {
     timezone: String = "Europe/Rome"
+}
+
+-- ---------------------------------------------------------------
+-- Invariants
+-- ---------------------------------------------------------------
+
+invariant TimezoneAwareDates {
+    "All date boundary checks (is_today, is_this_week, is_upcoming, past filtering)"
+    "use getTodayISO() which resolves 'today' in Europe/Rome timezone."
+    "No raw new Date() for date comparisons — prevents UTC drift on Cloudflare Workers."
+    "ISO string comparison (YYYY-MM-DD lexicographic) used for all date predicates."
 }
 
 -- ---------------------------------------------------------------

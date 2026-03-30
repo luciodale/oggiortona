@@ -19,23 +19,26 @@ export function RestaurantList({ restaurants, isLoading, isLoggedIn, initialPinn
   useZipperScroll(containerRef);
   const { pinnedIds, togglePin } = usePinnedRestaurants(initialPinnedIds);
 
-  const { filters, filtered, toggleOpenNow, toggleHasSpecial, toggleHasDeals } =
+  const { filters, filtered, hasActiveFilter, clearFilters, toggleOpenNow, toggleHasPromo, toggleHasNews } =
     useRestaurantFilters(restaurants, pinnedIds);
 
-  const specialCount = restaurants.filter((r) => r.promotions.some((p) => p.type === "special")).length;
-  const dealCount = restaurants.filter((r) => r.promotions.some((p) => p.type === "deal")).length;
+  const promoCount = restaurants.filter((r) => r.promotions.some((p) => p.type === "special" || p.type === "deal")).length;
+  const newsCount = restaurants.filter((r) => r.promotions.some((p) => p.type === "news")).length;
 
   return (
     <div ref={containerRef}>
-      <div className="scroll-hide -mx-5 flex gap-2 overflow-x-auto px-5 pb-1" role="toolbar" aria-label="Filtri">
+      <div className="flex flex-wrap gap-2 pb-1" role="toolbar" aria-label="Filtri">
+        <Pill active={!hasActiveFilter} onClick={clearFilters}>
+          Tutti
+        </Pill>
         <Pill active={filters.openNow} onClick={toggleOpenNow}>
           Aperto ora
         </Pill>
-        <Pill active={filters.hasSpecial} onClick={toggleHasSpecial}>
-          {specialCount > 0 ? `Piatto del giorno (${specialCount})` : "Piatto del giorno"}
+        <Pill active={filters.hasPromo} onClick={toggleHasPromo}>
+          {promoCount > 0 ? `Promozioni (${promoCount})` : "Promozioni"}
         </Pill>
-        <Pill active={filters.hasDeals} onClick={toggleHasDeals}>
-          {dealCount > 0 ? `Offerte (${dealCount})` : "Offerte"}
+        <Pill active={filters.hasNews} onClick={toggleHasNews}>
+          {newsCount > 0 ? `News (${newsCount})` : "News"}
         </Pill>
       </div>
 
