@@ -3,10 +3,11 @@ import { events } from "../../db/schema";
 import { gte, asc, eq, and as dbAnd, or } from "drizzle-orm";
 import { createEventApiSchema } from "../../schemas/event";
 import { notifyAdmins } from "../../utils/adminNotify";
+import { getTodayISO } from "../../utils/date";
 
 export async function GET({ locals }: APIContext): Promise<Response> {
   const db = locals.db;
-  const today = new Date().toISOString().split("T")[0]!;
+  const today = getTodayISO();
 
   const allEvents = await db
     .select()

@@ -1,8 +1,9 @@
 import { useState, useMemo } from "react";
 import type { EventRow } from "../types/database";
 import { isThisWeek, isToday } from "../utils/date";
+import { eventFilterCategories } from "../config/categories";
 
-const KNOWN_CATEGORIES = new Set(["sport", "musica", "cultura"]);
+const KNOWN_CATEGORIES = new Set(eventFilterCategories.filter((c) => c !== "altro"));
 
 export type TimeFilter = "oggi" | "tutti" | "passati";
 
