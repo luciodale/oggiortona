@@ -5,6 +5,12 @@ type BeforeInstallPromptEvent = Event & {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 };
 
+const DISMISS_KEY = "pwa-install-dismissed";
+
+function isDismissedThisSession() {
+  return sessionStorage.getItem(DISMISS_KEY) === "1";
+}
+
 function isStandalone() {
   if (window.matchMedia("(display-mode: standalone)").matches) return true;
   if ("standalone" in navigator && (navigator as Record<string, unknown>).standalone === true) return true;
@@ -23,10 +29,10 @@ export function usePwaInstallPrompt() {
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
-    if (isStandalone()) return;
+    if (isStandalone() || isDismissedThisSession()) return;
 
     if (isIos()) {
-      timerRef.current = setTimeout(() => setShowIos(true), 10_000);
+      timerRef.current = setTimeout(() => setShowIos(true), 7_000);
       return () => clearTimeout(timerRef.current);
     }
 
@@ -41,7 +47,7 @@ export function usePwaInstallPrompt() {
 
   useEffect(() => {
     if (!deferredPrompt) return;
-    timerRef.current = setTimeout(() => setReady(true), 10_000);
+    timerRef.current = setTimeout(() => setReady(true), 7_000);
     return () => clearTimeout(timerRef.current);
   }, [deferredPrompt]);
 
@@ -59,6 +65,7 @@ export function usePwaInstallPrompt() {
   );
 
   function handleDismiss() {
+    sessionStorage.setItem(DISMISS_KEY, "1");
     setReady(false);
     setShowIos(false);
     setDeferredPrompt(null);

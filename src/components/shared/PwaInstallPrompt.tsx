@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { usePwaInstallPrompt } from "../../hooks/usePwaInstallPrompt";
+import { EllipsisIcon } from "../../icons/EllipsisIcon";
 import { ShareIcon } from "../../icons/ShareIcon";
 import { SquarePlusIcon } from "../../icons/SquarePlusIcon";
 import { useLocale } from "../../i18n/useLocale";
@@ -90,15 +91,21 @@ export function PwaInstallPrompt() {
           <div className="mt-3 space-y-2.5 rounded-xl bg-surface-warm px-3 py-3">
             <div className="flex items-center gap-2 text-[12px] text-primary">
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-white shadow-sm">
+                <EllipsisIcon className="h-3.5 w-3.5 text-accent" />
+              </span>
+              <span><strong>1.</strong> <strong>{t("pwa.iosStep1")}</strong> {t("pwa.iosStep1detail")}</span>
+            </div>
+            <div className="flex items-center gap-2 text-[12px] text-primary">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-white shadow-sm">
                 <ShareIcon className="h-3.5 w-3.5 text-accent" />
               </span>
-              <span>{t("pwa.iosStep1")} <span className="text-muted">{t("pwa.iosStep1detail")}</span></span>
+              <span><strong>2.</strong> <strong>{t("pwa.iosStep2")}</strong> {t("pwa.iosStep2detail")}</span>
             </div>
             <div className="flex items-center gap-2 text-[12px] text-primary">
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-white shadow-sm">
                 <SquarePlusIcon className="h-3.5 w-3.5 text-accent" />
               </span>
-              <span>{t("pwa.iosStep2")}</span>
+              <span><strong>3.</strong> <strong>{t("pwa.iosStep3")}</strong></span>
             </div>
           </div>
           <button

@@ -87,6 +87,7 @@ export const en: Translations = {
   "events.all": "All",
   "events.today": "Today",
   "events.allCategories": "All",
+  "events.past": "Past",
   "events.allEvents": "All events",
   "events.updated": "Event updated!",
   "events.published": "Event published!",
@@ -187,9 +188,11 @@ export const en: Translations = {
   "pwa.subtitle": "Keep everything at your fingertips, like a real app.",
   "pwa.notNow": "Not now",
   "pwa.installBtn": "Install",
-  "pwa.iosStep1": "Tap \"Share\"",
-  "pwa.iosStep1detail": "in Safari's bottom bar",
-  "pwa.iosStep2": "Select \"Add to Home Screen\"",
+  "pwa.iosStep1": "Tap the three dots",
+  "pwa.iosStep1detail": "at the bottom-right in Safari",
+  "pwa.iosStep2": "Tap \"Share\"",
+  "pwa.iosStep2detail": "the square with an arrow icon",
+  "pwa.iosStep3": "Scroll down and select \"Add to Home Screen\"",
   "pwa.gotIt": "Got it",
 
   // UI Components

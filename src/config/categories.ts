@@ -1,6 +1,6 @@
-import type { Locale } from "../types/domain";
 import type { TranslationKey } from "../i18n/t";
 import { t } from "../i18n/t";
+import type { Locale } from "../types/domain";
 
 function buildLabels(keys: Array<string>, prefix: string, locale: Locale): Record<string, string> {
   const result: Record<string, string> = {};
@@ -52,7 +52,7 @@ export const eventFormCategories = [
 
 export const eventFilterCategories = [
   "sport",
-  "musica",
+  "cibo",
   "cultura",
   "altro",
 ];

@@ -34,12 +34,8 @@ export function RootLayout() {
         <Outlet />
       </main>
       <BottomNav />
-      {pathname === "/" && (
-        <>
-          <NotificationPrompt />
-          <PwaInstallPrompt />
-        </>
-      )}
+      <PwaInstallPrompt />
+      {pathname === "/" && <NotificationPrompt />}
     </>
   );
 }

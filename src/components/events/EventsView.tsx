@@ -1,10 +1,12 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import type { EventRow } from "../../types/database";
 import { EventList } from "./EventList";
 import { ViewToggle } from "../shared/ViewToggle";
 import { useViewMode } from "../../hooks/useViewMode";
 import { useRefresh } from "../../hooks/useRefresh";
 import { useEventFilters } from "../../hooks/useEventFilters";
+import type { TimeFilter } from "../../hooks/useEventFilters";
 import { useEventMapPins } from "../../hooks/useEventMapPins";
 import { eventFilterCategories, eventCategoryLabels } from "../../config/categories";
 import { ContentLoader } from "../shared/ContentLoader";
@@ -22,10 +24,24 @@ type EventsViewProps = {
 export function EventsView({ events, isLoading }: EventsViewProps) {
   const { locale, t } = useLocale();
   const { mode, handleToggle, anchorRef, mapTop } = useViewMode();
-  const { isRefreshing, handleRefresh } = useRefresh([["events"]]);
-  const { timeFilter, setTimeFilter, category, setCategory, filtered, grouped } = useEventFilters(events);
+  const { isRefreshing, handleRefresh } = useRefresh([["events"], ["events-past"]]);
+  const [timeFilter, setTimeFilter] = useState<TimeFilter>("tutti");
+
+  const { data: pastData, isLoading: isPastLoading } = useQuery<{ events: Array<EventRow> }>({
+    queryKey: ["events-past"],
+    queryFn: () => fetch("/api/events/past").then((r) => r.json()),
+    enabled: timeFilter === "passati",
+  });
+
+  const { category, setCategory, filtered, grouped } = useEventFilters({
+    events,
+    pastEvents: pastData?.events ?? [],
+    timeFilter,
+  });
   const pins = useEventMapPins(filtered);
   const catLabels = eventCategoryLabels(locale);
+
+  const showLoader = timeFilter === "passati" ? isPastLoading : isLoading;
 
   return (
     <div>
@@ -53,6 +69,9 @@ export function EventsView({ events, isLoading }: EventsViewProps) {
             <Pill active={timeFilter === "oggi"} onClick={() => setTimeFilter("oggi")}>
               {t("events.today")}
             </Pill>
+            <Pill active={timeFilter === "passati"} onClick={() => setTimeFilter("passati")}>
+              {t("events.past")}
+            </Pill>
           </div>
 
           <div className="scroll-hide -mx-5 flex gap-2 overflow-x-auto px-5" role="toolbar" aria-label={t("events.categoryFilter")}>
@@ -72,7 +91,7 @@ export function EventsView({ events, isLoading }: EventsViewProps) {
         </div>
       </div>
 
-      {isLoading ? (
+      {showLoader ? (
         <ContentLoader />
       ) : mode === "list" ? (
         <EventList grouped={grouped} />

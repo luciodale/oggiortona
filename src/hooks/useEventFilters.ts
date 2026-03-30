@@ -4,11 +4,12 @@ import { isThisWeek, isToday } from "../utils/date";
 
 const KNOWN_CATEGORIES = new Set(["sport", "musica", "cultura"]);
 
-export type TimeFilter = "oggi" | "tutti";
+export type TimeFilter = "oggi" | "tutti" | "passati";
 
 type EventGroups = {
   thisWeek: Array<EventRow>;
   upcoming: Array<EventRow>;
+  past: Array<EventRow>;
 };
 
 function eventCategories(event: EventRow): Array<string> {
@@ -23,20 +24,30 @@ function matchesCategory(event: EventRow, filter: string): boolean {
 }
 
 function matchesTime(event: EventRow, filter: TimeFilter): boolean {
-  if (filter === "tutti") return true;
+  if (filter === "tutti" || filter === "passati") return true;
   return isToday(event.dateStart, event.dateEnd);
 }
 
-export function useEventFilters(events: Array<EventRow>) {
-  const [timeFilter, setTimeFilter] = useState<TimeFilter>("tutti");
+type UseEventFiltersParams = {
+  events: Array<EventRow>;
+  pastEvents: Array<EventRow>;
+  timeFilter: TimeFilter;
+};
+
+export function useEventFilters({ events, pastEvents, timeFilter }: UseEventFiltersParams) {
   const [category, setCategory] = useState<string>("all");
 
+  const isPast = timeFilter === "passati";
+  const source = isPast ? pastEvents : events;
+
   const filtered = useMemo(
-    () => events.filter((e) => matchesTime(e, timeFilter) && matchesCategory(e, category)),
-    [events, timeFilter, category],
+    () => source.filter((e) => matchesTime(e, timeFilter) && matchesCategory(e, category)),
+    [source, timeFilter, category],
   );
 
   const grouped = useMemo<EventGroups>(() => {
+    if (isPast) return { thisWeek: [], upcoming: [], past: filtered };
+
     const thisWeek: Array<EventRow> = [];
     const upcoming: Array<EventRow> = [];
 
@@ -48,8 +59,8 @@ export function useEventFilters(events: Array<EventRow>) {
       }
     }
 
-    return { thisWeek, upcoming };
-  }, [filtered]);
+    return { thisWeek, upcoming, past: [] };
+  }, [filtered, isPast]);
 
-  return { timeFilter, setTimeFilter, category, setCategory, filtered, grouped };
+  return { category, setCategory, filtered, grouped };
 }

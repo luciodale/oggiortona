@@ -83,6 +83,7 @@ export const it = {
   "events.all": "Tutti",
   "events.today": "Oggi",
   "events.allCategories": "Tutte",
+  "events.past": "Passati",
   "events.allEvents": "Tutti gli eventi",
   "events.updated": "Evento aggiornato!",
   "events.published": "Evento pubblicato!",
@@ -183,9 +184,11 @@ export const it = {
   "pwa.subtitle": "Tieni tutto a portata di mano, come un'app vera.",
   "pwa.notNow": "Non ora",
   "pwa.installBtn": "Installa",
-  "pwa.iosStep1": "Tocca \"Condividi\"",
-  "pwa.iosStep1detail": "nella barra in basso di Safari",
-  "pwa.iosStep2": "Seleziona \"Aggiungi alla schermata Home\"",
+  "pwa.iosStep1": "Tocca i tre puntini",
+  "pwa.iosStep1detail": "in basso a destra in Safari",
+  "pwa.iosStep2": "Tocca \"Condividi\"",
+  "pwa.iosStep2detail": "con l'icona del quadrato con la freccia",
+  "pwa.iosStep3": "Scorri e seleziona \"Aggiungi alla schermata Home\"",
   "pwa.gotIt": "Ho capito",
 
   // UI Components
