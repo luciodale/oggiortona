@@ -18,7 +18,8 @@
     {
       "binding": "DB",
       "database_name": "oggi-a-ortona-db",
-      "database_id": "a36ca5cb-04c8-436e-a3ad-ceeb4653b674"
+      "database_id": "a36ca5cb-04c8-436e-a3ad-ceeb4653b674",
+      "migrations_dir": "src/db/migrations"
     }
   ]
 }

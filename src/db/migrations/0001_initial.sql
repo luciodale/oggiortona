@@ -19,7 +19,6 @@ CREATE TABLE IF NOT EXISTS restaurants (
   latitude REAL,
   longitude REAL,
   opening_hours TEXT NOT NULL,
-  image_url TEXT,
   menu_url TEXT,
   owner_id TEXT NOT NULL REFERENCES users(id),
   active INTEGER NOT NULL DEFAULT 1,
@@ -50,7 +49,7 @@ CREATE INDEX IF NOT EXISTS idx_promotions_dates ON promotions(date_start, date_e
 -- Push Subscriptions (admin | owner | general)
 CREATE TABLE IF NOT EXISTS push_subscriptions (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  user_id TEXT REFERENCES users(id) ON DELETE CASCADE,
   endpoint TEXT NOT NULL,
   p256dh TEXT NOT NULL,
   auth TEXT NOT NULL,
@@ -60,6 +59,16 @@ CREATE TABLE IF NOT EXISTS push_subscriptions (
 );
 CREATE INDEX IF NOT EXISTS idx_push_subscriptions_user ON push_subscriptions(user_id);
 CREATE INDEX IF NOT EXISTS idx_push_subscriptions_scope ON push_subscriptions(scope);
+
+-- Pinned Restaurants (user favourites)
+CREATE TABLE IF NOT EXISTS pinned_restaurants (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  restaurant_id INTEGER NOT NULL REFERENCES restaurants(id) ON DELETE CASCADE,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  UNIQUE(user_id, restaurant_id)
+);
+CREATE INDEX IF NOT EXISTS idx_pinned_user ON pinned_restaurants(user_id);
 
 -- Events
 CREATE TABLE IF NOT EXISTS events (
@@ -76,7 +85,7 @@ CREATE TABLE IF NOT EXISTS events (
   longitude REAL,
   category TEXT NOT NULL,
   price REAL,
-  image_url TEXT,
+  link TEXT,
   owner_id TEXT NOT NULL REFERENCES users(id),
   active INTEGER NOT NULL DEFAULT 1,
   deleted INTEGER NOT NULL DEFAULT 0,
