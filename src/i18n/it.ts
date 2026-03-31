@@ -51,8 +51,6 @@ export const it = {
   "home.today": "oggi?",
   "home.whereToEat": "Dove mangiare",
   "home.whatToDo": "Cosa fare",
-  "home.restaurantsInitial": "L",
-  "home.eventsInitial": "E",
   "home.venuesInOrtona": "{count} locali a Ortona",
   "home.specialOne": "{count} piatto del giorno",
   "home.specialMany": "{count} piatti del giorno",

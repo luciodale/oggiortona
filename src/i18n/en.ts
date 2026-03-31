@@ -55,8 +55,6 @@ export const en: Translations = {
   "home.today": "today?",
   "home.whereToEat": "Where to eat",
   "home.whatToDo": "Things to do",
-  "home.restaurantsInitial": "V",
-  "home.eventsInitial": "E",
   "home.venuesInOrtona": "{count} venues in Ortona",
   "home.specialOne": "{count} daily special",
   "home.specialMany": "{count} daily specials",
