@@ -38,7 +38,7 @@ export function useZipperScroll(containerRef: React.RefObject<HTMLDivElement | n
         if (progress <= 0) {
           card.style.setProperty("--zip-x", "0px");
           card.style.setProperty("--zip-scale", "1");
-          card.style.setProperty("--zip-blur", "0px");
+          card.removeAttribute("data-zip-blur");
         } else {
           const eased = progress * progress;
           const direction = i % 2 === 0 ? -1 : 1;
@@ -46,6 +46,9 @@ export function useZipperScroll(containerRef: React.RefObject<HTMLDivElement | n
           card.style.setProperty("--zip-x", `${eased * MAX_OFFSET_X * direction}px`);
           card.style.setProperty("--zip-scale", `${1 - eased * (1 - MIN_SCALE)}`);
           card.style.setProperty("--zip-blur", `${eased * MAX_BLUR}px`);
+          if (!card.hasAttribute("data-zip-blur")) {
+            card.setAttribute("data-zip-blur", "");
+          }
         }
 
         if (!card.hasAttribute("data-zip-ready")) {

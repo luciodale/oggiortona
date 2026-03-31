@@ -127,11 +127,13 @@ body {
 .zipper-card {
   --zip-x: 0px;
   --zip-scale: 1;
-  --zip-blur: 0px;
   transform: translateX(var(--zip-x)) scale(var(--zip-scale));
-  filter: blur(var(--zip-blur));
-  will-change: transform, filter;
+  will-change: transform;
   transform-origin: center center;
+}
+
+.zipper-card[data-zip-blur] {
+  filter: blur(var(--zip-blur));
 }
 
 /* ==============================
