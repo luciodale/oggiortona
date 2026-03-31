@@ -104,7 +104,7 @@ export function ProfileDashboard() {
 
       <div className="mt-8 space-y-4">
         <Link
-          to="/add/restaurant"
+          to="/profile/add/restaurant"
           className="flex items-center justify-center gap-2 rounded-xl bg-mangiare py-3.5 text-[13px] font-semibold text-white no-underline transition-all hover:bg-mangiare/90 active:scale-[0.98]"
         >
           <CupIcon className="h-4 w-4" />
