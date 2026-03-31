@@ -71,11 +71,6 @@ const profileIndexRoute = createRoute({
   component: lazyRouteComponent(() => import("./components/profile/ProfileDashboard"), "ProfileDashboard"),
 });
 const profileRestaurantRoute = createRoute({ getParentRoute: () => profileRoute, path: "/restaurant/$id", component: Outlet });
-const profileRestaurantPreviewRoute = createRoute({
-  getParentRoute: () => profileRestaurantRoute,
-  path: "/",
-  component: lazyRouteComponent(() => import("./components/profile/ProfileRestaurantPreview"), "ProfileRestaurantPreview"),
-});
 const profileRestaurantEditRoute = createRoute({
   getParentRoute: () => profileRestaurantRoute,
   path: "/edit",
@@ -92,11 +87,6 @@ const profileAddRestaurantRoute = createRoute({
   component: lazyRouteComponent(() => import("./components/profile/ProfileAddRestaurant"), "ProfileAddRestaurant"),
 });
 const profileEventRoute = createRoute({ getParentRoute: () => profileRoute, path: "/event/$id", component: Outlet });
-const profileEventPreviewRoute = createRoute({
-  getParentRoute: () => profileEventRoute,
-  path: "/",
-  component: lazyRouteComponent(() => import("./components/profile/ProfileEventPreview"), "ProfileEventPreview"),
-});
 const profileEventEditRoute = createRoute({
   getParentRoute: () => profileEventRoute,
   path: "/edit",
@@ -122,9 +112,9 @@ const routeTree = rootRoute.addChildren([
   ssoCallbackRoute,
   profileRoute.addChildren([
     profileIndexRoute,
-    profileRestaurantRoute.addChildren([profileRestaurantPreviewRoute, profileRestaurantEditRoute, profileStorefrontRoute]),
+    profileRestaurantRoute.addChildren([profileRestaurantEditRoute, profileStorefrontRoute]),
     profileAddRestaurantRoute,
-    profileEventRoute.addChildren([profileEventPreviewRoute, profileEventEditRoute]),
+    profileEventRoute.addChildren([profileEventEditRoute]),
   ]),
   adminRoute.addChildren([adminIndexRoute]),
 ]);

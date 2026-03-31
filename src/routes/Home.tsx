@@ -6,6 +6,8 @@ import { CalendarIcon } from "../icons/CalendarIcon";
 import { ChevronRightIcon } from "../icons/ChevronRightIcon";
 import { ClockIcon } from "../icons/ClockIcon";
 import { CupIcon } from "../icons/CupIcon";
+import { DiningIllustration } from "../icons/DiningIllustration";
+import { SparkleIllustration } from "../icons/SparkleIllustration";
 import { StarIcon } from "../icons/StarIcon";
 import { TagIcon } from "../icons/TagIcon";
 import { DAY_NAMES, MONTH_NAMES_LOWER as MONTH_NAMES } from "../i18n/t";
@@ -43,8 +45,9 @@ export function HomeRoute() {
       </div>
 
       <nav className="flex flex-col gap-5 pt-10 stagger-children" aria-label={t("home.mainSections")}>
-        <Link to="/restaurants" className="group overflow-hidden rounded-3xl bg-gradient-to-br from-mangiare-light via-[#fae6d9] to-[#f5d4c2] px-6 pb-6 pt-7 no-underline shadow-[0_2px_20px_rgba(196,81,42,0.07)] transition-all hover:shadow-[0_4px_28px_rgba(196,81,42,0.13)] active:scale-[0.98]">
-          <div className="flex items-start justify-between">
+        <Link to="/restaurants" className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-mangiare-light via-[#fae6d9] to-[#f5d4c2] px-6 pb-6 pt-7 no-underline shadow-[0_2px_20px_rgba(196,81,42,0.07)] transition-all hover:shadow-[0_4px_28px_rgba(196,81,42,0.13)] active:scale-[0.98]">
+          <DiningIllustration className="absolute -right-4 bottom-0 h-28 w-56 text-mangiare/[0.22]" />
+          <div className="relative flex items-start justify-between">
             <div>
               <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-mangiare">{t("home.whereToEat")}</span>
               <h2 className="mt-2 font-family-display text-[2.25rem] font-semibold leading-none text-primary">{t("nav.restaurants")}</h2>
@@ -85,8 +88,9 @@ export function HomeRoute() {
           </div>
         </Link>
 
-        <Link to="/events" className="group overflow-hidden rounded-3xl bg-gradient-to-br from-fare-light via-[#e2ecf4] to-[#d4e3f0] px-6 pb-6 pt-7 no-underline shadow-[0_2px_20px_rgba(61,107,142,0.07)] transition-all hover:shadow-[0_4px_28px_rgba(61,107,142,0.13)] active:scale-[0.98]">
-          <div className="flex items-start justify-between">
+        <Link to="/events" className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-fare-light via-[#e2ecf4] to-[#d4e3f0] px-6 pb-6 pt-7 no-underline shadow-[0_2px_20px_rgba(61,107,142,0.07)] transition-all hover:shadow-[0_4px_28px_rgba(61,107,142,0.13)] active:scale-[0.98]">
+          <SparkleIllustration className="absolute right-6 bottom-2 h-32 w-32 text-fare/[0.22]" />
+          <div className="relative flex items-start justify-between">
             <div>
               <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-fare">{t("home.whatToDo")}</span>
               <h2 className="mt-2 font-family-display text-[2.25rem] font-semibold leading-none text-primary">{t("nav.events")}</h2>

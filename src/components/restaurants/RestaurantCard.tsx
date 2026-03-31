@@ -12,9 +12,10 @@ type RestaurantCardProps = {
   isPinned: boolean;
   onTogglePin?: (id: number) => void;
   zipperCard?: boolean;
+  onCardClick?: (restaurant: RestaurantWithStatus) => void;
 };
 
-export function RestaurantCard({ restaurant, isPinned, onTogglePin, zipperCard = true }: RestaurantCardProps) {
+export function RestaurantCard({ restaurant, isPinned, onTogglePin, zipperCard = true, onCardClick }: RestaurantCardProps) {
   const { locale, t } = useLocale();
 
   function handlePinClick(e: React.MouseEvent) {
@@ -22,15 +23,26 @@ export function RestaurantCard({ restaurant, isPinned, onTogglePin, zipperCard =
     e.stopPropagation();
     onTogglePin?.(restaurant.id);
   }
+
+  function handleClick(e: React.MouseEvent) {
+    if (onCardClick) {
+      e.preventDefault();
+      onCardClick(restaurant);
+    }
+  }
   const labels = restaurantTypeLabels(locale);
   const specials = restaurant.promotions.filter((p) => p.type === "special");
   const deals = restaurant.promotions.filter((p) => p.type === "deal");
   const newsItems = restaurant.promotions.filter((p) => p.type === "news");
 
   return (
-    <div className={`${zipperCard ? "zipper-card" : ""} rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] border-l-[3px] transition-colors duration-200 ${isPinned ? "border-l-accent/40" : "border-l-transparent"}`}>
+    <div
+      className={`${zipperCard ? "zipper-card" : ""} rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] border-l-[3px] transition-colors duration-200 ${isPinned ? "border-l-accent/40" : "border-l-transparent"} ${onCardClick ? "cursor-pointer" : ""}`}
+      onClick={handleClick}
+      role={onCardClick ? "button" : undefined}
+    >
       <a
-        href={`/restaurants/${restaurant.id}`}
+        href={onCardClick ? undefined : `/restaurants/${restaurant.id}`}
         className="block p-4 pb-0 no-underline"
       >
         {/* Top row: name + status */}

@@ -22,7 +22,7 @@ export type MapPin = {
 
 export const ORTONA_CENTER: [number, number] = [42.3548, 14.4030];
 export const DEFAULT_ZOOM = 15;
-export const TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+export const TILE_URL = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
 
 export function buildPopupHtml(pin: MapPin) {
   return renderToStaticMarkup(createElement(MapPopup, { pin }));

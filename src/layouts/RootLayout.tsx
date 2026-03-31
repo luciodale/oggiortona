@@ -1,7 +1,9 @@
-import { useEffect } from "react";
+import { SwipeBarProvider } from "@luciodale/swipe-bar";
 import { Outlet, useRouterState } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { Toaster } from "sonner";
 import { BottomNav } from "../components/BottomNav";
+import { DetailBottomSheet } from "../components/shared/DetailBottomSheet";
 import { NotificationPrompt } from "../components/shared/NotificationPrompt";
 import { PwaInstallPrompt } from "../components/shared/PwaInstallPrompt";
 import { useThemeColor } from "../hooks/useThemeColor";
@@ -15,11 +17,11 @@ export function RootLayout() {
     const loader = document.getElementById("app-loader");
     if (!loader) return;
     loader.style.opacity = "0";
-    setTimeout(() => loader.remove(), 400);
+    setTimeout(() => loader.remove(), 200);
   }, []);
 
   return (
-    <>
+    <SwipeBarProvider>
       <Toaster
         position="top-center"
         toastOptions={{
@@ -36,6 +38,7 @@ export function RootLayout() {
       <BottomNav />
       <PwaInstallPrompt />
       {pathname === "/" && <NotificationPrompt />}
-    </>
+      <DetailBottomSheet />
+    </SwipeBarProvider>
   );
 }

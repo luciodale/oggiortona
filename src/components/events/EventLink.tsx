@@ -10,6 +10,7 @@ export function EventLink({ href, className = "" }: EventLinkProps) {
       target="_blank"
       rel="noopener noreferrer"
       className={`text-[12px] font-medium text-fare underline decoration-fare/30 hover:decoration-fare ${className}`}
+      onClick={(e) => e.stopPropagation()}
     >
       Scopri di più
     </a>

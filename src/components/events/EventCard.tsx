@@ -9,17 +9,29 @@ import { EventPriceBadge } from "./EventPriceBadge";
 type EventCardProps = {
   event: EventRow;
   zipperCard?: boolean;
+  onCardClick?: (event: EventRow) => void;
 };
 
-export function EventCard({ event, zipperCard = true }: EventCardProps) {
+export function EventCard({ event, zipperCard = true, onCardClick }: EventCardProps) {
   const { locale } = useLocale();
   const labels = eventCategoryLabels(locale);
   const categories = event.category.split(",").map((c) => c.trim());
 
+  function handleClick(e: React.MouseEvent) {
+    if (onCardClick) {
+      e.preventDefault();
+      onCardClick(event);
+    }
+  }
+
   return (
-    <div className={`${zipperCard ? "zipper-card" : ""} rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]`}>
+    <div
+      className={`${zipperCard ? "zipper-card" : ""} rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] ${onCardClick ? "cursor-pointer" : ""}`}
+      onClick={handleClick}
+      role={onCardClick ? "button" : undefined}
+    >
       <a
-        href={`/events/${event.id}`}
+        href={onCardClick ? undefined : `/events/${event.id}`}
         className="block p-4 pb-0 no-underline"
       >
         <div className="flex items-start justify-between gap-3">

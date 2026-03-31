@@ -1,9 +1,12 @@
+import { useSwipeBarContext } from "@luciodale/swipe-bar";
 import { eventCategoryColors, eventCategoryLabels } from "../../config/categories";
 import { useDeleteEntity } from "../../hooks/useDeleteEntity";
 import { useLocale } from "../../i18n/useLocale";
 import { XIcon } from "../../icons/XIcon";
 import type { EventRow } from "../../types/database";
+import type { SheetMeta } from "../../types/domain";
 import { formatDateLong } from "../../utils/date";
+import { PillActionButton } from "../shared/PillAction";
 import { PillActionLink } from "../shared/PillAction";
 
 type EventListCardProps = {
@@ -15,6 +18,12 @@ export function EventListCard({ event }: EventListCardProps) {
   const catLabels = eventCategoryLabels(locale);
   const categories = event.category.split(",").map((c) => c.trim());
   const { handleDelete } = useDeleteEntity("event");
+  const { openSidebar } = useSwipeBarContext();
+
+  function handlePreview() {
+    const meta: SheetMeta = { kind: "event", data: event };
+    openSidebar("bottom", { meta });
+  }
 
   return (
     <div className="relative rounded-2xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
@@ -57,9 +66,8 @@ export function EventListCard({ event }: EventListCardProps) {
         </span>
       )}
       <div className="mt-3 flex flex-wrap gap-2">
-        <PillActionLink
-          to="/profile/event/$id"
-          params={{ id: String(event.id) }}
+        <PillActionButton
+          onClick={handlePreview}
           label={t("profile.previewCard")}
         />
         <PillActionLink

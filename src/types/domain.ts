@@ -5,6 +5,7 @@ export type Locale = "it" | "en";
 export type PushScope = "admin" | "owner" | "general";
 
 import type {
+  EventRow,
   PromotionRow,
   OpeningHours,
   RestaurantRow,
@@ -17,3 +18,13 @@ export type RestaurantWithStatus = RestaurantRow & {
   parsedHours: OpeningHours;
   expiredPromotionCount: number;
 };
+
+export type SheetMeta =
+  | { kind: "restaurant"; data: RestaurantWithStatus }
+  | { kind: "event"; data: EventRow };
+
+export function isSheetMeta(value: unknown): value is SheetMeta {
+  if (typeof value !== "object" || value === null) return false;
+  const v = value as Record<string, unknown>;
+  return (v.kind === "restaurant" || v.kind === "event") && v.data != null;
+}

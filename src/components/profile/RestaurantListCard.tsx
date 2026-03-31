@@ -1,8 +1,10 @@
+import { useSwipeBarContext } from "@luciodale/swipe-bar";
 import { restaurantTypeLabels } from "../../config/categories";
 import { useDeleteEntity } from "../../hooks/useDeleteEntity";
 import { useLocale } from "../../i18n/useLocale";
 import { XIcon } from "../../icons/XIcon";
-import type { RestaurantWithStatus } from "../../types/domain";
+import type { RestaurantWithStatus, SheetMeta } from "../../types/domain";
+import { PillActionButton } from "../shared/PillAction";
 import { PillActionLink } from "../shared/PillAction";
 
 type RestaurantListCardProps = {
@@ -13,6 +15,12 @@ export function RestaurantListCard({ restaurant }: RestaurantListCardProps) {
   const { locale, t } = useLocale();
   const labels = restaurantTypeLabels(locale);
   const { handleDelete } = useDeleteEntity("restaurant");
+  const { openSidebar } = useSwipeBarContext();
+
+  function handlePreview() {
+    const meta: SheetMeta = { kind: "restaurant", data: restaurant };
+    openSidebar("bottom", { meta });
+  }
 
   return (
     <div className="relative rounded-2xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
@@ -49,8 +57,8 @@ export function RestaurantListCard({ restaurant }: RestaurantListCardProps) {
         </span>
       )}
       <div className="mt-3 flex flex-wrap gap-2">
-        <PillActionLink
-          to={`/profile/restaurant/${restaurant.id}`}
+        <PillActionButton
+          onClick={handlePreview}
           label={t("profile.previewCard")}
         />
         <PillActionLink

@@ -39,7 +39,6 @@ export function PushToggle({
             : "bg-surface-warm text-muted hover:bg-surface-warm/80"
       }`}
     >
-      <span className="text-sm" aria-hidden="true">{isOn ? "\uD83D\uDD14" : "\uD83D\uDD15"}</span>
       {state === "denied" && labelDenied}
       {state === "subscribed" && (busy ? labelDeactivating : labelOn)}
       {state === "unsubscribed" && (busy ? labelActivating : labelOff)}
