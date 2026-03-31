@@ -1,6 +1,6 @@
 import type { APIContext } from "astro";
 import { restaurants, promotions } from "../../db/schema";
-import { eq, lte, gte, and as dbAnd } from "drizzle-orm";
+import { eq, lte, gte, lt, and as dbAnd, count } from "drizzle-orm";
 
 import { getTodayISO } from "../../utils/date";
 import { groupPromotionsByRestaurant, enrichRestaurant } from "../../utils/enrichRestaurant";
@@ -12,13 +12,20 @@ export async function GET({ locals }: APIContext): Promise<Response> {
   const db = locals.db;
   const today = getTodayISO();
 
-  const [userRestaurants, allPromotions] = await Promise.all([
+  const [userRestaurants, allPromotions, expiredCounts] = await Promise.all([
     db.select().from(restaurants).where(dbAnd(eq(restaurants.ownerId, user.id), eq(restaurants.deleted, 0))),
     db.select().from(promotions).where(dbAnd(lte(promotions.dateStart, today), gte(promotions.dateEnd, today))),
+    db.select({ restaurantId: promotions.restaurantId, count: count() })
+      .from(promotions)
+      .where(lt(promotions.dateEnd, today))
+      .groupBy(promotions.restaurantId),
   ]);
 
+  const expiredMap = new Map(expiredCounts.map((r) => [r.restaurantId, r.count]));
   const grouped = groupPromotionsByRestaurant(allPromotions);
-  const enriched = userRestaurants.map((r) => enrichRestaurant(r, grouped.get(r.id) ?? []));
+  const enriched = userRestaurants.map((r) =>
+    enrichRestaurant(r, grouped.get(r.id) ?? [], expiredMap.get(r.id) ?? 0),
+  );
 
   return Response.json({ restaurants: enriched });
 }

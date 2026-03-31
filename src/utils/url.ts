@@ -1,7 +1,7 @@
 export function parseRedirectUrl(search: string) {
   const params = new URLSearchParams(search);
   const raw = params.get("redirect_url");
-  if (!raw || raw.startsWith("//") || raw.includes("://") || !raw.startsWith("/")) return "/";
+  if (!raw || raw.startsWith("//") || raw.includes("://") || !raw.startsWith("/")) return "/profile";
   return raw;
 }
 

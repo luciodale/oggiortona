@@ -26,7 +26,6 @@ export const it = {
   "common.edit": "Modifica",
   "common.delete": "Elimina",
   "common.publish": "Pubblica",
-  "common.renew": "Rinnova",
   "common.refresh": "Aggiorna",
   "common.explore": "Esplora",
   "common.discover": "Scopri",
@@ -44,8 +43,6 @@ export const it = {
   "promo.dailySpecial": "Piatto del giorno",
   "promo.deal": "Offerta",
   "promo.news": "News",
-  "promo.expired": "Scaduto",
-  "promo.active": "Attivo",
   "promo.expiredOne": "promozione scaduta",
   "promo.expiredMany": "promozioni scadute",
 
@@ -67,11 +64,6 @@ export const it = {
   "home.eventUpcomingOne": "{count} evento in programma",
   "home.eventUpcomingMany": "{count} eventi in programma",
   "home.discoverEvents": "Scopri gli eventi",
-  "home.haveVenueOrEvent": "Hai un locale o un evento?",
-  "home.addToOrtona": "Aggiungi a Ortona",
-  "home.venue": "Locale",
-  "home.event": "Evento",
-  "home.signInToPublish": "Accedi per pubblicare",
   "home.mainSections": "Sezioni principali",
 
   // Events
@@ -152,6 +144,7 @@ export const it = {
   "profile.addVenueTitle": "Aggiungi locale",
   "profile.editEventTitle": "Modifica evento",
   "profile.backToProfile": "Torna al profilo",
+  "profile.pastEvents": "Eventi passati",
   "profile.eventNotFound": "Evento non trovato",
   "profile.confirmDeleteVenue": "Sei sicuro di voler eliminare questo locale?",
   "profile.confirmDeleteEvent": "Sei sicuro di voler eliminare questo evento?",
@@ -264,7 +257,6 @@ export const it = {
   "pin.unpin": "Rimuovi dai fissati",
 
   // Language
-  "lang.label": "Lingua",
   "lang.italian": "Italiano",
   "lang.english": "English",
 } as const;

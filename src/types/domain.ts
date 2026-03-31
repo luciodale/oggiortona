@@ -15,4 +15,5 @@ export type RestaurantWithStatus = RestaurantRow & {
   isOpen: boolean;
   promotions: Array<PromotionRow>;
   parsedHours: OpeningHours;
+  expiredPromotionCount: number;
 };

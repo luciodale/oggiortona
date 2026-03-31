@@ -31,7 +31,7 @@ export function PushToggle({
       onClick={isOn ? unsubscribe : subscribe}
       aria-pressed={isOn}
       aria-busy={busy}
-      className={`flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-medium transition-all ${
+      className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] font-medium transition-all ${
         state === "denied"
           ? "cursor-not-allowed bg-surface-warm text-muted"
           : isOn
@@ -39,7 +39,7 @@ export function PushToggle({
             : "bg-surface-warm text-muted hover:bg-surface-warm/80"
       }`}
     >
-      <span className="text-base" aria-hidden="true">{isOn ? "\uD83D\uDD14" : "\uD83D\uDD15"}</span>
+      <span className="text-sm" aria-hidden="true">{isOn ? "\uD83D\uDD14" : "\uD83D\uDD15"}</span>
       {state === "denied" && labelDenied}
       {state === "subscribed" && (busy ? labelDeactivating : labelOn)}
       {state === "unsubscribed" && (busy ? labelActivating : labelOff)}

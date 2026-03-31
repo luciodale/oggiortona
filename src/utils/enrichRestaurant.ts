@@ -19,6 +19,7 @@ export function groupPromotionsByRestaurant(
 export function enrichRestaurant(
   row: RestaurantRow,
   promotions: Array<PromotionRow>,
+  expiredPromotionCount = 0,
 ): RestaurantWithStatus {
   const parsedHours = parseOpeningHours(row.openingHours);
   return {
@@ -27,5 +28,6 @@ export function enrichRestaurant(
     isOpen: isOpenNow(parsedHours),
     promotions,
     parsedHours,
+    expiredPromotionCount,
   };
 }

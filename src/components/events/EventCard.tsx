@@ -8,15 +8,16 @@ import { EventPriceBadge } from "./EventPriceBadge";
 
 type EventCardProps = {
   event: EventRow;
+  zipperCard?: boolean;
 };
 
-export function EventCard({ event }: EventCardProps) {
+export function EventCard({ event, zipperCard = true }: EventCardProps) {
   const { locale } = useLocale();
   const labels = eventCategoryLabels(locale);
   const categories = event.category.split(",").map((c) => c.trim());
 
   return (
-    <div className="zipper-card rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+    <div className={`${zipperCard ? "zipper-card" : ""} rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]`}>
       <a
         href={`/events/${event.id}`}
         className="block p-4 pb-0 no-underline"

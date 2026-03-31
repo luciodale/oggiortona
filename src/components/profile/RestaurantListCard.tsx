@@ -30,6 +30,11 @@ export function RestaurantListCard({ restaurant }: RestaurantListCardProps) {
       <p className="mt-0.5 text-[11px] capitalize text-muted">
         {restaurant.types.map((tp) => labels[tp] ?? tp).join(" · ")}
       </p>
+      {restaurant.expiredPromotionCount > 0 && (
+        <span className="mt-1.5 inline-block rounded-full bg-danger/10 px-2.5 py-0.5 text-[10px] font-semibold text-danger">
+          {restaurant.expiredPromotionCount} {restaurant.expiredPromotionCount === 1 ? t("promo.expiredOne") : t("promo.expiredMany")}
+        </span>
+      )}
       {restaurant.active === 0 && (
         <span
           className={`mt-1.5 inline-block rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${

@@ -15,6 +15,7 @@ export function AdminDashboard() {
   const [tab, setTab] = useState<AdminTab>("restaurants");
   const [search, setSearch] = useState("");
   const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [showBroadcast, setShowBroadcast] = useState(false);
 
   const { restaurants, loading: loadingRestaurants, toggleRestaurant, deletePromotion } = useAdminRestaurants();
   const { events, loading: loadingEvents, toggleEvent } = useAdminEvents();
@@ -41,7 +42,18 @@ export function AdminDashboard() {
       </div>
 
       <div className="mt-5">
-        <AdminBroadcast />
+        <button
+          type="button"
+          onClick={() => setShowBroadcast((v) => !v)}
+          className="text-[12px] font-semibold text-accent transition-colors hover:text-accent/80"
+        >
+          {showBroadcast ? "Nascondi broadcast" : "Notifica broadcast"}
+        </button>
+        {showBroadcast && (
+          <div className="mt-3">
+            <AdminBroadcast />
+          </div>
+        )}
       </div>
 
       <div className="mt-5 space-y-4">

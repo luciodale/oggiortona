@@ -30,7 +30,6 @@ export const en: Translations = {
   "common.edit": "Edit",
   "common.delete": "Delete",
   "common.publish": "Publish",
-  "common.renew": "Renew",
   "common.refresh": "Refresh",
   "common.explore": "Explore",
   "common.discover": "Discover",
@@ -48,8 +47,6 @@ export const en: Translations = {
   "promo.dailySpecial": "Daily special",
   "promo.deal": "Deal",
   "promo.news": "News",
-  "promo.expired": "Expired",
-  "promo.active": "Active",
   "promo.expiredOne": "expired promotion",
   "promo.expiredMany": "expired promotions",
 
@@ -71,11 +68,6 @@ export const en: Translations = {
   "home.eventUpcomingOne": "{count} upcoming event",
   "home.eventUpcomingMany": "{count} upcoming events",
   "home.discoverEvents": "Discover events",
-  "home.haveVenueOrEvent": "Have a venue or event?",
-  "home.addToOrtona": "Add to Ortona",
-  "home.venue": "Venue",
-  "home.event": "Event",
-  "home.signInToPublish": "Sign in to publish",
   "home.mainSections": "Main sections",
 
   // Events
@@ -156,6 +148,7 @@ export const en: Translations = {
   "profile.addVenueTitle": "Add venue",
   "profile.editEventTitle": "Edit event",
   "profile.backToProfile": "Back to profile",
+  "profile.pastEvents": "Past events",
   "profile.eventNotFound": "Event not found",
   "profile.confirmDeleteVenue": "Are you sure you want to delete this venue?",
   "profile.confirmDeleteEvent": "Are you sure you want to delete this event?",
@@ -268,7 +261,6 @@ export const en: Translations = {
   "pin.unpin": "Unpin",
 
   // Language
-  "lang.label": "Language",
   "lang.italian": "Italiano",
   "lang.english": "English",
 };

@@ -36,6 +36,7 @@ function makeRestaurant(overrides: Partial<RestaurantWithStatus> = {}): Restaura
     isOpen: true,
     promotions: [],
     parsedHours: EMPTY_HOURS,
+    expiredPromotionCount: 0,
     ...overrides,
   };
 }

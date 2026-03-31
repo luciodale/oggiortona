@@ -11,9 +11,10 @@ type RestaurantCardProps = {
   restaurant: RestaurantWithStatus;
   isPinned: boolean;
   onTogglePin?: (id: number) => void;
+  zipperCard?: boolean;
 };
 
-export function RestaurantCard({ restaurant, isPinned, onTogglePin }: RestaurantCardProps) {
+export function RestaurantCard({ restaurant, isPinned, onTogglePin, zipperCard = true }: RestaurantCardProps) {
   const { locale, t } = useLocale();
 
   function handlePinClick(e: React.MouseEvent) {
@@ -27,7 +28,7 @@ export function RestaurantCard({ restaurant, isPinned, onTogglePin }: Restaurant
   const newsItems = restaurant.promotions.filter((p) => p.type === "news");
 
   return (
-    <div className={`zipper-card rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] border-l-[3px] transition-colors duration-200 ${isPinned ? "border-l-accent/40" : "border-l-transparent"}`}>
+    <div className={`${zipperCard ? "zipper-card" : ""} rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] border-l-[3px] transition-colors duration-200 ${isPinned ? "border-l-accent/40" : "border-l-transparent"}`}>
       <a
         href={`/restaurants/${restaurant.id}`}
         className="block p-4 pb-0 no-underline"
