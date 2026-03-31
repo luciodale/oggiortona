@@ -1,5 +1,6 @@
 import { Link, useParams } from "@tanstack/react-router";
 import { useRestaurantDetail } from "../../hooks/useRestaurantDetail";
+import { useLocale } from "../../i18n/useLocale";
 import { ArrowLeftIcon } from "../../icons/ArrowLeftIcon";
 import { parseTypes } from "../../utils/restaurant";
 import { parseOpeningHours } from "../../utils/time";
@@ -8,6 +9,7 @@ import { RestaurantForm } from "../restaurants/RestaurantForm";
 export function ProfileRestaurantEdit() {
   const { id } = useParams({ strict: false });
   const { restaurant, loading } = useRestaurantDetail(id);
+  const { t } = useLocale();
 
   if (loading) {
     return (
@@ -37,12 +39,11 @@ export function ProfileRestaurantEdit() {
   return (
     <div>
       <Link
-        to="/profile/restaurant/$id"
-        params={{ id: String(restaurant.id) }}
+        to="/profile"
         className="mb-4 inline-flex items-center gap-1 text-xs font-medium text-muted no-underline hover:text-primary"
       >
         <ArrowLeftIcon className="h-3.5 w-3.5" />
-        Torna al locale
+        {t("profile.backToProfile")}
       </Link>
 
       <h1 className="font-family-display text-2xl font-medium tracking-tight text-primary">

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const FORM_CATEGORIES = ["sport", "cultura", "musica"] as const;
+export const FORM_CATEGORIES = ["sport", "cibo", "cultura", "altro"] as const;
 
 const timeString = z.string().regex(/^\d{2}:\d{2}$/, "Formato orario non valido");
 const dateString = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Formato data non valido");

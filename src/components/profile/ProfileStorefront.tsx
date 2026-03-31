@@ -48,11 +48,11 @@ export function ProfileStorefront() {
   return (
     <div>
       <Link
-        to={`/profile/restaurant/${id}`}
+        to="/profile"
         className="mb-4 inline-flex items-center gap-1 text-xs font-medium text-muted no-underline hover:text-primary"
       >
         <ArrowLeftIcon className="h-3.5 w-3.5" />
-        {t("common.back")}
+        {t("profile.backToProfile")}
       </Link>
 
       <h1 className="font-family-display text-xl font-medium tracking-tight text-primary">

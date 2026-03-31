@@ -43,13 +43,28 @@ export function EventCard({ event }: EventCardProps) {
             )}
           </div>
 
-          <div className="flex shrink-0 flex-col items-center rounded-xl bg-fare-light px-3 py-2">
-            <span className="text-[10px] font-semibold uppercase text-fare/60">
-              {new Date(event.dateStart + "T00:00:00Z").toLocaleDateString(locale === "it" ? "it-IT" : "en-GB", { month: "short", timeZone: "Europe/Rome" })}
-            </span>
-            <span className="font-family-display text-2xl font-semibold leading-tight text-fare">
-              {parseInt(event.dateStart.substring(8, 10), 10)}
-            </span>
+          <div className="flex shrink-0 items-center gap-1.5">
+            <div className="flex flex-col items-center rounded-xl bg-fare-light px-3 py-2">
+              <span className="text-[10px] font-semibold uppercase text-fare/60">
+                {new Date(event.dateStart + "T00:00:00Z").toLocaleDateString(locale === "it" ? "it-IT" : "en-GB", { month: "short", timeZone: "Europe/Rome" })}
+              </span>
+              <span className="font-family-display text-2xl font-semibold leading-tight text-fare">
+                {parseInt(event.dateStart.substring(8, 10), 10)}
+              </span>
+            </div>
+            {event.dateEnd && event.dateEnd !== event.dateStart && (
+              <>
+                <span className="text-[10px] text-muted">&ndash;</span>
+                <div className="flex flex-col items-center rounded-xl bg-fare-light px-3 py-2">
+                  <span className="text-[10px] font-semibold uppercase text-fare/60">
+                    {new Date(event.dateEnd + "T00:00:00Z").toLocaleDateString(locale === "it" ? "it-IT" : "en-GB", { month: "short", timeZone: "Europe/Rome" })}
+                  </span>
+                  <span className="font-family-display text-2xl font-semibold leading-tight text-fare">
+                    {parseInt(event.dateEnd.substring(8, 10), 10)}
+                  </span>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </a>

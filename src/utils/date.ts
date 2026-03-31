@@ -5,7 +5,7 @@ export function isToday(dateStart: string, dateEnd: string | null) {
   return false;
 }
 
-export function isThisWeek(dateStr: string) {
+export function isThisWeek(dateStart: string, dateEnd: string | null) {
   const today = getTodayISO();
   const d = new Date(today + "T00:00:00Z");
   const dow = d.getUTCDay();
@@ -19,7 +19,8 @@ export function isThisWeek(dateStr: string) {
   sunday.setUTCDate(monday.getUTCDate() + 6);
   const sundayISO = sunday.toISOString().substring(0, 10);
 
-  return dateStr >= mondayISO && dateStr <= sundayISO;
+  const end = dateEnd ?? dateStart;
+  return end >= mondayISO && dateStart <= sundayISO;
 }
 
 export function isUpcoming(dateStr: string) {

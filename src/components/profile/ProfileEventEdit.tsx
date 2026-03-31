@@ -40,12 +40,11 @@ export function ProfileEventEdit() {
   return (
     <div>
       <Link
-        to="/profile/event/$id"
-        params={{ id: String(event.id) }}
+        to="/profile"
         className="mb-4 inline-flex items-center gap-1 text-xs font-medium text-muted no-underline hover:text-primary"
       >
         <ArrowLeftIcon className="h-3.5 w-3.5" />
-        {t("profile.backToEvent")}
+        {t("profile.backToProfile")}
       </Link>
 
       <h1 className="font-family-display text-2xl font-medium tracking-tight text-primary">

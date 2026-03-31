@@ -1,16 +1,11 @@
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import type { EventRow } from "../types/database";
 
 export function useUserEvents() {
-  const [events, setEvents] = useState<Array<EventRow>>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading } = useQuery<{ events: Array<EventRow> }>({
+    queryKey: ["my-events"],
+    queryFn: () => fetch("/api/my-events").then((r) => r.json()),
+  });
 
-  useEffect(() => {
-    fetch("/api/my-events")
-      .then((r) => r.json() as Promise<{ events: Array<EventRow> }>)
-      .then((data) => setEvents(data.events))
-      .finally(() => setLoading(false));
-  }, []);
-
-  return { events, loading };
+  return { events: data?.events ?? [], loading: isLoading };
 }

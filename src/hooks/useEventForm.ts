@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import {
   eventFormSchema,
   FORM_CATEGORIES,
@@ -8,7 +11,7 @@ import {
 } from "../schemas/event";
 import { getTodayISO } from "../utils/date";
 
-type SubmitState = "idle" | "submitting" | "success" | "error";
+type SubmitState = "idle" | "submitting" | "error";
 
 type InitialData = {
   title: string;
@@ -36,6 +39,8 @@ function splitCategories(category: string) {
 
 export function useEventForm(initial?: InitialData) {
   const initialSplit = initial ? splitCategories(initial.category) : null;
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventFormSchema),
@@ -60,7 +65,6 @@ export function useEventForm(initial?: InitialData) {
 
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
-  const [createdId, setCreatedId] = useState<number | null>(null);
 
   function toggleCategory(cat: string) {
     const current = form.getValues("categories");
@@ -110,9 +114,12 @@ export function useEventForm(initial?: InitialData) {
       );
 
       if (res.ok) {
-        const resData = (await res.json()) as { event: { id: number } };
-        setCreatedId(resData.event.id);
-        setSubmitState("success");
+        toast.success(isEdit ? "Evento aggiornato!" : "Evento pubblicato!");
+        queryClient.invalidateQueries({ queryKey: ["home"] });
+        if (isEdit) {
+          queryClient.invalidateQueries({ queryKey: ["event", eventId] });
+        }
+        navigate({ to: "/profile" });
       } else {
         const resData = (await res.json()) as { error: string };
         setErrorMessage(resData.error);
@@ -130,6 +137,5 @@ export function useEventForm(initial?: InitialData) {
     onSubmit,
     submitState,
     errorMessage,
-    createdId,
   };
 }

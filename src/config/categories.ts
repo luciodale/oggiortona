@@ -20,6 +20,7 @@ export function eventCategoryLabels(locale: Locale): Record<string, string> {
 
 export const eventCategoryColors: Record<string, string> = {
   sagra: "bg-amber-50 text-amber-700",
+  cibo: "bg-orange-50 text-orange-700",
   musica: "bg-violet-50 text-violet-700",
   mercato: "bg-emerald-50 text-emerald-700",
   cultura: "bg-sky-50 text-sky-700",
@@ -46,8 +47,9 @@ export const restaurantFormTypes = [
 
 export const eventFormCategories = [
   "sport",
+  "cibo",
   "cultura",
-  "musica",
+  "altro",
 ] as const;
 
 export const eventFilterCategories = [
@@ -59,6 +61,7 @@ export const eventFilterCategories = [
 
 export const eventCategories = [
   "sport",
+  "cibo",
   "musica",
   "cultura",
   "altro",

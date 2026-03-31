@@ -1,16 +1,17 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocale } from "../i18n/useLocale";
 
 type EntityType = "restaurant" | "event";
 
-const ENTITY_CONFIG: Record<EntityType, { endpoint: string; confirmKey: "profile.confirmDeleteVenue" | "profile.confirmDeleteEvent" }> = {
-  restaurant: { endpoint: "/api/restaurants", confirmKey: "profile.confirmDeleteVenue" },
-  event: { endpoint: "/api/events", confirmKey: "profile.confirmDeleteEvent" },
+const ENTITY_CONFIG: Record<EntityType, { endpoint: string; confirmKey: "profile.confirmDeleteVenue" | "profile.confirmDeleteEvent"; queryKeys: Array<ReadonlyArray<string>> }> = {
+  restaurant: { endpoint: "/api/restaurants", confirmKey: "profile.confirmDeleteVenue", queryKeys: [["my-restaurants"], ["home"]] },
+  event: { endpoint: "/api/events", confirmKey: "profile.confirmDeleteEvent", queryKeys: [["my-events"], ["home"]] },
 };
 
-export function useDeleteEntity(entityType: EntityType) {
+export function useDeleteEntity(entityType: EntityType, onDeleted?: () => void) {
   const { t } = useLocale();
   const config = ENTITY_CONFIG[entityType];
+  const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: (id: number) =>
@@ -18,7 +19,10 @@ export function useDeleteEntity(entityType: EntityType) {
         if (!res.ok) throw new Error("Delete failed");
       }),
     onSuccess: () => {
-      window.location.reload();
+      for (const key of config.queryKeys) {
+        queryClient.invalidateQueries({ queryKey: key });
+      }
+      onDeleted?.();
     },
   });
 

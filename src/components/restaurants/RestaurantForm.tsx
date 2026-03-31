@@ -3,8 +3,6 @@ import { useRestaurantForm } from "../../hooks/useRestaurantForm";
 import { restaurantFormTypes, restaurantTypeLabels } from "../../config/categories";
 import { useLocale } from "../../i18n/useLocale";
 import { getOrderedDays } from "../../utils/time";
-import { toast } from "sonner";
-import { useNavigate } from "@tanstack/react-router";
 import { Input } from "../ui/Input";
 import { Textarea } from "../ui/Textarea";
 import { Pill } from "../ui/Pill";
@@ -26,7 +24,6 @@ export function RestaurantForm({ restaurantId, initialData }: RestaurantFormProp
     onSubmit,
     submitState,
     errorMessage,
-    createdId,
   } = useRestaurantForm(initialData);
 
   const { locale } = useLocale();
@@ -35,13 +32,6 @@ export function RestaurantForm({ restaurantId, initialData }: RestaurantFormProp
   const selectedTypes = useWatch({ control: form.control, name: "types" });
   const typesError = form.formState.errors.types;
   const orderedDays = getOrderedDays();
-  const navigate = useNavigate();
-
-  if (submitState === "success" && createdId) {
-    toast.success(isEdit ? "Locale aggiornato!" : "Locale inviato per approvazione!");
-    navigate({ to: isEdit ? "/" : "/profile/restaurant/$id", params: isEdit ? undefined : { id: String(createdId) } });
-    return null;
-  }
 
   return (
     <form

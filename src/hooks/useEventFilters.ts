@@ -53,7 +53,7 @@ export function useEventFilters({ events, pastEvents, timeFilter }: UseEventFilt
     const upcoming: Array<EventRow> = [];
 
     for (const event of filtered) {
-      if (isThisWeek(event.dateStart)) {
+      if (isThisWeek(event.dateStart, event.dateEnd)) {
         thisWeek.push(event);
       } else {
         upcoming.push(event);

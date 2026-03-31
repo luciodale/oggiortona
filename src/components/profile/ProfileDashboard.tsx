@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
+import { useSetAtom } from "jotai";
 import { useUserEvents } from "../../hooks/useUserEvents";
 import { useUserRestaurants } from "../../hooks/useUserRestaurants";
-import { useLocale } from "../../i18n/useLocale";
+import { useLocale, localeAtom } from "../../i18n/useLocale";
 import { CalendarIcon } from "../../icons/CalendarIcon";
 import { CupIcon } from "../../icons/CupIcon";
 import { LogoutButton } from "../auth/LogoutButton";
@@ -11,9 +12,11 @@ import { EventListCard } from "./EventListCard";
 import { ExpiredPromotionsNotice } from "./ExpiredPromotionsNotice";
 import { useSpaAuth } from "../../hooks/useSpaAuth";
 import { RestaurantListCard } from "./RestaurantListCard";
+import type { Locale } from "../../types/domain";
 
 export function ProfileDashboard() {
   const { locale, t } = useLocale();
+  const setLocale = useSetAtom(localeAtom);
   const { user } = useSpaAuth();
   const { restaurants, loading: loadingRestaurants } = useUserRestaurants();
   const { events, loading: loadingEvents } = useUserEvents();
@@ -35,8 +38,9 @@ export function ProfileDashboard() {
           id="locale-select"
           value={locale}
           onChange={(e) => {
-            document.cookie = `locale=${e.target.value}; path=/; max-age=31536000; SameSite=Lax`;
-            window.location.reload();
+            const newLocale = e.target.value as Locale;
+            document.cookie = `locale=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
+            setLocale(newLocale);
           }}
           className="rounded-lg border border-border bg-white px-3 py-1.5 text-sm text-primary"
         >
@@ -110,13 +114,13 @@ export function ProfileDashboard() {
           <CupIcon className="h-4 w-4" />
           {t("profile.addVenue")}
         </Link>
-        <a
-          href="/add/event"
+        <Link
+          to="/add/event"
           className="flex items-center justify-center gap-2 rounded-xl bg-fare py-3.5 text-[13px] font-semibold text-white no-underline transition-all hover:bg-fare/90 active:scale-[0.98]"
         >
           <CalendarIcon className="h-4 w-4" />
           {t("profile.addEvent")}
-        </a>
+        </Link>
       </div>
 
       <div className="mt-8">

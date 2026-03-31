@@ -151,7 +151,7 @@ export const it = {
   "profile.editVenue": "Modifica locale",
   "profile.addVenueTitle": "Aggiungi locale",
   "profile.editEventTitle": "Modifica evento",
-  "profile.backToEvent": "Torna all'evento",
+  "profile.backToProfile": "Torna al profilo",
   "profile.eventNotFound": "Evento non trovato",
   "profile.confirmDeleteVenue": "Sei sicuro di voler eliminare questo locale?",
   "profile.confirmDeleteEvent": "Sei sicuro di voler eliminare questo evento?",
@@ -243,6 +243,7 @@ export const it = {
   "eventCategory.mercato": "Mercato",
   "eventCategory.cultura": "Cultura",
   "eventCategory.sport": "Sport",
+  "eventCategory.cibo": "Cibo",
   "eventCategory.altro": "Altro",
 
   // Push notifications

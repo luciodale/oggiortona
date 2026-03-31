@@ -2,7 +2,6 @@ import { useWatch } from "react-hook-form";
 import { useEventForm } from "../../hooks/useEventForm";
 import { eventFormCategories, eventCategoryLabels } from "../../config/categories";
 import { useLocale } from "../../i18n/useLocale";
-import { toast } from "sonner";
 import { Input } from "../ui/Input";
 import { Textarea } from "../ui/Textarea";
 import { Pill } from "../ui/Pill";
@@ -24,7 +23,6 @@ export function EventForm({ eventId, initialData }: EventFormProps) {
     onSubmit,
     submitState,
     errorMessage,
-    createdId,
   } = useEventForm(initialData);
 
   const { locale } = useLocale();
@@ -32,11 +30,6 @@ export function EventForm({ eventId, initialData }: EventFormProps) {
   const isEdit = eventId != null;
   const selectedCategories = useWatch({ control: form.control, name: "categories" });
   const categoriesError = form.formState.errors.categories;
-  if (submitState === "success" && createdId) {
-    toast.success(isEdit ? "Evento aggiornato!" : "Evento pubblicato!");
-    window.location.href = isEdit ? "/profile" : `/events/${createdId}`;
-    return null;
-  }
 
   return (
     <form

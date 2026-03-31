@@ -155,7 +155,7 @@ export const en: Translations = {
   "profile.editVenue": "Edit venue",
   "profile.addVenueTitle": "Add venue",
   "profile.editEventTitle": "Edit event",
-  "profile.backToEvent": "Back to event",
+  "profile.backToProfile": "Back to profile",
   "profile.eventNotFound": "Event not found",
   "profile.confirmDeleteVenue": "Are you sure you want to delete this venue?",
   "profile.confirmDeleteEvent": "Are you sure you want to delete this event?",
@@ -247,6 +247,7 @@ export const en: Translations = {
   "eventCategory.mercato": "Market",
   "eventCategory.cultura": "Culture",
   "eventCategory.sport": "Sport",
+  "eventCategory.cibo": "Food",
   "eventCategory.altro": "Other",
 
   // Push notifications

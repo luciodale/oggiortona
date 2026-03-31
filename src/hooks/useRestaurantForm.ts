@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import type { OpeningHours, DaySchedule, ItalianDay } from "../types/database";
 import {
   restaurantFormSchema,
@@ -10,7 +13,7 @@ import {
 } from "../schemas/restaurant";
 import { getOrderedDays } from "../utils/time";
 
-type SubmitState = "idle" | "submitting" | "success" | "error";
+type SubmitState = "idle" | "submitting" | "error";
 
 function emptyDayState(): DayFormValues {
   return {
@@ -95,6 +98,8 @@ function splitTypes(types: Array<string>) {
 
 export function useRestaurantForm(initial?: InitialData) {
   const initialSplit = initial ? splitTypes(initial.types) : null;
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const form = useForm<RestaurantFormValues>({
     resolver: zodResolver(restaurantFormSchema),
@@ -118,7 +123,6 @@ export function useRestaurantForm(initial?: InitialData) {
 
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
-  const [createdId, setCreatedId] = useState<number | null>(null);
 
   function toggleType(t: string) {
     const current = form.getValues("types");
@@ -177,9 +181,13 @@ export function useRestaurantForm(initial?: InitialData) {
       );
 
       if (res.ok) {
-        const resData = (await res.json()) as { restaurant: { id: number } };
-        setCreatedId(resData.restaurant.id);
-        setSubmitState("success");
+        toast.success(isEdit ? "Locale aggiornato!" : "Locale inviato per approvazione!");
+        queryClient.invalidateQueries({ queryKey: ["my-restaurants"] });
+        queryClient.invalidateQueries({ queryKey: ["home"] });
+        if (isEdit) {
+          queryClient.invalidateQueries({ queryKey: ["restaurant", restaurantId] });
+        }
+        navigate({ to: "/profile" });
       } else {
         const resData = (await res.json()) as { error: string };
         setErrorMessage(resData.error);
@@ -198,6 +206,5 @@ export function useRestaurantForm(initial?: InitialData) {
     onSubmit,
     submitState,
     errorMessage,
-    createdId,
   };
 }

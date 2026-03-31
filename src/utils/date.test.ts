@@ -83,25 +83,25 @@ describe("isThisWeek", () => {
     vi.setSystemTime(new Date("2025-06-18T12:00:00Z"));
 
     // Monday of same week
-    expect(isThisWeek("2025-06-16")).toBe(true);
+    expect(isThisWeek("2025-06-16", null)).toBe(true);
     // Sunday of same week
-    expect(isThisWeek("2025-06-22")).toBe(true);
+    expect(isThisWeek("2025-06-22", null)).toBe(true);
     // Wednesday (today)
-    expect(isThisWeek("2025-06-18")).toBe(true);
+    expect(isThisWeek("2025-06-18", null)).toBe(true);
   });
 
   it("returns false for date in next week", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2025-06-18T12:00:00Z"));
 
-    expect(isThisWeek("2025-06-23")).toBe(false);
+    expect(isThisWeek("2025-06-23", null)).toBe(false);
   });
 
   it("returns false for date in previous week", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2025-06-18T12:00:00Z"));
 
-    expect(isThisWeek("2025-06-09")).toBe(false);
+    expect(isThisWeek("2025-06-09", null)).toBe(false);
   });
 
   it("handles Sunday as last day of week (Mon-Sun)", () => {
@@ -110,11 +110,11 @@ describe("isThisWeek", () => {
     vi.setSystemTime(new Date("2025-06-22T12:00:00Z"));
 
     // Monday of same week
-    expect(isThisWeek("2025-06-16")).toBe(true);
+    expect(isThisWeek("2025-06-16", null)).toBe(true);
     // Sunday (today)
-    expect(isThisWeek("2025-06-22")).toBe(true);
+    expect(isThisWeek("2025-06-22", null)).toBe(true);
     // Next Monday
-    expect(isThisWeek("2025-06-23")).toBe(false);
+    expect(isThisWeek("2025-06-23", null)).toBe(false);
   });
 
   it("handles Monday as first day of week", () => {
@@ -122,9 +122,9 @@ describe("isThisWeek", () => {
     // Monday 2025-06-16
     vi.setSystemTime(new Date("2025-06-16T12:00:00Z"));
 
-    expect(isThisWeek("2025-06-16")).toBe(true);
-    expect(isThisWeek("2025-06-22")).toBe(true);
-    expect(isThisWeek("2025-06-15")).toBe(false);
+    expect(isThisWeek("2025-06-16", null)).toBe(true);
+    expect(isThisWeek("2025-06-22", null)).toBe(true);
+    expect(isThisWeek("2025-06-15", null)).toBe(false);
   });
 
   it("uses Italy timezone near midnight UTC", () => {
@@ -133,8 +133,21 @@ describe("isThisWeek", () => {
     vi.setSystemTime(new Date("2025-06-22T23:30:00Z"));
 
     // In Italy it's already Monday June 23 → new week
-    expect(isThisWeek("2025-06-22")).toBe(false);
-    expect(isThisWeek("2025-06-23")).toBe(true);
+    expect(isThisWeek("2025-06-22", null)).toBe(false);
+    expect(isThisWeek("2025-06-23", null)).toBe(true);
+  });
+
+  it("returns true when dateEnd overlaps with current week", () => {
+    vi.useFakeTimers();
+    // Wednesday 2025-06-18, week is Mon 16 - Sun 22
+    vi.setSystemTime(new Date("2025-06-18T12:00:00Z"));
+
+    // Started last week, ends this week
+    expect(isThisWeek("2025-06-13", "2025-06-17")).toBe(true);
+    // Started last week, ended last week
+    expect(isThisWeek("2025-06-09", "2025-06-15")).toBe(false);
+    // Spans entire week
+    expect(isThisWeek("2025-06-10", "2025-06-25")).toBe(true);
   });
 });
 
