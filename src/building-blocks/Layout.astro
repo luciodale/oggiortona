@@ -6,6 +6,6 @@ type Props = {
 const { class: className } = Astro.props;
 ---
 
-<main id="main-content" class:list={["mx-auto max-w-lg px-5 pb-24 pt-safe h-full overflow-x-hidden overflow-y-auto", className]}>
+<main id="main-content" class:list={["mx-auto max-w-lg px-5 pb-24 pt-safe h-full overflow-x-hidden overflow-y-auto scroll-hide", className]}>
   <slot />
 </main>
