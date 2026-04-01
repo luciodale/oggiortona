@@ -4,6 +4,21 @@ import { useLocale } from "../../i18n/useLocale";
 import { CodeInput } from "./CodeInput";
 import { GoogleIcon } from "../../icons/GoogleIcon";
 
+function TermsNotice() {
+  const { t } = useLocale();
+  const linkText = t("auth.termsLink");
+  const full = t("auth.termsNotice", { terms: `{{LINK}}` });
+  const [before, after] = full.split("{{LINK}}");
+
+  return (
+    <p className="text-center text-[11px] text-muted leading-relaxed">
+      {before}
+      <a href="/terms" className="underline hover:text-primary transition-colors">{linkText}</a>
+      {after}
+    </p>
+  );
+}
+
 export function SignInForm() {
   const { t } = useLocale();
   const google = useOAuthSignIn();
@@ -95,6 +110,8 @@ export function SignInForm() {
           {emailCode.loading ? t("auth.sending") : t("auth.sendCode")}
         </button>
       </form>
+
+      <TermsNotice />
     </div>
   );
 }

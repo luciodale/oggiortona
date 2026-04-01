@@ -184,6 +184,9 @@ export const en: Translations = {
   "auth.verify": "Verify",
   "auth.verifying": "Verifying...",
   "auth.changeEmail": "Change email",
+  "auth.termsNotice": "By signing in, you agree to the {terms}.",
+  "auth.termsLink": "Terms of Service",
+  "auth.terms": "Terms of Service",
 
   // PWA
   "pwa.title": "Add Oggi a Ortona",

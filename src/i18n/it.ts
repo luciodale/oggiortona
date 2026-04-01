@@ -180,6 +180,9 @@ export const it = {
   "auth.verify": "Verifica",
   "auth.verifying": "Verifica...",
   "auth.changeEmail": "Cambia email",
+  "auth.termsNotice": "Accedendo, accetti i {terms}.",
+  "auth.termsLink": "Termini di Servizio",
+  "auth.terms": "Termini di Servizio",
 
   // PWA
   "pwa.title": "Aggiungi Oggi a Ortona",

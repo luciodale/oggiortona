@@ -134,6 +134,12 @@ export function ProfileDashboard() {
           <PastEventsList events={pastEvents} />
         </>
       )}
+
+      <div className="mt-12 border-t border-border-light pt-4 text-center">
+        <a href="/terms" className="text-[11px] text-muted hover:text-primary transition-colors">
+          {t("auth.terms")}
+        </a>
+      </div>
     </div>
   );
 }
