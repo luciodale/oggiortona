@@ -169,6 +169,17 @@ export const it = {
   "auth.signInDesc": "Accedi per aggiungere e gestire il tuo locale.",
   "auth.signOut": "Esci",
   "auth.signingOut": "Uscita...",
+  "auth.continueWithGoogle": "Continua con Google",
+  "auth.orContinueWithEmail": "oppure continua con email",
+  "auth.emailPlaceholder": "la-tua@email.com",
+  "auth.sendCode": "Invia codice",
+  "auth.sending": "Invio...",
+  "auth.verifyTitle": "Verifica la tua email",
+  "auth.codeSentTo": "Abbiamo inviato un codice a {email}",
+  "auth.verificationCode": "Codice di verifica",
+  "auth.verify": "Verifica",
+  "auth.verifying": "Verifica...",
+  "auth.changeEmail": "Cambia email",
 
   // PWA
   "pwa.title": "Aggiungi Oggi a Ortona",

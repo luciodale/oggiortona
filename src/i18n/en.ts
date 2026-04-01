@@ -173,6 +173,17 @@ export const en: Translations = {
   "auth.signInDesc": "Sign in to add and manage your venue.",
   "auth.signOut": "Sign out",
   "auth.signingOut": "Signing out...",
+  "auth.continueWithGoogle": "Continue with Google",
+  "auth.orContinueWithEmail": "or continue with email",
+  "auth.emailPlaceholder": "your@email.com",
+  "auth.sendCode": "Send code",
+  "auth.sending": "Sending...",
+  "auth.verifyTitle": "Verify your email",
+  "auth.codeSentTo": "We sent a code to {email}",
+  "auth.verificationCode": "Verification code",
+  "auth.verify": "Verify",
+  "auth.verifying": "Verifying...",
+  "auth.changeEmail": "Change email",
 
   // PWA
   "pwa.title": "Add Oggi a Ortona",

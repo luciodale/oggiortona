@@ -4,34 +4,28 @@ import { useStore } from "@nanostores/react";
 import { useState } from "react";
 import { getRedirectUrl } from "../utils/url";
 
-const providers: Array<{ strategy: OAuthStrategy; label: string }> = [
-  { strategy: "oauth_google", label: "Google" },
-  { strategy: "oauth_apple", label: "Apple" },
-  { strategy: "oauth_facebook", label: "Facebook" },
-];
-
 export function useOAuthSignIn() {
   const signIn = useStore($signInStore);
   const isLoaded = useStore($isLoadedStore);
-  const [loading, setLoading] = useState<OAuthStrategy | null>(null);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  async function handleOAuth(strategy: OAuthStrategy) {
+  async function handleGoogle() {
     if (!isLoaded || !signIn) return;
-    setLoading(strategy);
+    setLoading(true);
     setError("");
 
     try {
       await signIn.authenticateWithRedirect({
-        strategy,
+        strategy: "oauth_google" as OAuthStrategy,
         redirectUrl: "/sign-in/sso-callback",
         redirectUrlComplete: getRedirectUrl(),
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Errore di accesso");
-      setLoading(null);
+      setLoading(false);
     }
   }
 
-  return { loading, error, handleOAuth, providers };
+  return { loading, error, handleGoogle };
 }
