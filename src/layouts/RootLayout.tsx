@@ -32,7 +32,7 @@ export function RootLayout() {
           },
         }}
       />
-      <main id="main-content" className="mx-auto max-w-lg px-5 pb-24 pt-safe">
+      <main id="main-content" className="mx-auto max-w-lg px-5 pb-24 pt-safe h-full overflow-x-hidden overflow-y-auto">
         <Outlet />
       </main>
       <BottomNav />

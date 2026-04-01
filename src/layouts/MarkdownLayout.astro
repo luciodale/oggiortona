@@ -1,0 +1,38 @@
+---
+import AppHead from "../building-blocks/AppHead.astro";
+import "../styles/global.css";
+
+type Props = {
+  frontmatter: {
+    title: string;
+  };
+};
+
+const { frontmatter } = Astro.props;
+---
+
+<!doctype html>
+<html lang="it">
+  <head>
+    <AppHead
+      title={frontmatter.title}
+      description={frontmatter.title}
+    />
+  </head>
+  <body class="min-h-dvh bg-surface">
+    <div class="mx-auto max-w-xl px-6 py-16">
+      <a href="/" class="inline-flex items-center gap-2 mb-10 text-sm text-muted hover:text-accent transition-colors">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5" /><path d="m12 19-7-7 7-7" />
+        </svg>
+        Oggi a Ortona
+      </a>
+      <article class="prose prose-neutral prose-headings:font-display prose-headings:text-primary prose-h1:text-3xl prose-h1:mb-2 prose-h2:text-lg prose-h2:mt-10 prose-h2:mb-3 prose-p:text-primary/80 prose-p:leading-relaxed prose-li:text-primary/80 prose-strong:text-primary prose-a:text-accent prose-a:no-underline hover:prose-a:underline">
+        <slot />
+      </article>
+      <div class="mt-16 pt-6 border-t border-border-light text-xs text-muted">
+        Oggi a Ortona
+      </div>
+    </div>
+  </body>
+</html>

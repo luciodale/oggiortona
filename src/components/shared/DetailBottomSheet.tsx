@@ -1,5 +1,4 @@
 import { SwipeBarBottom, useSwipeBarContext } from "@luciodale/swipe-bar";
-import { useEffect } from "react";
 import { isSheetMeta } from "../../types/domain";
 import { EventDetailBody } from "../events/EventDetailBody";
 import { RestaurantDetailBody } from "../restaurants/RestaurantDetailBody";
@@ -21,34 +20,7 @@ function SheetContent() {
   );
 }
 
-function useBackgroundScrollLock() {
-  const { isBottomOpen } = useSwipeBarContext();
-
-  useEffect(function lockBackgroundScroll() {
-    if (!isBottomOpen) return;
-
-    const scrollY = window.scrollY;
-    const body = document.body;
-
-    body.style.position = "fixed";
-    body.style.top = `-${scrollY}px`;
-    body.style.left = "0";
-    body.style.right = "0";
-    body.style.overflow = "hidden";
-
-    return function cleanup() {
-      body.style.position = "";
-      body.style.top = "";
-      body.style.left = "";
-      body.style.right = "";
-      body.style.overflow = "";
-      window.scrollTo(0, scrollY);
-    };
-  }, [isBottomOpen]);
-}
-
 export function DetailBottomSheet() {
-  useBackgroundScrollLock();
 
   return (
     <SwipeBarBottom

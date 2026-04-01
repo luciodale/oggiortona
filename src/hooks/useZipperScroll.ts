@@ -71,15 +71,18 @@ export function useZipperScroll(containerRef: React.RefObject<HTMLDivElement | n
       updateCards();
     }
 
+    const scrollTarget = document.getElementById("main-content");
+    if (!scrollTarget) return;
+
     collectCards();
-    window.addEventListener("scroll", onScroll, { passive: true });
+    scrollTarget.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize, { passive: true });
 
     const mo = new MutationObserver(collectCards);
     mo.observe(container, { childList: true, subtree: true });
 
     return () => {
-      window.removeEventListener("scroll", onScroll);
+      scrollTarget.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
       mo.disconnect();
     };

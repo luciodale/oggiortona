@@ -32,6 +32,7 @@
     "@luciodale/react-searchable-dropdown": "^1.0.3",
     "@luciodale/swipe-bar": "^1.3.63",
     "@nanostores/react": "^1.1.0",
+    "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.12",
     "@tanstack/react-query": "^5.95.2",
     "@tanstack/react-router": "^1.168.7",
