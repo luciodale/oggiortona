@@ -32,7 +32,7 @@ async function main() {
   console.log("Add these to your .dev.vars and Cloudflare dashboard:\n");
   console.log(`VAPID_PUBLIC_KEY=${publicKeyBase64Url}`);
   console.log(`VAPID_PRIVATE_KEY=${privateKeyBase64Url}`);
-  console.log(`VAPID_SUBJECT=https://oggiortona.com`);
+  console.log(`VAPID_SUBJECT=https://oggiaortona.com`);
 }
 
 main();
