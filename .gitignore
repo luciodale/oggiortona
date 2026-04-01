@@ -12,4 +12,5 @@ dist/
 .localflare/
 
 .env
+.env.prod
 .dev.vars
