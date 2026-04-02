@@ -1,5 +1,6 @@
 import { eventCategoryColors, eventCategoryLabels } from "../../config/categories";
 import { useLocale } from "../../i18n/useLocale";
+import { ChevronRightIcon } from "../../icons/ChevronRightIcon";
 import { ClockIcon } from "../../icons/ClockIcon";
 import { PinIcon } from "../../icons/PinIcon";
 import type { EventRow } from "../../types/database";
@@ -117,13 +118,21 @@ export function EventCard({ event, zipperCard = true, onCardClick, isAdmin, onTo
           <EventPriceBadge price={event.price} />
           {event.link && <EventLink href={event.link} />}
         </div>
-        <CardContactButtons
-          phone={event.phone}
-          name={event.title}
-          address={event.address}
-          latitude={event.latitude}
-          longitude={event.longitude}
-        />
+        <div className="flex shrink-0 items-center gap-2">
+          <CardContactButtons
+            phone={event.phone}
+            name={event.title}
+            address={event.address}
+            latitude={event.latitude}
+            longitude={event.longitude}
+          />
+          {onCardClick && (
+            <span className="flex items-center gap-0.5 text-[11px] font-semibold text-accent">
+              {t("common.details")}
+              <ChevronRightIcon className="h-3.5 w-3.5" />
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );

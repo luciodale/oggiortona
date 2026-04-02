@@ -33,10 +33,28 @@ export function useAdminEvents() {
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) =>
+      fetch(`/api/admin/events/${id}`, { method: "DELETE" }).then((res) => {
+        if (!res.ok) throw new Error();
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-events"] });
+      toast.success("Evento eliminato");
+    },
+    onError: () => {
+      toast.error("Errore durante l'eliminazione");
+    },
+  });
+
   function toggleEvent(id: number) {
     const wasActive = events.find((e) => e.id === id)?.active === 1;
     toggleMutation.mutate({ id, wasActive });
   }
 
-  return { events, loading: isLoading, toggleEvent };
+  function deleteEvent(id: number) {
+    deleteMutation.mutate(id);
+  }
+
+  return { events, loading: isLoading, toggleEvent, deleteEvent };
 }

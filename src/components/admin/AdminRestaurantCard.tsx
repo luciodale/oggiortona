@@ -1,6 +1,9 @@
+import { useSwipeBarContext } from "@luciodale/swipe-bar";
 import { restaurantTypeLabels } from "../../config/categories";
 import { TrashIcon } from "../../icons/TrashIcon";
 import type { PromotionRow, RestaurantRow } from "../../types/database";
+import type { SheetMeta } from "../../types/domain";
+import { enrichRestaurant } from "../../utils/enrichRestaurant";
 
 type AdminRestaurantCardProps = {
   restaurant: RestaurantRow & { ownerEmail: string | null; ownerName: string | null; promotions: Array<PromotionRow> };
@@ -17,19 +20,24 @@ export function AdminRestaurantCard({
   onToggle,
   onDeletePromotion,
 }: AdminRestaurantCardProps) {
+  const { openSidebar } = useSwipeBarContext();
   const labels = restaurantTypeLabels("it");
   const types = restaurant.type.split(",").map((t) => t.trim());
   const isActive = restaurant.active === 1;
+
+  function handleCardClick() {
+    const meta: SheetMeta = { kind: "restaurant", data: enrichRestaurant(restaurant, restaurant.promotions) };
+    openSidebar("bottom", { meta });
+  }
 
   return (
     <div className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
       <div
         role="button"
         tabIndex={0}
-        className="flex w-full items-center justify-between gap-3 bg-transparent p-4 text-left"
-        onClick={onExpand}
-        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onExpand(); } }}
-        aria-expanded={expanded}
+        className="flex w-full cursor-pointer items-center justify-between gap-3 bg-transparent p-4 text-left"
+        onClick={handleCardClick}
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCardClick(); } }}
       >
         <div className="min-w-0 flex-1">
           <p className="font-family-display text-base font-medium text-primary">
@@ -52,6 +60,16 @@ export function AdminRestaurantCard({
           >
             {isActive ? "Attivo" : "Inattivo"}
           </span>
+          {restaurant.promotions.length > 0 && (
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onExpand(); }}
+              aria-label={`${expanded ? "Nascondi" : "Mostra"} promozioni`}
+              className="rounded-lg px-2 py-1.5 text-[11px] font-semibold text-muted transition-colors hover:text-primary"
+            >
+              {expanded ? "▲" : "▼"} {restaurant.promotions.length}
+            </button>
+          )}
           <button
             type="button"
             onClick={(e) => {

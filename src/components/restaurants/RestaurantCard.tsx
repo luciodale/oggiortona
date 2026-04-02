@@ -1,5 +1,6 @@
 import { restaurantTypeLabels } from "../../config/categories";
 import { useLocale } from "../../i18n/useLocale";
+import { ChevronRightIcon } from "../../icons/ChevronRightIcon";
 import { PinIcon } from "../../icons/PinIcon";
 import type { RestaurantWithStatus } from "../../types/domain";
 import { CardContactButtons } from "../shared/CardContactButtons";
@@ -139,13 +140,21 @@ export function RestaurantCard({ restaurant, isPinned, onTogglePin, zipperCard =
             </a>
           )}
         </div>
-        <CardContactButtons
-          phone={restaurant.phone}
-          name={restaurant.name}
-          address={restaurant.address}
-          latitude={restaurant.latitude}
-          longitude={restaurant.longitude}
-        />
+        <div className="flex shrink-0 items-center gap-2">
+          <CardContactButtons
+            phone={restaurant.phone}
+            name={restaurant.name}
+            address={restaurant.address}
+            latitude={restaurant.latitude}
+            longitude={restaurant.longitude}
+          />
+          {onCardClick && (
+            <span className="flex items-center gap-0.5 text-[11px] font-semibold text-accent">
+              {t("common.details")}
+              <ChevronRightIcon className="h-3.5 w-3.5" />
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );

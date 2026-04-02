@@ -5,9 +5,10 @@ type AdminEventListProps = {
   events: Array<EventRow & { ownerEmail: string | null; ownerName: string | null }>;
   loading: boolean;
   onToggle: (id: number) => void;
+  onDelete?: (id: number) => void;
 };
 
-export function AdminEventList({ events, loading, onToggle }: AdminEventListProps) {
+export function AdminEventList({ events, loading, onToggle, onDelete }: AdminEventListProps) {
   if (loading) {
     return (
       <div className="flex justify-center py-12">
@@ -27,7 +28,12 @@ export function AdminEventList({ events, loading, onToggle }: AdminEventListProp
   return (
     <div className="flex flex-col gap-3">
       {events.map((e) => (
-        <AdminEventCard key={e.id} event={e} onToggle={() => onToggle(e.id)} />
+        <AdminEventCard
+          key={e.id}
+          event={e}
+          onToggle={() => onToggle(e.id)}
+          onDelete={onDelete ? () => onDelete(e.id) : undefined}
+        />
       ))}
     </div>
   );
