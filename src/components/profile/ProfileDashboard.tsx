@@ -62,26 +62,7 @@ export function ProfileDashboard() {
             </select>
             <ChevronDownIcon className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted" strokeWidth={2.5} />
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <PushToggle
-            scope="general"
-            labelOn={t("push.generalOn")}
-            labelOff={t("push.generalOff")}
-            labelDenied={t("push.denied")}
-            labelActivating={t("push.activating")}
-            labelDeactivating={t("push.deactivating")}
-          />
-          {restaurants.length > 0 && (
-            <PushToggle
-              scope="owner"
-              labelOn={t("push.ownerOn")}
-              labelOff={t("push.ownerOff")}
-              labelDenied={t("push.denied")}
-              labelActivating={t("push.activating")}
-              labelDeactivating={t("push.deactivating")}
-            />
-          )}
-        </div>
+        <PushToggle />
       </div>
 
       <div className="mt-6 flex gap-3">

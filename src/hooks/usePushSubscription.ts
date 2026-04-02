@@ -1,10 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
-import type { PushScope } from "../types/domain";
 import { urlBase64ToUint8Array } from "../utils/base64";
 
 type PushState = "loading" | "unsupported" | "denied" | "subscribed" | "unsubscribed";
 
-export function usePushSubscription(scope: PushScope) {
+export function usePushSubscription() {
   const [state, setState] = useState<PushState>("loading");
   const [busy, setBusy] = useState(false);
 
@@ -20,7 +19,7 @@ export function usePushSubscription(scope: PushScope) {
         return;
       }
 
-      const res = await fetch(`/api/push/status?scope=${scope}`);
+      const res = await fetch("/api/push/status?scope=general");
       if (res.ok) {
         const { subscribed } = await res.json() as { subscribed: boolean };
         setState(subscribed ? "subscribed" : "unsubscribed");
@@ -30,7 +29,7 @@ export function usePushSubscription(scope: PushScope) {
     }
 
     check();
-  }, [scope]);
+  }, []);
 
   const subscribe = useCallback(async () => {
     setBusy(true);
@@ -50,13 +49,12 @@ export function usePushSubscription(scope: PushScope) {
       }
 
       const subJson = subscription.toJSON();
-      const saveRes = await fetch("/api/push/subscribe", {
+      const saveRes = await fetch("/api/push/auto-enroll", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           endpoint: subJson.endpoint,
           keys: subJson.keys,
-          scope,
         }),
       });
 
@@ -68,7 +66,7 @@ export function usePushSubscription(scope: PushScope) {
     } finally {
       setBusy(false);
     }
-  }, [scope]);
+  }, []);
 
   const unsubscribe = useCallback(async () => {
     setBusy(true);
@@ -76,10 +74,10 @@ export function usePushSubscription(scope: PushScope) {
       const reg = await navigator.serviceWorker.ready;
       const subscription = await reg.pushManager.getSubscription();
       if (subscription) {
-        await fetch("/api/push/unsubscribe", {
+        await fetch("/api/push/unsubscribe-all", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ endpoint: subscription.endpoint, scope }),
+          body: JSON.stringify({ endpoint: subscription.endpoint }),
         });
       }
       setState("unsubscribed");
@@ -88,8 +86,7 @@ export function usePushSubscription(scope: PushScope) {
     } finally {
       setBusy(false);
     }
-  }, [scope]);
+  }, []);
 
   return { state, busy, subscribe, unsubscribe };
 }
-

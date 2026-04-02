@@ -1,24 +1,9 @@
 import { usePushSubscription } from "../../hooks/usePushSubscription";
-import type { PushScope } from "../../types/domain";
+import { useLocale } from "../../i18n/useLocale";
 
-type PushToggleProps = {
-  scope: PushScope;
-  labelOn: string;
-  labelOff: string;
-  labelDenied: string;
-  labelActivating: string;
-  labelDeactivating: string;
-};
-
-export function PushToggle({
-  scope,
-  labelOn,
-  labelOff,
-  labelDenied,
-  labelActivating,
-  labelDeactivating,
-}: PushToggleProps) {
-  const { state, busy, subscribe, unsubscribe } = usePushSubscription(scope);
+export function PushToggle() {
+  const { t } = useLocale();
+  const { state, busy, subscribe, unsubscribe } = usePushSubscription();
 
   if (state === "loading" || state === "unsupported") return null;
 
@@ -39,9 +24,9 @@ export function PushToggle({
             : "bg-surface-warm text-muted hover:bg-surface-warm/80"
       }`}
     >
-      {state === "denied" && labelDenied}
-      {state === "subscribed" && (busy ? labelDeactivating : labelOn)}
-      {state === "unsubscribed" && (busy ? labelActivating : labelOff)}
+      {state === "denied" && t("push.denied")}
+      {state === "subscribed" && (busy ? t("push.deactivating") : t("push.generalOn"))}
+      {state === "unsubscribed" && (busy ? t("push.activating") : t("push.generalOff"))}
     </button>
   );
 }

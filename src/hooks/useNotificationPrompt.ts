@@ -31,13 +31,12 @@ export function useNotificationPrompt() {
       }
 
       const subJson = subscription.toJSON();
-      await fetch("/api/push/subscribe", {
+      await fetch("/api/push/auto-enroll", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           endpoint: subJson.endpoint,
           keys: subJson.keys,
-          scope: "general",
         }),
       });
     } catch {
@@ -56,4 +55,3 @@ export function useNotificationPrompt() {
 
   return { visible, busy, handleEnable, handleDismiss };
 }
-
