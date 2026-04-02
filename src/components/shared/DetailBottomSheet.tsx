@@ -1,6 +1,6 @@
 import { SwipeBarBottom, useSwipeBarContext } from "@luciodale/swipe-bar";
-import { isSheetMeta } from "../../types/domain";
 import { XIcon } from "../../icons/XIcon";
+import { isSheetMeta } from "../../types/domain";
 import { EventDetailBody } from "../events/EventDetailBody";
 import { RestaurantDetailBody } from "../restaurants/RestaurantDetailBody";
 
@@ -40,27 +40,31 @@ function CloseButton() {
 }
 
 export function DetailBottomSheet() {
+  const sheetHeight = Math.round(window.innerHeight * 0.9);
+
   return (
     <SwipeBarBottom
-      className="rounded-t-3xl bg-surface shadow-[0_-4px_24px_rgba(0,0,0,0.08)]"
+      className="mx-2.5 rounded-t-3xl bg-surface shadow-[0_-4px_24px_rgba(0,0,0,0.08)] border border-b-0 border-border"
       isAbsolute
       showToggle={false}
       swipeToOpen={false}
       swipeToClose
       showOverlay
       overlayBackgroundColor="transparent"
-      sidebarHeightPx={Math.round(window.innerHeight * 0.9)}
+      sidebarHeightPx={sheetHeight}
       swipeBarZIndex={50}
       overlayZIndex={45}
       resetMetaOnClose
     >
-        <div className="relative overflow-y-auto overscroll-contain" style={{ height: Math.round(window.innerHeight * 0.9) }}>
-          <div className="sticky top-0 z-10 flex justify-center bg-surface pt-2.5 pb-2 rounded-t-3xl">
-            <div className="h-1 w-9 rounded-full bg-border md:hidden" />
-            <CloseButton />
-          </div>
+      <div className="flex flex-col" style={{ height: sheetHeight }}>
+        <div className="flex shrink-0 justify-center pt-3 pb-1">
+          <div className="h-1 w-9 rounded-full bg-border md:hidden" />
+          <CloseButton />
+        </div>
+        <div className="flex-1 overflow-y-auto overscroll-contain">
           <SheetContent />
         </div>
-      </SwipeBarBottom>
+      </div>
+    </SwipeBarBottom>
   );
 }

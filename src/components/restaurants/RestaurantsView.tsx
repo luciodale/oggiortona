@@ -1,15 +1,14 @@
 import { lazy, Suspense } from "react";
 import type { RestaurantWithStatus } from "../../types/domain";
 import { RestaurantList } from "./RestaurantList";
-import { ViewToggle } from "../shared/ViewToggle";
 import { Pill } from "../ui/Pill";
+import { ListHeader } from "../shared/ListHeader";
 import { useViewMode } from "../../hooks/useViewMode";
 import { useRefresh } from "../../hooks/useRefresh";
 import { useMapPins } from "../../hooks/useMapPins";
 import { useRestaurantFilters } from "../../hooks/useRestaurantFilters";
 import { usePinnedRestaurants } from "../../hooks/usePinnedRestaurants";
 import { ContentLoader } from "../shared/ContentLoader";
-import { RefreshIcon } from "../../icons/RefreshIcon";
 import { useLocale } from "../../i18n/useLocale";
 
 const MapView = lazy(() => import("../shared/MapView").then((m) => ({ default: m.MapView })));
@@ -35,37 +34,29 @@ export function RestaurantsView({ restaurants, isLoading, isLoggedIn, initialPin
 
   return (
     <div>
-      <div className={`space-y-3 pb-3${mode === "map" ? " relative z-30" : ""}`}>
-        <div className="animate-fade-up flex items-center gap-3">
-          <h1 className="font-family-display text-3xl font-medium tracking-tight text-primary">
-            {t("restaurants.pageTitle")}
-          </h1>
-          <ViewToggle mode={mode} onToggle={handleToggle} />
-          <button
-            type="button"
-            aria-label={t("common.refresh")}
-            onClick={handleRefresh}
-            className="ml-auto flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border-light bg-surface text-muted transition-all duration-300 hover:border-mangiare-muted hover:text-mangiare active:scale-90"
-          >
-            <RefreshIcon className={`h-[18px] w-[18px]${isRefreshing ? " animate-spin" : ""}`} />
-          </button>
-        </div>
-
-        <div className="flex flex-wrap gap-2" role="toolbar" aria-label="Filtri">
+      <ListHeader
+        title={t("restaurants.pageTitle")}
+        section="mangiare"
+        mode={mode}
+        onToggle={handleToggle}
+        isRefreshing={isRefreshing}
+        onRefresh={handleRefresh}
+      >
+        <div className="flex flex-wrap gap-2" role="toolbar" aria-label={t("restaurants.filters")}>
           <Pill active={!hasActiveFilter} onClick={clearFilters}>
-            Tutti
+            {t("events.all")}
           </Pill>
           <Pill active={filters.openNow} onClick={toggleOpenNow}>
-            Aperto ora
+            {t("restaurants.openNow")}
           </Pill>
           <Pill active={filters.hasPromo} onClick={toggleHasPromo}>
-            {promoCount > 0 ? `Promozioni (${promoCount})` : "Promozioni"}
+            {promoCount > 0 ? t("restaurants.specialsWithCount", { count: promoCount }) : t("restaurants.specials")}
           </Pill>
           <Pill active={filters.hasNews} onClick={toggleHasNews}>
-            {newsCount > 0 ? `News (${newsCount})` : "News"}
+            {newsCount > 0 ? t("restaurants.dealsWithCount", { count: newsCount }) : t("restaurants.deals")}
           </Pill>
         </div>
-      </div>
+      </ListHeader>
 
       {mode === "list" ? (
         <RestaurantList

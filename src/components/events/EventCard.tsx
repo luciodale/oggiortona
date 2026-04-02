@@ -63,7 +63,7 @@ export function EventCard({ event, zipperCard = true, onCardClick, isAdmin, onTo
               {event.title}
             </h3>
             {event.description && (
-              <p className="mt-1 line-clamp-2 text-[12px] leading-relaxed text-muted">
+              <p className="mt-1 line-clamp-2 text-[13px] leading-relaxed text-muted">
                 {event.description}
               </p>
             )}
@@ -151,7 +151,7 @@ export function EventCard({ event, zipperCard = true, onCardClick, isAdmin, onTo
 
 export function SectionDivider({ title }: { title: string }) {
   return (
-    <h2 className="mb-3 mt-8 text-[10px] font-semibold uppercase tracking-[0.15em] text-muted first:mt-0">
+    <h2 className="mb-3 mt-6 text-[10px] font-semibold uppercase tracking-[0.15em] text-muted first:mt-0">
       {title}
     </h2>
   );

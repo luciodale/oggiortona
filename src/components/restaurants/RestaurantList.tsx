@@ -1,8 +1,7 @@
 import { useSwipeBarContext } from "@luciodale/swipe-bar";
 import { useCallback, useRef } from "react";
 import { useZipperScroll } from "../../hooks/useZipperScroll";
-import type { RestaurantWithStatus } from "../../types/domain";
-import type { SheetMeta } from "../../types/domain";
+import type { RestaurantWithStatus, SheetMeta } from "../../types/domain";
 import { ContentLoader } from "../shared/ContentLoader";
 import { RestaurantCard } from "./RestaurantCard";
 
@@ -30,7 +29,7 @@ export function RestaurantList({ filtered, isLoading, isLoggedIn, pinnedIds, onT
         <ContentLoader />
       ) : (
         <>
-          <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.1em] text-muted">
+          <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-muted">
             {filtered.length} {filtered.length === 1 ? "locale" : "locali"}
           </p>
 

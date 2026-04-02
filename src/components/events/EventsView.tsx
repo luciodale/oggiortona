@@ -1,19 +1,18 @@
-import { lazy, Suspense, useState, useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import type { EventRow } from "../../types/database";
-import { EventList } from "./EventList";
-import { ViewToggle } from "../shared/ViewToggle";
-import { useViewMode } from "../../hooks/useViewMode";
-import { useRefresh } from "../../hooks/useRefresh";
-import { useEventFilters } from "../../hooks/useEventFilters";
+import { lazy, Suspense, useCallback, useState } from "react";
+import { eventCategoryLabels, eventFilterCategories } from "../../config/categories";
 import type { TimeFilter } from "../../hooks/useEventFilters";
+import { useEventFilters } from "../../hooks/useEventFilters";
 import { useEventMapPins } from "../../hooks/useEventMapPins";
-import { eventFilterCategories, eventCategoryLabels } from "../../config/categories";
-import { ContentLoader } from "../shared/ContentLoader";
-import { Pill } from "../ui/Pill";
-import { RefreshIcon } from "../../icons/RefreshIcon";
-import { useLocale } from "../../i18n/useLocale";
+import { useRefresh } from "../../hooks/useRefresh";
 import { useSpaAuth } from "../../hooks/useSpaAuth";
+import { useViewMode } from "../../hooks/useViewMode";
+import { useLocale } from "../../i18n/useLocale";
+import type { EventRow } from "../../types/database";
+import { ContentLoader } from "../shared/ContentLoader";
+import { ListHeader } from "../shared/ListHeader";
+import { Pill } from "../ui/Pill";
+import { EventList } from "./EventList";
 
 const MapView = lazy(() => import("../shared/MapView").then((m) => ({ default: m.MapView })));
 
@@ -54,22 +53,14 @@ export function EventsView({ events, isLoading }: EventsViewProps) {
 
   return (
     <div>
-      <div className={`space-y-3 pb-3${mode === "map" ? " relative z-30" : ""}`}>
-        <div className="animate-fade-up flex items-center gap-3">
-          <h1 className="font-family-display text-3xl font-medium tracking-tight text-primary">
-            {t("events.pageTitle")}
-          </h1>
-          <ViewToggle mode={mode} onToggle={handleToggle} />
-          <button
-            type="button"
-            aria-label={t("common.refresh")}
-            onClick={handleRefresh}
-            className="ml-auto flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border-light bg-surface text-muted transition-all duration-300 hover:border-fare-muted hover:text-fare active:scale-90"
-          >
-            <RefreshIcon className={`h-[18px] w-[18px]${isRefreshing ? " animate-spin" : ""}`} />
-          </button>
-        </div>
-
+      <ListHeader
+        title={t("events.pageTitle")}
+        section="fare"
+        mode={mode}
+        onToggle={handleToggle}
+        isRefreshing={isRefreshing}
+        onRefresh={handleRefresh}
+      >
         <div className="space-y-2">
           <div className="flex flex-wrap gap-2" role="toolbar" aria-label={t("events.timeFilter")}>
             <Pill active={timeFilter === "tutti"} onClick={() => setTimeFilter("tutti")}>
@@ -98,7 +89,7 @@ export function EventsView({ events, isLoading }: EventsViewProps) {
             ))}
           </div>
         </div>
-      </div>
+      </ListHeader>
 
       {showLoader ? (
         <ContentLoader />
