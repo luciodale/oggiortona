@@ -7,12 +7,11 @@ import { IconBubble } from "./IconBubble";
 type CardContactButtonsProps = {
   phone: string | null;
   name: string;
-  address: string;
   latitude: number | null;
   longitude: number | null;
 };
 
-export function CardContactButtons({ phone, name, address, latitude, longitude }: CardContactButtonsProps) {
+export function CardContactButtons({ phone, name, latitude, longitude }: CardContactButtonsProps) {
   const { t } = useLocale();
 
   const hasCoordinates = latitude != null && longitude != null;

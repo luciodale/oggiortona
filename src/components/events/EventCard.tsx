@@ -67,6 +67,12 @@ export function EventCard({ event, zipperCard = true, onCardClick, isAdmin, onTo
                 {event.description}
               </p>
             )}
+            {event.timeStart && (
+              <span className="mt-1.5 flex items-center gap-1 text-[11px] text-muted/70">
+                <ClockIcon className="h-3 w-3" />
+                {event.timeStart}{event.timeEnd && ` \u2013 ${event.timeEnd}`}
+              </span>
+            )}
           </div>
 
           <div className="flex shrink-0 items-center gap-1.5">
@@ -107,32 +113,25 @@ export function EventCard({ event, zipperCard = true, onCardClick, isAdmin, onTo
         </div>
       </a>
 
-      <div className="flex items-center justify-between gap-2 px-4 pb-3.5 pt-3">
-        <div className="flex min-w-0 items-center gap-3 text-[11px] text-muted/70">
-          {event.timeStart && (
-            <span className="flex items-center gap-1">
-              <ClockIcon className="h-3 w-3" />
-              {event.timeStart}{event.timeEnd && ` \u2013 ${event.timeEnd}`}
-            </span>
-          )}
-          <EventPriceBadge price={event.price} />
-          {event.link && <EventLink href={event.link} />}
-        </div>
-        <div className="flex shrink-0 items-center gap-2">
+      <div className="flex items-end justify-between gap-2 px-4 pb-3.5 pt-3">
+        <div className="flex items-center gap-3">
           <CardContactButtons
             phone={event.phone}
             name={event.title}
-            address={event.address}
             latitude={event.latitude}
             longitude={event.longitude}
           />
-          {onCardClick && (
-            <span className="flex items-center gap-0.5 text-[11px] font-semibold text-accent">
-              {t("common.details")}
-              <ChevronRightIcon className="h-3.5 w-3.5" />
-            </span>
-          )}
+          <div className="flex items-center gap-3 text-[11px] text-muted/70">
+            <EventPriceBadge price={event.price} />
+            {event.link && <EventLink href={event.link} />}
+          </div>
         </div>
+        {onCardClick && (
+          <span className="flex shrink-0 items-center gap-0.5 text-[11px] font-semibold text-accent">
+            {t("common.details")}
+            <ChevronRightIcon className="h-3.5 w-3.5" />
+          </span>
+        )}
       </div>
     </div>
   );

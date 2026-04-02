@@ -123,38 +123,20 @@ export function RestaurantCard({ restaurant, isPinned, onTogglePin, zipperCard =
 
       </a>
 
-      {/* Bottom bar: address + action buttons */}
-      <div className="flex items-center justify-between gap-2 px-4 pb-3.5 pt-3">
-        <div className="flex min-w-0 items-center gap-2">
-          <p className="min-w-0 truncate text-[11px] text-muted/60">{restaurant.address}</p>
-          {restaurant.menuUrl && (
-            <a
-              href={restaurant.menuUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="shrink-0 text-[11px] font-semibold text-accent no-underline"
-              aria-label={t("aria.menuOf", { name: restaurant.name })}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {t("common.menu")}
-            </a>
-          )}
-        </div>
-        <div className="flex shrink-0 items-center gap-2">
-          <CardContactButtons
-            phone={restaurant.phone}
-            name={restaurant.name}
-            address={restaurant.address}
-            latitude={restaurant.latitude}
-            longitude={restaurant.longitude}
-          />
-          {onCardClick && (
-            <span className="flex items-center gap-0.5 text-[11px] font-semibold text-accent">
-              {t("common.details")}
-              <ChevronRightIcon className="h-3.5 w-3.5" />
-            </span>
-          )}
-        </div>
+      {/* Bottom bar: action buttons */}
+      <div className="flex items-end justify-between gap-2 px-4 pb-3.5 pt-3">
+        <CardContactButtons
+          phone={restaurant.phone}
+          name={restaurant.name}
+          latitude={restaurant.latitude}
+          longitude={restaurant.longitude}
+        />
+        {onCardClick && (
+          <span className="flex shrink-0 items-center gap-0.5 text-[11px] font-semibold text-accent">
+            {t("common.details")}
+            <ChevronRightIcon className="h-3.5 w-3.5" />
+          </span>
+        )}
       </div>
     </div>
   );
