@@ -18,7 +18,8 @@
     "test:watch": "vitest",
     "typecheck": "astro check && tsc --noEmit",
     "lint": "echo 'No linter configured yet'",
-    "deploy:cron": "cd workers/cron && wrangler deploy"
+    "deploy:cron": "cd workers/cron && wrangler deploy",
+    "test:cron": "source .env && curl -s -X POST https://oggiaortona.com/api/cron/notifications -H \"Authorization: Bearer $CRON_SECRET\" -H \"Content-Type: application/json\""
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",

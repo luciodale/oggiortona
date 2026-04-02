@@ -25,7 +25,7 @@ export function buildOwnerPayload(userId: string, count: number): OwnerPayload {
 
   return {
     userId,
-    title: "Oggi a Ortona",
+    title: "Promozione in scadenza",
     body,
     url: "/profile",
   };

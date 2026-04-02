@@ -131,7 +131,7 @@ rule NotifyOnNewEvent {
 -- ---------------------------------------------------------------
 
 rule NotifyOwnersOnExpiry {
-    when: DailyCron("45 12 * * *" UTC)
+    when: DailyCron("0 9 * * *" UTC)
     steps:
         1. Cron worker POSTs to /api/cron/notifications with CRON_SECRET
         2. Server calls notifyOwners(db, env)
@@ -195,7 +195,7 @@ handler NotificationClicked {
 -- ---------------------------------------------------------------
 
 -- Separate Cloudflare Worker with scheduled handler.
--- Single cron: "45 12 * * *" UTC (14:45 Italian time).
+-- Single cron: "0 9 * * *" UTC (11:00 CEST / 10:00 CET).
 -- POSTs to APP_URL/api/cron/notifications with CRON_SECRET.
 
 -- ---------------------------------------------------------------
