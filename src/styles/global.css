@@ -97,10 +97,6 @@ body {
   padding-top: max(1rem, env(safe-area-inset-top));
 }
 
-[data-sonner-toaster].toaster-offset {
-  --offset: max(32px, calc(env(safe-area-inset-top) + 14px)) !important;
-}
-
 /* ==============================
    Bottom nav glass pill
    ============================== */

@@ -43,7 +43,7 @@ export function RootLayout() {
     <SwipeBarProvider>
       <Toaster
         position="top-center"
-        className="toaster-offset"
+        offset={{ top: "max(32px, calc(env(safe-area-inset-top) + 14px))" }}
         toastOptions={{
           style: {
             fontFamily: "var(--font-family)",
