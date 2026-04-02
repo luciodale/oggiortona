@@ -2,11 +2,22 @@ import { $signInStore, $isLoadedStore } from "@clerk/astro/client";
 import type { OAuthStrategy } from "@clerk/types";
 import { useStore } from "@nanostores/react";
 import { useState, useEffect } from "react";
+import { useLocale } from "../i18n/useLocale";
 import { getRedirectUrl } from "../utils/url";
+
+function extractClerkMessage(err: unknown): string | null {
+  const clerkError = err as { errors?: Array<{ message: string; longMessage?: string }> };
+  if (clerkError.errors?.length) {
+    return clerkError.errors.map((e) => e.longMessage ?? e.message).join(". ");
+  }
+  if (err instanceof Error) return err.message;
+  return null;
+}
 
 export function useOAuthSignIn() {
   const signIn = useStore($signInStore);
   const isLoaded = useStore($isLoadedStore);
+  const { t } = useLocale();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -21,7 +32,10 @@ export function useOAuthSignIn() {
   }, []);
 
   async function handleGoogle() {
-    if (!isLoaded || !signIn) return;
+    if (!isLoaded || !signIn) {
+      setError(!isLoaded ? t("auth.notLoaded") : t("auth.notInitialized"));
+      return;
+    }
     setLoading(true);
     setError("");
 
@@ -32,7 +46,7 @@ export function useOAuthSignIn() {
         redirectUrlComplete: getRedirectUrl(),
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Errore di accesso");
+      setError(extractClerkMessage(err) ?? t("auth.genericError"));
       setLoading(false);
     }
   }

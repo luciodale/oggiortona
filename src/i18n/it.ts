@@ -184,6 +184,9 @@ export const it = {
   "auth.termsNotice": "Accedendo, accetti i {terms}.",
   "auth.termsLink": "Termini di Servizio",
   "auth.terms": "Termini di Servizio",
+  "auth.notLoaded": "Servizio di autenticazione non caricato. Ricarica la pagina.",
+  "auth.notInitialized": "Sessione non inizializzata. Ricarica la pagina.",
+  "auth.genericError": "Errore di accesso",
 
   // PWA
   "pwa.title": "Aggiungi Oggi a Ortona",

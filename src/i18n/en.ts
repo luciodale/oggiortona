@@ -188,6 +188,9 @@ export const en: Translations = {
   "auth.termsNotice": "By signing in, you agree to the {terms}.",
   "auth.termsLink": "Terms of Service",
   "auth.terms": "Terms of Service",
+  "auth.notLoaded": "Authentication service not loaded. Reload the page.",
+  "auth.notInitialized": "Session not initialized. Reload the page.",
+  "auth.genericError": "Sign in error",
 
   // PWA
   "pwa.title": "Add Oggi a Ortona",
