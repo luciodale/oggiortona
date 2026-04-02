@@ -1,7 +1,7 @@
 import { $signInStore, $isLoadedStore } from "@clerk/astro/client";
 import type { OAuthStrategy } from "@clerk/types";
 import { useStore } from "@nanostores/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getRedirectUrl } from "../utils/url";
 
 export function useOAuthSignIn() {
@@ -9,6 +9,16 @@ export function useOAuthSignIn() {
   const isLoaded = useStore($isLoadedStore);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(function resetOnReturn() {
+    function handleVisibilityChange() {
+      if (document.visibilityState === "visible") {
+        setLoading(false);
+      }
+    }
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
 
   async function handleGoogle() {
     if (!isLoaded || !signIn) return;
