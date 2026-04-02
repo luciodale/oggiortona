@@ -133,12 +133,6 @@ tool insert_events {
     output: count + summary of inserted events
 }
 
-tool insert_event {
-    "Insert a single event. Delegates to buildInsertSQL."
-    input: EventInput + target (local | remote)
-    output: confirmation with title, date, address, category, source link
-}
-
 tool get_recent_events {
     "Query events from 7 days ago to N days ahead (default 60)."
     "Used to check for duplicates before inserting."
