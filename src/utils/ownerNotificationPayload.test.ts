@@ -42,7 +42,7 @@ describe("buildOwnerPayload", () => {
   it("uses singular form for 1 promotion", () => {
     const payload = buildOwnerPayload("u1", 1);
     expect(payload.body).toBe("Hai 1 promozione in scadenza oggi");
-    expect(payload.title).toBe("Oggi a Ortona");
+    expect(payload.title).toBe("Promozione in scadenza");
     expect(payload.url).toBe("/profile");
     expect(payload.userId).toBe("u1");
   });
