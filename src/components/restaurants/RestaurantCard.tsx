@@ -38,7 +38,7 @@ export function RestaurantCard({ restaurant, isPinned, onTogglePin, zipperCard =
 
   return (
     <div
-      className={`${zipperCard ? "zipper-card" : ""} rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] border-l-[3px] transition-colors duration-200 ${isPinned ? "border-l-accent/40" : "border-l-transparent"} ${onCardClick ? "cursor-pointer" : ""}`}
+      className={`${zipperCard ? "zipper-card" : ""} rounded-2xl bg-card shadow-card border-l-[3px] transition-colors duration-200 ${isPinned ? "border-l-accent/40" : "border-l-transparent"} ${onCardClick ? "cursor-pointer" : ""}`}
       onClick={handleClick}
       role={onCardClick ? "button" : undefined}
     >

@@ -14,7 +14,7 @@ export function AdminReviewFilter({ value, onChange, showAiScraper }: AdminRevie
         onClick={() => onChange("pending")}
         className={`rounded-lg px-3 py-1.5 text-[11px] font-semibold transition-colors ${
           value === "pending"
-            ? "bg-amber-50 text-amber-700"
+            ? "bg-status-pending-bg text-status-pending"
             : "text-muted hover:text-primary"
         }`}
       >
@@ -37,7 +37,7 @@ export function AdminReviewFilter({ value, onChange, showAiScraper }: AdminRevie
           onClick={() => onChange("ai_scraper")}
           className={`rounded-lg px-3 py-1.5 text-[11px] font-semibold transition-colors ${
             value === "ai_scraper"
-              ? "bg-violet-50 text-violet-700"
+              ? "bg-promo-deal-bg text-promo-deal"
               : "text-muted hover:text-primary"
           }`}
         >

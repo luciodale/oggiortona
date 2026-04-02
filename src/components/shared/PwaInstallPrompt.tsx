@@ -20,7 +20,7 @@ export function PwaInstallPrompt() {
 
     toast.custom(
       (id) => (
-        <div className="w-full rounded-2xl bg-white p-4 shadow-lg ring-1 ring-border/50">
+        <div className="w-full rounded-2xl bg-card p-4 shadow-lg ring-1 ring-border/50">
           <div className="flex items-center gap-3">
             <img
               src="/icon-192.png"
@@ -71,7 +71,7 @@ export function PwaInstallPrompt() {
 
     toast.custom(
       (id) => (
-        <div className="w-full rounded-2xl bg-white p-4 shadow-lg ring-1 ring-border/50">
+        <div className="w-full rounded-2xl bg-card p-4 shadow-lg ring-1 ring-border/50">
           <div className="flex items-center gap-3">
             <img
               src="/icon-192.png"
@@ -90,19 +90,19 @@ export function PwaInstallPrompt() {
           </div>
           <div className="mt-3 space-y-2.5 rounded-xl bg-surface-warm px-3 py-3">
             <div className="flex items-center gap-2 text-[12px] text-primary">
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-white shadow-sm">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-card shadow-sm">
                 <EllipsisIcon className="h-3.5 w-3.5 text-accent" />
               </span>
               <span><strong>1.</strong> <strong>{t("pwa.iosStep1")}</strong> {t("pwa.iosStep1detail")}</span>
             </div>
             <div className="flex items-center gap-2 text-[12px] text-primary">
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-white shadow-sm">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-card shadow-sm">
                 <ShareIcon className="h-3.5 w-3.5 text-accent" />
               </span>
               <span><strong>2.</strong> <strong>{t("pwa.iosStep2")}</strong> {t("pwa.iosStep2detail")}</span>
             </div>
             <div className="flex items-center gap-2 text-[12px] text-primary">
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-white shadow-sm">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-card shadow-sm">
                 <SquarePlusIcon className="h-3.5 w-3.5 text-accent" />
               </span>
               <span><strong>3.</strong> <strong>{t("pwa.iosStep3")}</strong></span>

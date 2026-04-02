@@ -14,7 +14,7 @@ export function AdminTabs({ tab, onTabChange }: AdminTabsProps) {
         aria-selected={tab === "restaurants"}
         onClick={() => onTabChange("restaurants")}
         className={`flex flex-1 items-center justify-center rounded-lg py-2 text-[11px] font-semibold uppercase tracking-[0.06em] transition-all ${
-          tab === "restaurants" ? "bg-white text-primary shadow-sm" : "text-muted"
+          tab === "restaurants" ? "bg-card text-primary shadow-sm" : "text-muted"
         }`}
       >
         Ristoranti
@@ -25,7 +25,7 @@ export function AdminTabs({ tab, onTabChange }: AdminTabsProps) {
         aria-selected={tab === "events"}
         onClick={() => onTabChange("events")}
         className={`flex flex-1 items-center justify-center rounded-lg py-2 text-[11px] font-semibold uppercase tracking-[0.06em] transition-all ${
-          tab === "events" ? "bg-white text-primary shadow-sm" : "text-muted"
+          tab === "events" ? "bg-card text-primary shadow-sm" : "text-muted"
         }`}
       >
         Eventi

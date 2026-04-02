@@ -26,7 +26,7 @@ export function EventListCard({ event }: EventListCardProps) {
   }
 
   return (
-    <div className="relative rounded-2xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+    <div className="relative rounded-2xl bg-card p-4 shadow-card">
       <button
         type="button"
         onClick={() => handleDelete(event.id)}
@@ -56,8 +56,8 @@ export function EventListCard({ event }: EventListCardProps) {
         <span
           className={`mt-1.5 inline-block rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
             event.approved === 0
-              ? "bg-amber-50 text-amber-700"
-              : "bg-red-50 text-red-700"
+              ? "bg-status-pending-bg text-status-pending"
+              : "bg-status-rejected-bg text-status-rejected"
           }`}
         >
           {event.approved === 0

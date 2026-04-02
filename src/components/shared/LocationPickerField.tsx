@@ -75,7 +75,7 @@ export function LocationPickerField({
           aria-required
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? errorId : undefined}
-          className="w-full rounded-xl border border-border bg-white px-3 py-2.5 text-[13px] text-primary outline-none placeholder:text-muted/40 focus:border-accent"
+          className="w-full rounded-xl border border-border bg-card px-3 py-2.5 text-[13px] text-primary outline-none placeholder:text-muted/40 focus:border-accent"
         />
         {error && <FormError message={error} />}
       </div>
@@ -96,9 +96,9 @@ export function LocationPickerField({
           filterType="NO_MATCH"
           createNewOptionIfNoMatch={false}
           placeholder="Cerca sulla mappa..."
-          classNameSearchableDropdownContainer="relative flex items-center rounded-xl border border-border bg-white focus-within:border-accent"
+          classNameSearchableDropdownContainer="relative flex items-center rounded-xl border border-border bg-card focus-within:border-accent"
           classNameSearchQueryInput="w-full rounded-xl bg-transparent px-3 py-2.5 text-[13px] text-primary outline-none placeholder:text-muted/40"
-          classNameDropdownOptions="absolute z-50 w-full mt-1 max-h-60 overflow-y-auto rounded-xl border border-border bg-white shadow-lg"
+          classNameDropdownOptions="absolute z-50 w-full mt-1 max-h-60 overflow-y-auto rounded-xl border border-border bg-card shadow-lg"
           classNameDropdownOption="px-3 py-2.5 text-[13px] text-primary cursor-pointer"
           classNameDropdownOptionFocused="bg-surface-alt"
           classNameDropdownOptionNoMatch="px-3 py-2.5 text-[13px] text-muted"

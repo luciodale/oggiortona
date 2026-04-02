@@ -33,31 +33,18 @@ export function AdminRestaurantCard({
   }
 
   return (
-    <div className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+    <div className="rounded-2xl bg-card shadow-card">
       <div
         role="button"
         tabIndex={0}
-        className="flex w-full cursor-pointer items-center justify-between gap-3 bg-transparent p-4 text-left"
+        className="cursor-pointer bg-transparent p-4 text-left"
         onClick={handleCardClick}
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCardClick(); } }}
       >
-        <div className="min-w-0 flex-1">
-          <p className="font-family-display text-base font-medium text-primary">
-            {restaurant.name}
-          </p>
-          <p className="mt-0.5 text-[11px] capitalize text-muted">
-            {types.map((tp) => labels[tp] ?? tp).join(" · ")}
-          </p>
-          {(restaurant.ownerName || restaurant.ownerEmail) && (
-            <p className="mt-0.5 text-[10px] text-muted/50">
-              {[restaurant.ownerName, restaurant.ownerEmail].filter(Boolean).join(" · ")}
-            </p>
-          )}
-        </div>
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex items-center gap-2">
           <span
             className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
-              isActive ? "bg-success/10 text-success" : "bg-amber-50 text-amber-700"
+              isActive ? "bg-success/10 text-success" : "bg-status-pending-bg text-status-pending"
             }`}
           >
             {isActive ? "Attivo" : "Inattivo"}
@@ -72,6 +59,19 @@ export function AdminRestaurantCard({
               {expanded ? "▲" : "▼"} {restaurant.promotions.length}
             </button>
           )}
+        </div>
+        <p className="mt-1 font-family-display text-base font-medium text-primary">
+          {restaurant.name}
+        </p>
+        <p className="mt-0.5 text-[11px] capitalize text-muted">
+          {types.map((tp) => labels[tp] ?? tp).join(" · ")}
+        </p>
+        {(restaurant.ownerName || restaurant.ownerEmail) && (
+          <p className="mt-0.5 text-[10px] text-muted/50">
+            {[restaurant.ownerName, restaurant.ownerEmail].filter(Boolean).join(" · ")}
+          </p>
+        )}
+        <div className="mt-3 flex gap-2">
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); navigate({ to: `/profile/restaurant/${restaurant.id}/edit` }); }}
@@ -82,10 +82,7 @@ export function AdminRestaurantCard({
           </button>
           <button
             type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggle();
-            }}
+            onClick={(e) => { e.stopPropagation(); onToggle(); }}
             aria-label={`${isActive ? "Disabilita" : "Approva"} ${restaurant.name}`}
             className={`rounded-lg px-3 py-1.5 text-[11px] font-semibold transition-colors ${
               isActive

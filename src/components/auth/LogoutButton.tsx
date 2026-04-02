@@ -11,7 +11,7 @@ export function LogoutButton() {
       onClick={handleLogout}
       disabled={loading}
       aria-busy={loading}
-      className="shrink-0 rounded-lg bg-white px-3 py-1.5 text-[12px] font-semibold text-danger shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-colors hover:bg-danger/5 active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed"
+      className="shrink-0 rounded-lg bg-card px-3 py-1.5 text-[12px] font-semibold text-danger shadow-card transition-colors hover:bg-danger/5 active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed"
     >
       {loading ? t("auth.signingOut") : t("auth.signOut")}
     </button>

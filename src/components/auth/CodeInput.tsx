@@ -69,7 +69,7 @@ export function CodeInput({ value, onChange, disabled }: CodeInputProps) {
           onPaste={handlePaste}
           disabled={disabled}
           aria-label={`Digit ${i + 1}`}
-          className="w-11 h-13 text-center text-lg font-semibold rounded-xl border border-border bg-white text-primary transition-all focus:border-accent focus:ring-1 focus:ring-accent"
+          className="w-11 h-13 text-center text-lg font-semibold rounded-xl border border-border bg-card text-primary transition-all focus:border-accent focus:ring-1 focus:ring-accent"
         />
       ))}
     </div>

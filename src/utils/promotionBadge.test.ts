@@ -38,13 +38,13 @@ describe("getBadgeStyle", () => {
   it("returns deal style", () => {
     const badge = getBadgeStyle("deal", "it");
     expect(badge.label).toBe("Offerta");
-    expect(badge.cls).toContain("violet");
+    expect(badge.cls).toContain("promo-deal");
   });
 
   it("returns news style", () => {
     const badge = getBadgeStyle("news", "it");
     expect(badge.label).toBe("News");
-    expect(badge.cls).toContain("sky");
+    expect(badge.cls).toContain("promo-news");
   });
 
   it("returns fallback for unknown type", () => {

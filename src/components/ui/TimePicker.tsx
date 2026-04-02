@@ -70,7 +70,7 @@ function ScrollColumn({
             onClick={() => onSelect(item)}
             className={`shrink-0 px-4 py-1.5 text-center text-[13px] font-medium transition-colors ${
               isSelected
-                ? "bg-primary text-white"
+                ? "bg-muted text-card"
                 : "text-muted hover:bg-surface-warm hover:text-primary"
             }`}
           >
@@ -124,7 +124,7 @@ function DesktopTimePicker({ value, onChange }: TimePickerProps) {
         aria-haspopup="listbox"
         aria-label={`Seleziona orario: ${value}`}
         {...getReferenceProps()}
-        className="flex flex-1 items-center gap-2 rounded-xl border border-border bg-white px-3 py-2.5 text-[13px] font-medium text-primary outline-none transition-colors hover:border-accent focus:border-accent"
+        className="flex flex-1 items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-[13px] font-medium text-primary outline-none transition-colors hover:border-accent focus:border-accent"
       >
         <ClockIcon className="h-3.5 w-3.5 text-muted" />
         {value}
@@ -135,7 +135,7 @@ function DesktopTimePicker({ value, onChange }: TimePickerProps) {
             ref={refs.setFloating}
             style={floatingStyles}
             {...getFloatingProps()}
-            className="z-50 flex overflow-hidden rounded-xl border border-border bg-white shadow-lg"
+            className="z-50 flex overflow-hidden rounded-xl border border-border bg-card shadow-lg"
           >
             <ScrollColumn
               items={HOURS}
@@ -164,7 +164,7 @@ function MobileTimePicker({ value, onChange }: TimePickerProps) {
       value={value}
       onChange={(e) => onChange(e.target.value)}
       aria-label="Seleziona orario"
-      className="h-[42px] flex-1 appearance-none rounded-xl border border-border bg-white px-3 text-[13px] outline-none focus:border-accent"
+      className="h-[42px] flex-1 appearance-none rounded-xl border border-border bg-card px-3 text-[13px] outline-none focus:border-accent"
     />
   );
 }

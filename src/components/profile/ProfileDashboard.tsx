@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
 import { useUserEvents } from "../../hooks/useUserEvents";
@@ -17,12 +17,40 @@ import { useSpaAuth } from "../../hooks/useSpaAuth";
 import { RestaurantListCard } from "./RestaurantListCard";
 import type { Locale } from "../../types/domain";
 
+type ThemePreference = "system" | "light" | "dark";
+
+function getStoredTheme(): ThemePreference {
+  const stored = localStorage.getItem("theme");
+  if (stored === "light" || stored === "dark") return stored;
+  return "system";
+}
+
+function applyTheme(pref: ThemePreference) {
+  localStorage.setItem("theme", pref);
+  const dark = pref === "dark" || (pref === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
+  document.documentElement.classList.toggle("dark", dark);
+  window.dispatchEvent(new Event("themechange"));
+}
+
 export function ProfileDashboard() {
   const { locale, t } = useLocale();
   const setLocale = useSetAtom(localeAtom);
   const { user } = useSpaAuth();
   const { restaurants, loading: loadingRestaurants } = useUserRestaurants();
   const { events, loading: loadingEvents } = useUserEvents();
+  const [theme, setTheme] = useState<ThemePreference>(getStoredTheme);
+
+  useEffect(() => {
+    function onSystemChange() {
+      if (getStoredTheme() !== "system") return;
+      const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.classList.toggle("dark", dark);
+      window.dispatchEvent(new Event("themechange"));
+    }
+    const mql = matchMedia("(prefers-color-scheme: dark)");
+    mql.addEventListener("change", onSystemChange);
+    return () => mql.removeEventListener("change", onSystemChange);
+  }, []);
 
   const loading = loadingRestaurants || loadingEvents;
 
@@ -46,7 +74,8 @@ export function ProfileDashboard() {
       </div>
 
       <div className="mt-4 flex items-center justify-between">
-        <div className="relative">
+        <div className="flex items-center gap-2">
+          <div className="relative">
             <select
               id="locale-select"
               value={locale}
@@ -55,12 +84,30 @@ export function ProfileDashboard() {
                 document.cookie = `locale=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
                 setLocale(newLocale);
               }}
-              className="appearance-none rounded-lg border border-border bg-white py-1.5 pl-3 pr-8 text-sm text-primary"
+              className="appearance-none rounded-lg border border-border bg-card py-1.5 pl-3 pr-8 text-sm text-primary"
             >
               <option value="it">{t("lang.italian")}</option>
               <option value="en">{t("lang.english")}</option>
             </select>
             <ChevronDownIcon className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted" strokeWidth={2.5} />
+          </div>
+          <div className="relative">
+            <select
+              id="theme-select"
+              value={theme}
+              onChange={(e) => {
+                const pref = e.target.value as ThemePreference;
+                setTheme(pref);
+                applyTheme(pref);
+              }}
+              className="appearance-none rounded-lg border border-border bg-card py-1.5 pl-3 pr-8 text-sm text-primary"
+            >
+              <option value="system">{t("theme.system")}</option>
+              <option value="light">{t("theme.light")}</option>
+              <option value="dark">{t("theme.dark")}</option>
+            </select>
+            <ChevronDownIcon className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted" strokeWidth={2.5} />
+          </div>
         </div>
         <PushToggle />
       </div>

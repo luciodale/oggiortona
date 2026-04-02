@@ -2,9 +2,12 @@ import { lazy, Suspense } from "react";
 import type { RestaurantWithStatus } from "../../types/domain";
 import { RestaurantList } from "./RestaurantList";
 import { ViewToggle } from "../shared/ViewToggle";
+import { Pill } from "../ui/Pill";
 import { useViewMode } from "../../hooks/useViewMode";
 import { useRefresh } from "../../hooks/useRefresh";
 import { useMapPins } from "../../hooks/useMapPins";
+import { useRestaurantFilters } from "../../hooks/useRestaurantFilters";
+import { usePinnedRestaurants } from "../../hooks/usePinnedRestaurants";
 import { ContentLoader } from "../shared/ContentLoader";
 import { RefreshIcon } from "../../icons/RefreshIcon";
 import { useLocale } from "../../i18n/useLocale";
@@ -20,13 +23,19 @@ type RestaurantsViewProps = {
 
 export function RestaurantsView({ restaurants, isLoading, isLoggedIn, initialPinnedIds }: RestaurantsViewProps) {
   const { t } = useLocale();
-  const { mode, handleToggle, anchorRef, mapTop } = useViewMode();
+  const { mode, handleToggle } = useViewMode();
   const { isRefreshing, handleRefresh } = useRefresh([["restaurants"], ["pins"]]);
-  const pins = useMapPins(restaurants);
+  const { pinnedIds, togglePin } = usePinnedRestaurants(initialPinnedIds);
+  const { filters, filtered, hasActiveFilter, clearFilters, toggleOpenNow, toggleHasPromo, toggleHasNews } =
+    useRestaurantFilters(restaurants, pinnedIds);
+  const pins = useMapPins(filtered);
+
+  const promoCount = restaurants.filter((r) => r.promotions.some((p) => p.type === "special" || p.type === "deal")).length;
+  const newsCount = restaurants.filter((r) => r.promotions.some((p) => p.type === "news")).length;
 
   return (
     <div>
-      <div ref={anchorRef} className="mb-3 pb-2">
+      <div className={`space-y-3 pb-3${mode === "map" ? " relative z-30" : ""}`}>
         <div className="animate-fade-up flex items-center gap-3">
           <h1 className="font-family-display text-3xl font-medium tracking-tight text-primary">
             {t("restaurants.pageTitle")}
@@ -41,23 +50,39 @@ export function RestaurantsView({ restaurants, isLoading, isLoggedIn, initialPin
             <RefreshIcon className={`h-[18px] w-[18px]${isRefreshing ? " animate-spin" : ""}`} />
           </button>
         </div>
+
+        <div className="flex flex-wrap gap-2" role="toolbar" aria-label="Filtri">
+          <Pill active={!hasActiveFilter} onClick={clearFilters}>
+            Tutti
+          </Pill>
+          <Pill active={filters.openNow} onClick={toggleOpenNow}>
+            Aperto ora
+          </Pill>
+          <Pill active={filters.hasPromo} onClick={toggleHasPromo}>
+            {promoCount > 0 ? `Promozioni (${promoCount})` : "Promozioni"}
+          </Pill>
+          <Pill active={filters.hasNews} onClick={toggleHasNews}>
+            {newsCount > 0 ? `News (${newsCount})` : "News"}
+          </Pill>
+        </div>
       </div>
 
       {mode === "list" ? (
-        <RestaurantList restaurants={restaurants} isLoading={isLoading} isLoggedIn={isLoggedIn} initialPinnedIds={initialPinnedIds} />
+        <RestaurantList
+          filtered={filtered}
+          isLoading={isLoading}
+          isLoggedIn={isLoggedIn}
+          pinnedIds={pinnedIds}
+          onTogglePin={togglePin}
+        />
       ) : isLoading ? (
         <ContentLoader />
       ) : (
-        mapTop > 0 && (
-          <Suspense fallback={<div className="fixed inset-x-0 bottom-0 flex items-center justify-center bg-surface-alt" style={{ top: `${mapTop}px` }}><p className="text-sm text-muted">{t("common.loadingMap")}</p></div>}>
-            <div
-              className="fixed inset-x-0 bottom-0"
-              style={{ top: `${mapTop}px` }}
-            >
+        <Suspense fallback={<div className="fixed inset-0 z-20 flex items-center justify-center bg-surface-alt"><p className="text-sm text-muted">{t("common.loadingMap")}</p></div>}>
+            <div className="map-fullscreen fixed inset-0 z-20">
               <MapView pins={pins} />
             </div>
           </Suspense>
-        )
       )}
     </div>
   );

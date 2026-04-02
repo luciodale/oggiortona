@@ -1,8 +1,10 @@
-type ButtonVariant = "primary" | "ghost" | "danger";
+type ButtonVariant = "primary" | "outline" | "ghost" | "danger";
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-mangiare text-white hover:bg-mangiare/90 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed",
+    "bg-accent text-white hover:bg-accent-hover active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed",
+  outline:
+    "border border-border bg-card text-primary hover:bg-surface-alt active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed",
   ghost:
     "bg-transparent text-muted hover:text-primary",
   danger:
@@ -22,7 +24,7 @@ export function Button({
 }: ButtonProps) {
   return (
     <button
-      className={`rounded-xl py-3 text-[13px] font-semibold transition-all ${
+      className={`flex items-center justify-center rounded-xl py-3 text-[13px] font-semibold transition-all ${
         fullWidth ? "w-full" : ""
       } ${variantStyles[variant]} ${className}`}
       {...props}

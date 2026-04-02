@@ -7,8 +7,8 @@ export type BadgeStyle = { label: string; cls: string };
 
 const BADGE_CLS: Record<string, string> = {
   special: "bg-mangiare-light text-mangiare",
-  deal: "bg-violet-50 text-violet-700",
-  news: "bg-sky-50 text-sky-700",
+  deal: "bg-promo-deal-bg text-promo-deal",
+  news: "bg-promo-news-bg text-promo-news",
 };
 
 const BADGE_KEYS: Record<string, "promo.dailySpecial" | "promo.deal" | "promo.news"> = {
@@ -23,5 +23,5 @@ export function isPromotionExpired(item: PromotionRow) {
 
 export function getBadgeStyle(type: string, locale: Locale): BadgeStyle {
   const key = BADGE_KEYS[type] ?? "promo.news";
-  return { label: t(key, locale), cls: BADGE_CLS[type] ?? "bg-sky-50 text-sky-700" };
+  return { label: t(key, locale), cls: BADGE_CLS[type] ?? "bg-promo-news-bg text-promo-news" };
 }

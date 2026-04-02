@@ -26,7 +26,7 @@ export function EventsView({ events, isLoading }: EventsViewProps) {
   const { locale, t } = useLocale();
   const { isAdmin } = useSpaAuth();
   const queryClient = useQueryClient();
-  const { mode, handleToggle, anchorRef, mapTop } = useViewMode();
+  const { mode, handleToggle } = useViewMode();
   const { isRefreshing, handleRefresh } = useRefresh([["events"], ["events-past"]]);
   const [timeFilter, setTimeFilter] = useState<TimeFilter>("tutti");
 
@@ -54,7 +54,7 @@ export function EventsView({ events, isLoading }: EventsViewProps) {
 
   return (
     <div>
-      <div ref={anchorRef} className="space-y-3 pb-3">
+      <div className={`space-y-3 pb-3${mode === "map" ? " relative z-30" : ""}`}>
         <div className="animate-fade-up flex items-center gap-3">
           <h1 className="font-family-display text-3xl font-medium tracking-tight text-primary">
             {t("events.pageTitle")}
@@ -105,16 +105,11 @@ export function EventsView({ events, isLoading }: EventsViewProps) {
       ) : mode === "list" ? (
         <EventList grouped={grouped} isAdmin={isAdmin} onToggleHighlight={isAdmin ? handleToggleHighlight : undefined} />
       ) : (
-        mapTop > 0 && (
-          <Suspense fallback={<div className="fixed inset-x-0 bottom-0 flex items-center justify-center bg-surface-alt" style={{ top: `${mapTop}px` }}><p className="text-sm text-muted">{t("common.loadingMap")}</p></div>}>
-            <div
-              className="fixed inset-x-0 bottom-0"
-              style={{ top: `${mapTop}px` }}
-            >
+        <Suspense fallback={<div className="fixed inset-0 z-20 flex items-center justify-center bg-surface-alt"><p className="text-sm text-muted">{t("common.loadingMap")}</p></div>}>
+            <div className="map-fullscreen fixed inset-0 z-20">
               <MapView pins={pins} />
             </div>
           </Suspense>
-        )
       )}
     </div>
   );

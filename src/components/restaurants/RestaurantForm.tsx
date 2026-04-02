@@ -96,7 +96,7 @@ export function RestaurantForm({ restaurantId, initialData }: RestaurantFormProp
               aria-label={`${"€".repeat(n)} - ${n === 1 ? "Economico" : n === 2 ? "Medio" : "Alto"}`}
               className={`flex-1 rounded-xl py-2.5 text-center text-[13px] font-semibold transition-all ${
                 form.getValues("priceRange") === n
-                  ? "bg-primary text-white"
+                  ? "bg-muted text-card"
                   : "bg-surface-warm text-muted hover:text-primary"
               }`}
             >
@@ -140,7 +140,7 @@ export function RestaurantForm({ restaurantId, initialData }: RestaurantFormProp
         <legend className="mb-1.5 block text-[13px] font-medium text-primary">
           Orari di apertura<span className="ml-0.5 text-danger" aria-hidden="true">*</span>
         </legend>
-        <div className="rounded-xl border border-border bg-white px-3">
+        <div className="rounded-xl border border-border bg-card px-3">
           {orderedDays.map((day, i) => (
             <DayRow
               key={day}

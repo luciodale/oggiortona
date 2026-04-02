@@ -43,3 +43,14 @@ const fullTitle = title === siteConfig.title ? title : `${title} | ${siteConfig.
   href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap"
   rel="stylesheet"
 />
+
+<!-- Theme: prevent flash of wrong theme -->
+<script is:inline>
+  (function(){
+    var t=localStorage.getItem("theme");
+    var d=t==="dark"||(t!=="light"&&matchMedia("(prefers-color-scheme:dark)").matches);
+    if(d)document.documentElement.classList.add("dark");
+    var m=document.querySelector('meta[name="theme-color"]');
+    if(m&&d)m.setAttribute("content","#141110");
+  })();
+</script>

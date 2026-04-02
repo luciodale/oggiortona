@@ -277,4 +277,9 @@ export const en: Translations = {
   // Language
   "lang.italian": "Italiano",
   "lang.english": "English",
+
+  // Theme
+  "theme.system": "System",
+  "theme.light": "Light",
+  "theme.dark": "Dark",
 };

@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useRef } from "react";
 import type L from "leaflet";
-import { ORTONA_CENTER, TILE_URL } from "../utils/map";
+import { ORTONA_CENTER, getCardColor, getTileUrl } from "../utils/map";
 
-const PICKER_PIN_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="48" viewBox="0 0 36 48">
-  <path d="M18 0C8.06 0 0 8.06 0 18c0 13.5 18 30 18 30s18-16.5 18-30C36 8.06 27.94 0 18 0z" fill="#c4512a" stroke="#fdfaf6" stroke-width="2"/>
-  <circle cx="18" cy="18" r="6" fill="#fdfaf6"/>
+function buildPickerPinSvg(stroke: string) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="48" viewBox="0 0 36 48">
+  <path d="M18 0C8.06 0 0 8.06 0 18c0 13.5 18 30 18 30s18-16.5 18-30C36 8.06 27.94 0 18 0z" fill="#c4512a" stroke="${stroke}" stroke-width="2"/>
+  <circle cx="18" cy="18" r="6" fill="${stroke}"/>
 </svg>`;
+}
 
 type LocationPickerOptions = {
   latitude: number | null;
@@ -50,11 +52,11 @@ export function useLocationPicker({
         attributionControl: false,
       }).setView(center, 17);
 
-      Leaflet.tileLayer(TILE_URL, { maxZoom: 19 }).addTo(map);
+      Leaflet.tileLayer(getTileUrl(), { maxZoom: 19 }).addTo(map);
       Leaflet.control.zoom({ position: "topright" }).addTo(map);
 
       const icon = Leaflet.divIcon({
-        html: PICKER_PIN_SVG,
+        html: buildPickerPinSvg(getCardColor()),
         className: "picker-pin",
         iconSize: [36, 48],
         iconAnchor: [18, 48],

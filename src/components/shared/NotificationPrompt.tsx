@@ -19,7 +19,7 @@ export function NotificationPrompt() {
         <div
           role="alertdialog"
           aria-label={t("push.promptTitle")}
-          className="fixed bottom-20 left-4 right-4 z-50 animate-fade-up rounded-2xl bg-white p-4 shadow-lg ring-1 ring-border/50"
+          className="fixed bottom-20 left-4 right-4 z-50 animate-fade-up rounded-2xl bg-card p-4 shadow-lg ring-1 ring-border/50"
           style={{ animationDuration: "0.3s" }}
         >
           <div className="flex items-start gap-3">

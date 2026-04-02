@@ -16,7 +16,7 @@ export function AdminEventCard({ event, onToggle, onDelete }: AdminEventCardProp
   const navigate = useNavigate();
   const catLabels = eventCategoryLabels("it");
   const isActive = event.active === 1;
-  const colorClass = eventCategoryColors[event.category] ?? "bg-stone-100 text-stone-600";
+  const colorClass = eventCategoryColors[event.category] ?? "bg-cat-altro-bg text-cat-altro";
 
   function handleCardClick() {
     const meta: SheetMeta = { kind: "event", data: event };
@@ -29,34 +29,32 @@ export function AdminEventCard({ event, onToggle, onDelete }: AdminEventCardProp
       tabIndex={0}
       onClick={handleCardClick}
       onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCardClick(); } }}
-      className="flex cursor-pointer items-center justify-between gap-3 rounded-2xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
+      className="cursor-pointer rounded-2xl bg-card p-4 shadow-card"
     >
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${colorClass}`}>
-            {catLabels[event.category] ?? event.category}
-          </span>
-          <span
-            className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
-              isActive ? "bg-success/10 text-success" : "bg-amber-50 text-amber-700"
-            }`}
-          >
-            {isActive ? "Attivo" : "Inattivo"}
-          </span>
-        </div>
-        <p className="mt-1 font-family-display text-base font-medium text-primary">
-          {event.title}
-        </p>
-        <p className="mt-0.5 text-[11px] text-muted">
-          {formatDateShort(event.dateStart, "it")} · {event.address}
-        </p>
-        {(event.ownerName || event.ownerEmail) && (
-          <p className="mt-0.5 text-[10px] text-muted/50">
-            {[event.ownerName, event.ownerEmail].filter(Boolean).join(" · ")}
-          </p>
-        )}
+      <div className="flex items-center gap-2">
+        <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${colorClass}`}>
+          {catLabels[event.category] ?? event.category}
+        </span>
+        <span
+          className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+            isActive ? "bg-success/10 text-success" : "bg-status-pending-bg text-status-pending"
+          }`}
+        >
+          {isActive ? "Attivo" : "Inattivo"}
+        </span>
       </div>
-      <div className="flex shrink-0 gap-2">
+      <p className="mt-1 font-family-display text-base font-medium text-primary">
+        {event.title}
+      </p>
+      <p className="mt-0.5 text-[11px] text-muted">
+        {formatDateShort(event.dateStart, "it")} · {event.address}
+      </p>
+      {(event.ownerName || event.ownerEmail) && (
+        <p className="mt-0.5 text-[10px] text-muted/50">
+          {[event.ownerName, event.ownerEmail].filter(Boolean).join(" · ")}
+        </p>
+      )}
+      <div className="mt-3 flex gap-2">
         <button
           type="button"
           onClick={(e) => { e.stopPropagation(); navigate({ to: `/profile/event/${event.id}/edit` }); }}

@@ -19,13 +19,13 @@ export function eventCategoryLabels(locale: Locale): Record<string, string> {
 }
 
 export const eventCategoryColors: Record<string, string> = {
-  sagra: "bg-amber-50 text-amber-700",
-  cibo: "bg-orange-50 text-orange-700",
-  musica: "bg-violet-50 text-violet-700",
-  mercato: "bg-emerald-50 text-emerald-700",
-  cultura: "bg-sky-50 text-sky-700",
-  sport: "bg-rose-50 text-rose-700",
-  altro: "bg-stone-100 text-stone-600",
+  sagra: "bg-cat-sagra-bg text-cat-sagra",
+  cibo: "bg-cat-cibo-bg text-cat-cibo",
+  musica: "bg-cat-musica-bg text-cat-musica",
+  mercato: "bg-cat-mercato-bg text-cat-mercato",
+  cultura: "bg-cat-cultura-bg text-cat-cultura",
+  sport: "bg-cat-sport-bg text-cat-sport",
+  altro: "bg-cat-altro-bg text-cat-altro",
 };
 
 export const restaurantTypes = [

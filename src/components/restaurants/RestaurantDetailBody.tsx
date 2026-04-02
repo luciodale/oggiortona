@@ -41,12 +41,12 @@ export function RestaurantDetailBody({ restaurant }: RestaurantDetailBodyProps) 
         {restaurant.phone && (
           <a href={`https://wa.me/${restaurant.phone.replace(/[\s\-+()]/g, "")}?text=${encodeURIComponent(t("aria.whatsappMessage"))}`} target="_blank" rel="noopener noreferrer" className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#25D366] py-3 text-[13px] font-semibold text-white no-underline transition-all hover:bg-[#1FAD55] active:scale-[0.98]">{t("common.whatsapp")}</a>
         )}
-        <a href={restaurant.latitude != null && restaurant.longitude != null ? `https://www.google.com/maps/search/?api=1&query=${restaurant.latitude},${restaurant.longitude}` : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(restaurant.address)}`} target="_blank" rel="noopener noreferrer" className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary py-3 text-[13px] font-semibold text-white no-underline transition-all hover:bg-primary/90 active:scale-[0.98]">{t("common.directions")}</a>
+        <a href={restaurant.latitude != null && restaurant.longitude != null ? `https://www.google.com/maps/search/?api=1&query=${restaurant.latitude},${restaurant.longitude}` : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(restaurant.address)}`} target="_blank" rel="noopener noreferrer" className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary py-3 text-[13px] font-semibold text-card no-underline transition-all hover:bg-primary/90 active:scale-[0.98]">{t("common.directions")}</a>
         {restaurant.phone && (
-          <a href={`tel:${restaurant.phone}`} className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-white py-3 text-[13px] font-semibold text-primary no-underline transition-all hover:bg-surface-alt active:scale-[0.98]">{t("common.call")}</a>
+          <a href={`tel:${restaurant.phone}`} className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-card py-3 text-[13px] font-semibold text-primary no-underline transition-all hover:bg-surface-alt active:scale-[0.98]">{t("common.call")}</a>
         )}
         {restaurant.menuUrl && (
-          <a href={restaurant.menuUrl} target="_blank" rel="noopener noreferrer" className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-white py-3 text-[13px] font-semibold text-primary no-underline transition-all hover:bg-surface-alt active:scale-[0.98]">{t("common.menu")}</a>
+          <a href={restaurant.menuUrl} target="_blank" rel="noopener noreferrer" className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-card py-3 text-[13px] font-semibold text-primary no-underline transition-all hover:bg-surface-alt active:scale-[0.98]">{t("common.menu")}</a>
         )}
       </div>
 
@@ -56,7 +56,7 @@ export function RestaurantDetailBody({ restaurant }: RestaurantDetailBodyProps) 
 
       <div className="mt-8">
         <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-muted">{t("common.hours")}</h2>
-        <div className="rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+        <div className="rounded-2xl bg-card shadow-card">
           {days.map((day, i) => {
             const schedule = restaurant.parsedHours[day];
             return (

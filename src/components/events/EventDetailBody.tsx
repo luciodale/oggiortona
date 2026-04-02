@@ -40,7 +40,7 @@ export function EventDetailBody({ event }: EventDetailBodyProps) {
     <>
       <div className="flex flex-wrap gap-1">
         {categories.map((cat: string) => (
-          <span key={cat} className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${eventCategoryColors[cat] ?? "bg-stone-100 text-stone-600"}`}>
+          <span key={cat} className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${eventCategoryColors[cat] ?? "bg-cat-altro-bg text-cat-altro"}`}>
             {catLabels[cat] ?? cat}
           </span>
         ))}
@@ -48,7 +48,7 @@ export function EventDetailBody({ event }: EventDetailBodyProps) {
 
       <h1 className="mt-3 font-family-display text-2xl font-medium leading-tight text-primary">{event.title}</h1>
 
-      <div className="mt-5 space-y-3 rounded-2xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+      <div className="mt-5 space-y-3 rounded-2xl bg-card p-4 shadow-card">
         <div className="flex items-center gap-3 text-[13px] text-primary">
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-fare-light">
             <CalendarIcon className="h-4 w-4 text-fare" />
@@ -89,7 +89,7 @@ export function EventDetailBody({ event }: EventDetailBodyProps) {
           <ActionLink
             href={`https://www.google.com/maps/search/?api=1&query=${event.latitude},${event.longitude}`}
             label={t("common.directions")}
-            color="bg-primary text-white hover:bg-primary/90"
+            color="bg-primary text-card hover:bg-primary/90"
             external
           />
         )}
@@ -97,7 +97,7 @@ export function EventDetailBody({ event }: EventDetailBodyProps) {
           <ActionLink
             href={`tel:${event.phone}`}
             label={t("common.call")}
-            color="border border-border bg-white text-primary hover:bg-surface-alt"
+            color="border border-border bg-card text-primary hover:bg-surface-alt"
           />
         )}
       </div>

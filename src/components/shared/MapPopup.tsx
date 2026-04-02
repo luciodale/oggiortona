@@ -60,7 +60,7 @@ export function MapPopup({ pin }: { pin: MapPin }) {
           href={pin.directionsUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-2.5 inline-flex w-full justify-center items-center gap-1.5 rounded-xl bg-secondary px-4 py-2 text-xs font-semibold tracking-[0.02em] text-surface no-underline"
+          className="mt-2.5 inline-flex w-full justify-center items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold tracking-[0.02em] text-card no-underline"
         >
           <MapPinIcon className="h-[13px] w-[13px]" strokeWidth={2.5} />
           Indicazioni

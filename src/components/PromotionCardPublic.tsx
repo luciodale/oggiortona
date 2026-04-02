@@ -8,10 +8,10 @@ export function PromotionCardPublic({ item }: { item: PromotionRow }) {
   const { t, locale } = useLocale();
   const isMultiDay = item.dateStart !== item.dateEnd;
 
-  const fallback: Style = { bg: "bg-sky-50", label: t("promo.news"), labelColor: "text-sky-700" };
+  const fallback: Style = { bg: "bg-promo-news-bg", label: t("promo.news"), labelColor: "text-promo-news" };
   const styleMap: Record<string, Style> = {
     special: { bg: "bg-mangiare-light", label: t("promo.dailySpecial"), labelColor: "text-mangiare" },
-    deal: { bg: "bg-violet-50", label: t("promo.deal"), labelColor: "text-violet-700" },
+    deal: { bg: "bg-promo-deal-bg", label: t("promo.deal"), labelColor: "text-promo-deal" },
     news: fallback,
   };
   const style: Style = styleMap[item.type] ?? fallback;

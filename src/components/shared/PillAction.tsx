@@ -1,11 +1,11 @@
 import { Link } from "@tanstack/react-router";
 
-type PillActionVariant = "default" | "accent" | "violet";
+type PillActionVariant = "default" | "accent" | "promo";
 
 const variantClasses: Record<PillActionVariant, string> = {
   default: "bg-secondary text-primary hover:bg-surface-warm",
   accent: "bg-accent/10 text-accent hover:bg-accent/20",
-  violet: "bg-violet-50 text-violet-700 hover:bg-violet-100",
+  promo: "bg-promo-deal-bg text-promo-deal hover:bg-promo-deal-bg/80",
 };
 
 const baseClasses =

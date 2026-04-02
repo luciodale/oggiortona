@@ -1,3 +1,4 @@
+import { StarIcon } from "../../icons/StarIcon";
 import type { PromotionRow } from "../../types/database";
 import { DateRange } from "./DateRange";
 import { TimeRange } from "./TimeRange";
@@ -12,7 +13,7 @@ export function SpecialEntry({ special }: SpecialEntryProps) {
 
   return (
     <div className="mt-3 flex items-start gap-2 rounded-xl bg-mangiare-light px-3 py-2.5">
-      <span className="mt-px text-sm" aria-hidden="true">&#9733;</span>
+      <StarIcon className="mt-px h-3.5 w-3.5 shrink-0 text-mangiare" strokeWidth={2.5} />
       <div>
         <p className="text-[10px] font-semibold uppercase tracking-wide text-mangiare">
           Piatto del giorno

@@ -22,7 +22,20 @@ export type MapPin = {
 
 export const ORTONA_CENTER: [number, number] = [42.3548, 14.4030];
 export const DEFAULT_ZOOM = 15;
-export const TILE_URL = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+export const TILE_URL_LIGHT = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+export const TILE_URL_DARK = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+
+export function getTileUrl() {
+  if (typeof document !== "undefined" && document.documentElement.classList.contains("dark")) {
+    return TILE_URL_DARK;
+  }
+  return TILE_URL_LIGHT;
+}
+
+export function getCardColor() {
+  if (typeof document === "undefined") return "#ffffff";
+  return getComputedStyle(document.documentElement).getPropertyValue("--color-card").trim();
+}
 
 export function buildPopupHtml(pin: MapPin) {
   return renderToStaticMarkup(createElement(MapPopup, { pin }));
@@ -39,8 +52,8 @@ export const MAP_CSS = `
     z-index: 1000 !important;
   }
   .retro-popup .leaflet-popup-content-wrapper {
-    background: #fdfaf6;
-    border: 1px solid #e0d5c5;
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.12);
     padding: 0;
@@ -50,10 +63,13 @@ export const MAP_CSS = `
     line-height: 1.4;
   }
   .retro-popup .leaflet-popup-tip {
-    background: #fdfaf6;
-    border: 1px solid #e0d5c5;
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
     border-top: none;
     border-right: none;
+  }
+  .map-fullscreen .leaflet-top.leaflet-right {
+    top: calc(env(safe-area-inset-top, 0px) + 140px) !important;
   }
   .leaflet-control-zoom {
     border: none !important;
@@ -67,12 +83,12 @@ export const MAP_CSS = `
     line-height: 38px !important;
     font-size: 18px !important;
     font-weight: 500 !important;
-    background: rgba(253,250,246,0.85) !important;
+    background: var(--color-surface-alt) !important;
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
-    color: #2c1810 !important;
+    color: var(--color-primary) !important;
     border: none !important;
-    border-bottom: 1px solid #e0d5c5 !important;
+    border-bottom: 1px solid var(--color-border) !important;
     font-family: var(--font-family) !important;
     transition: background 0.15s ease;
   }
@@ -80,10 +96,10 @@ export const MAP_CSS = `
     border-bottom: none !important;
   }
   .leaflet-control-zoom a:hover {
-    background: rgba(240,232,219,0.9) !important;
+    background: var(--color-surface-warm) !important;
   }
   .leaflet-control-zoom a:active {
-    background: rgba(224,213,197,0.95) !important;
+    background: var(--color-border) !important;
   }
   .leaflet-control-attribution {
     display: none !important;

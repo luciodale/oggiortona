@@ -11,11 +11,12 @@
   /* Warm Mediterranean palette */
   --color-primary: #2c1810;
   --color-secondary: #f5efe6;
-  --color-accent: #c4512a;
-  --color-accent-hover: #a8421f;
+  --color-accent: #9a6b1a;
+  --color-accent-hover: #835a14;
   --color-surface: #fdfaf6;
   --color-surface-alt: #f7f2eb;
   --color-surface-warm: #f0e8db;
+  --color-card: #ffffff;
   --color-border: #e0d5c5;
   --color-border-light: #ece5da;
   --color-muted: #6d6155;
@@ -25,10 +26,46 @@
   /* Section colors */
   --color-mangiare: #c4512a;
   --color-mangiare-light: #fdf2ed;
+  --color-mangiare-mid: #fae6d9;
+  --color-mangiare-deep: #f5d4c2;
   --color-mangiare-muted: #e8a88e;
   --color-fare: #3d6b8e;
   --color-fare-light: #edf4f8;
+  --color-fare-mid: #e2ecf4;
+  --color-fare-deep: #d4e3f0;
   --color-fare-muted: #8bb3cc;
+
+  /* Promotion types */
+  --color-promo-deal: #7a4068;
+  --color-promo-deal-bg: #f5eef3;
+  --color-promo-news: #3a6e65;
+  --color-promo-news-bg: #eef5f3;
+
+  /* Event categories */
+  --color-cat-sagra: #8a6d20;
+  --color-cat-sagra-bg: #fdf6e8;
+  --color-cat-cibo: #a05530;
+  --color-cat-cibo-bg: #fdf2ed;
+  --color-cat-musica: #7a4068;
+  --color-cat-musica-bg: #f5eef3;
+  --color-cat-mercato: #4a6e3a;
+  --color-cat-mercato-bg: #f0f5ee;
+  --color-cat-cultura: #3d6b8e;
+  --color-cat-cultura-bg: #edf4f8;
+  --color-cat-sport: #a04030;
+  --color-cat-sport-bg: #fdf0ee;
+  --color-cat-altro: #6d6155;
+  --color-cat-altro-bg: #f5f0ea;
+
+  /* Status */
+  --color-status-pending: #8a6d20;
+  --color-status-pending-bg: #fdf6e8;
+  --color-status-rejected: #a04030;
+  --color-status-rejected-bg: #fdf0ee;
+
+  /* Elevation */
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-elevated: 0 4px 24px rgba(0,0,0,0.08);
 
   /* Typography */
   --font-family: "DM Sans", -apple-system, BlinkMacSystemFont, sans-serif;
@@ -110,6 +147,82 @@ body {
   box-shadow:
     0 4px 24px rgba(0, 0, 0, 0.06),
     0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+/* ==============================
+   Dark mode
+   ============================== */
+
+html.dark {
+  color-scheme: dark;
+
+  /* Core palette */
+  --color-primary: #e8dfd4;
+  --color-secondary: #2a2420;
+  --color-accent: #d4a040;
+  --color-accent-hover: #be8d35;
+  --color-surface: #141110;
+  --color-surface-alt: #1e1a16;
+  --color-surface-warm: #252018;
+  --color-card: #252019;
+  --color-border: #3a322b;
+  --color-border-light: #2e2820;
+  --color-muted: #9a8d80;
+  --color-success: #5a9a6e;
+  --color-danger: #d45a4a;
+
+  /* Section colors */
+  --color-mangiare: #d86840;
+  --color-mangiare-light: #1e1612;
+  --color-mangiare-mid: #251a14;
+  --color-mangiare-deep: #2a1e16;
+  --color-mangiare-muted: #a06848;
+  --color-fare: #5a90b8;
+  --color-fare-light: #14191f;
+  --color-fare-mid: #171d24;
+  --color-fare-deep: #1a2028;
+  --color-fare-muted: #6a97b5;
+
+  /* Promotion types */
+  --color-promo-deal: #c48ab0;
+  --color-promo-deal-bg: #241c22;
+  --color-promo-news: #7ab5a8;
+  --color-promo-news-bg: #182420;
+
+  /* Event categories */
+  --color-cat-sagra: #d4b060;
+  --color-cat-sagra-bg: #201c14;
+  --color-cat-cibo: #d08050;
+  --color-cat-cibo-bg: #201612;
+  --color-cat-musica: #c48ab0;
+  --color-cat-musica-bg: #241c22;
+  --color-cat-mercato: #7ab870;
+  --color-cat-mercato-bg: #162014;
+  --color-cat-cultura: #5a90b8;
+  --color-cat-cultura-bg: #14191f;
+  --color-cat-sport: #d47060;
+  --color-cat-sport-bg: #201614;
+  --color-cat-altro: #9a8d80;
+  --color-cat-altro-bg: #1a1816;
+
+  /* Status */
+  --color-status-pending: #d4b060;
+  --color-status-pending-bg: #201c14;
+  --color-status-rejected: #d47060;
+  --color-status-rejected-bg: #201614;
+
+  /* Elevation */
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-elevated: 0 4px 24px rgba(0,0,0,0.4);
+}
+
+html.dark body {
+  --noise-texture: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+}
+
+html.dark .nav-glass {
+  background: rgba(20, 17, 16, 0.75);
+  border: 1px solid rgba(58, 50, 43, 0.4);
 }
 
 /* ==============================

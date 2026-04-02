@@ -20,7 +20,7 @@ export function ViewToggle({ mode, onToggle }: ViewToggleProps) {
         aria-selected={mode === "list"}
         onClick={() => onToggle("list")}
         className={`flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-wide transition-all ${
-          mode === "list" ? "bg-white text-primary shadow-sm" : "text-muted"
+          mode === "list" ? "bg-card text-primary shadow-sm" : "text-muted"
         }`}
       >
         <ListIcon className="h-3 w-3" strokeWidth={2.5} />
@@ -32,7 +32,7 @@ export function ViewToggle({ mode, onToggle }: ViewToggleProps) {
         aria-selected={mode === "map"}
         onClick={() => onToggle("map")}
         className={`flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-wide transition-all ${
-          mode === "map" ? "bg-white text-primary shadow-sm" : "text-muted"
+          mode === "map" ? "bg-card text-primary shadow-sm" : "text-muted"
         }`}
       >
         <MapViewIcon className="h-3 w-3" strokeWidth={2.5} />

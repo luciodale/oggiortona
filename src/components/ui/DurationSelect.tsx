@@ -21,7 +21,7 @@ export function DurationSelect({ label = "Durata", value, onChange, max = 7 }: D
             aria-label={`${n} ${n === 1 ? "giorno" : "giorni"}`}
             className={`flex-1 rounded-xl py-2 text-center text-[13px] font-semibold transition-all ${
               String(n) === value
-                ? "bg-primary text-white"
+                ? "bg-muted text-card"
                 : "bg-surface-warm text-muted hover:text-primary"
             }`}
           >

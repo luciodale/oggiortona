@@ -1,27 +1,40 @@
 import { useEffect } from "react";
 import { useRouterState } from "@tanstack/react-router";
 
+function resolveThemeColor(cssVar: string) {
+  return getComputedStyle(document.documentElement).getPropertyValue(cssVar).trim();
+}
+
 export function useThemeColor() {
   const routerState = useRouterState();
   const pathname = routerState.location.pathname;
 
   useEffect(() => {
-    const meta = document.querySelector('meta[name="theme-color"]');
-    let themeColor = "#fdfaf6";
-    let bodyClass = "bg-surface";
+    function update() {
+      const meta = document.querySelector('meta[name="theme-color"]');
+      let cssVar = "--color-surface";
+      let bodyClass = "bg-surface";
 
-    if (pathname.startsWith("/restaurants")) {
-      themeColor = "#fdf2ed";
-      bodyClass = "page-mangiare";
-    } else if (pathname.startsWith("/events") || pathname.startsWith("/add/event")) {
-      themeColor = "#edf4f8";
-      bodyClass = "page-fare";
-    } else if (pathname.startsWith("/sign-in")) {
-      themeColor = "#fdf2ed";
-      bodyClass = "page-mangiare";
+      if (pathname.startsWith("/restaurants") || pathname.startsWith("/sign-in")) {
+        cssVar = "--color-mangiare-light";
+        bodyClass = "page-mangiare";
+      } else if (pathname.startsWith("/events") || pathname.startsWith("/add/event")) {
+        cssVar = "--color-fare-light";
+        bodyClass = "page-fare";
+      }
+
+      if (meta) meta.setAttribute("content", resolveThemeColor(cssVar));
+      document.body.className = `min-h-screen min-h-dvh ${bodyClass}`;
     }
 
-    if (meta) meta.setAttribute("content", themeColor);
-    document.body.className = `min-h-screen min-h-dvh ${bodyClass}`;
+    update();
+
+    window.addEventListener("themechange", update);
+    const mql = matchMedia("(prefers-color-scheme: dark)");
+    mql.addEventListener("change", update);
+    return () => {
+      window.removeEventListener("themechange", update);
+      mql.removeEventListener("change", update);
+    };
   }, [pathname]);
 }

@@ -1,3 +1,4 @@
+import { ZapIcon } from "../../icons/ZapIcon";
 import type { PromotionRow } from "../../types/database";
 import { DateRange } from "./DateRange";
 import { TimeRange } from "./TimeRange";
@@ -11,10 +12,10 @@ export function DealEntry({ deal }: DealEntryProps) {
     deal.timeStart || deal.timeEnd || deal.dateStart !== deal.dateEnd;
 
   return (
-    <div className="mt-3 flex items-start gap-2 rounded-xl bg-violet-50 px-3 py-2.5">
-      <span className="mt-px text-sm" aria-hidden="true">&#9889;</span>
+    <div className="mt-3 flex items-start gap-2 rounded-xl bg-promo-deal-bg px-3 py-2.5">
+      <ZapIcon className="mt-px h-3.5 w-3.5 shrink-0 text-promo-deal" strokeWidth={2.5} />
       <div>
-        <p className="text-[10px] font-semibold uppercase tracking-wide text-violet-700">
+        <p className="text-[10px] font-semibold uppercase tracking-wide text-promo-deal">
           Offerta
         </p>
         <p className="mt-0.5 text-[13px] font-medium text-primary">
@@ -31,7 +32,7 @@ export function DealEntry({ deal }: DealEntryProps) {
             <DateRange
               dateStart={deal.dateStart}
               dateEnd={deal.dateEnd}
-              className="text-[10px] text-violet-500"
+              className="text-[10px] text-promo-deal/70"
             />
           </div>
         )}

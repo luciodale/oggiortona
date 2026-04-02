@@ -1,6 +1,7 @@
 import { useOAuthSignIn } from "../../hooks/useOAuthSignIn";
 import { useEmailCodeSignIn } from "../../hooks/useEmailCodeSignIn";
 import { useLocale } from "../../i18n/useLocale";
+import { Button } from "../ui/Button";
 import { CodeInput } from "./CodeInput";
 import { GoogleIcon } from "../../icons/GoogleIcon";
 
@@ -43,13 +44,13 @@ export function SignInForm() {
             <p className="text-center text-[12px] text-danger" role="alert">{emailCode.error}</p>
           )}
 
-          <button
+          <Button
             type="submit"
+            fullWidth
             disabled={emailCode.loading || emailCode.code.length < 6}
-            className="flex w-full items-center justify-center rounded-xl bg-accent px-4 py-3.5 text-[13px] font-semibold text-white transition-all hover:bg-accent-hover active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {emailCode.loading ? t("auth.verifying") : t("auth.verify")}
-          </button>
+          </Button>
         </form>
 
         <button
@@ -65,11 +66,12 @@ export function SignInForm() {
 
   return (
     <div className="space-y-4">
-      <button
-        type="button"
+      <Button
+        variant="outline"
+        fullWidth
         disabled={google.loading}
         onClick={google.handleGoogle}
-        className="flex w-full items-center justify-center gap-3 rounded-xl border border-border bg-white px-4 py-3.5 text-[13px] font-semibold text-primary transition-all hover:bg-surface-alt active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+        className="gap-3"
       >
         {google.loading ? (
           <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" role="status" aria-label={t("common.loading")} />
@@ -77,7 +79,7 @@ export function SignInForm() {
           <GoogleIcon className="h-4 w-4" />
         )}
         {t("auth.continueWithGoogle")}
-      </button>
+      </Button>
 
       {google.error && <p className="text-center text-[12px] text-danger" role="alert">{google.error}</p>}
 
@@ -95,20 +97,20 @@ export function SignInForm() {
           placeholder={t("auth.emailPlaceholder")}
           required
           disabled={emailCode.loading}
-          className="w-full rounded-xl border border-border bg-white px-4 py-3.5 text-[13px] text-primary placeholder:text-muted/50 transition-all focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none disabled:opacity-60"
+          className="w-full rounded-xl border border-border bg-card px-4 py-3.5 text-[13px] text-primary placeholder:text-muted/50 transition-all focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none disabled:opacity-60"
         />
 
         {emailCode.error && (
           <p className="text-center text-[12px] text-danger" role="alert">{emailCode.error}</p>
         )}
 
-        <button
+        <Button
           type="submit"
+          fullWidth
           disabled={emailCode.loading || !emailCode.email}
-          className="flex w-full items-center justify-center rounded-xl bg-accent px-4 py-3.5 text-[13px] font-semibold text-white transition-all hover:bg-accent-hover active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {emailCode.loading ? t("auth.sending") : t("auth.sendCode")}
-        </button>
+        </Button>
       </form>
 
       <TermsNotice />

@@ -58,7 +58,7 @@ function DesktopDatePicker({ value, onChange, placeholder, label }: {
         aria-haspopup="dialog"
         aria-label={label ? `${label}: ${value ? formatDisplay(value) : (placeholder ?? "Seleziona data")}` : undefined}
         {...getReferenceProps()}
-        className="flex w-full items-center gap-2 rounded-xl border border-border bg-white px-3 py-2.5 text-left text-[13px] outline-none transition-colors hover:border-accent focus:border-accent"
+        className="flex w-full items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-left text-[13px] outline-none transition-colors hover:border-accent focus:border-accent"
       >
         <CalendarIcon className="h-3.5 w-3.5 text-muted" />
         <span className={value ? "text-primary" : "text-muted/40"}>
@@ -74,7 +74,7 @@ function DesktopDatePicker({ value, onChange, placeholder, label }: {
               aria-label="Seleziona data"
               style={floatingStyles}
               {...getFloatingProps()}
-              className="z-50 rounded-xl border border-border bg-white shadow-lg"
+              className="z-50 rounded-xl border border-border bg-card shadow-lg"
             >
               <CalendarGrid value={value} onChange={onChange} onClose={() => setIsOpen(false)} />
             </div>
@@ -93,7 +93,7 @@ function MobileDatePicker({ value, onChange, placeholder, label }: {
 }) {
   return (
     <div className="relative">
-      <div className="pointer-events-none flex w-full items-center gap-2 rounded-xl border border-border bg-white px-3 py-2.5 text-left text-[13px]" aria-hidden="true">
+      <div className="pointer-events-none flex w-full items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-left text-[13px]" aria-hidden="true">
         <CalendarIcon className="h-3.5 w-3.5 text-muted" />
         <span className={value ? "text-primary" : "text-muted/40"}>
           {value ? formatDisplay(value) : (placeholder ?? "Seleziona data")}

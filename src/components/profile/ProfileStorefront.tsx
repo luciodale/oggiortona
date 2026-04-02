@@ -71,7 +71,7 @@ export function ProfileStorefront() {
             aria-selected={tab === tp}
             onClick={() => setTab(tp)}
             className={`flex flex-1 items-center justify-center rounded-lg py-2 text-[11px] font-semibold uppercase tracking-[0.06em] transition-all ${
-              tab === tp ? "bg-white text-primary shadow-sm" : "text-muted"
+              tab === tp ? "bg-card text-primary shadow-sm" : "text-muted"
             }`}
           >
             {TAB_LABELS[tp]}
@@ -79,7 +79,7 @@ export function ProfileStorefront() {
         ))}
       </div>
 
-      <div className="mt-4 rounded-2xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+      <div className="mt-4 rounded-2xl bg-card p-4 shadow-card">
         {tab === "special" && (
           <PromotionForm
             form={specialForm}

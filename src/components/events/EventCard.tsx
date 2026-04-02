@@ -39,7 +39,7 @@ export function EventCard({ event, zipperCard = true, onCardClick, isAdmin, onTo
 
   const card = (
     <div
-      className={`${zipperCard && !isHighlighted ? "zipper-card" : ""} rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] ${onCardClick ? "cursor-pointer" : ""}`}
+      className={`${zipperCard && !isHighlighted ? "zipper-card" : ""} rounded-2xl bg-card shadow-card ${onCardClick ? "cursor-pointer" : ""}`}
       onClick={handleClick}
       role={onCardClick ? "button" : undefined}
     >

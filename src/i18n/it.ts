@@ -273,4 +273,9 @@ export const it = {
   // Language
   "lang.italian": "Italiano",
   "lang.english": "English",
+
+  // Theme
+  "theme.system": "Sistema",
+  "theme.light": "Chiaro",
+  "theme.dark": "Scuro",
 } as const;

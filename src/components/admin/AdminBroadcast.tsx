@@ -14,7 +14,7 @@ export function AdminBroadcast() {
   if (loading) return null;
 
   return (
-    <div className="rounded-xl border border-border bg-white p-4">
+    <div className="rounded-xl border border-border bg-card p-4">
       <h2 className="text-sm font-semibold text-primary">
         Notifica broadcast
       </h2>
@@ -28,14 +28,14 @@ export function AdminBroadcast() {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Titolo"
-          className="w-full rounded-lg border border-border bg-white px-3 py-2 text-sm text-primary placeholder:text-muted/50"
+          className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-primary placeholder:text-muted/50"
         />
         <textarea
           value={body}
           onChange={(e) => setBody(e.target.value)}
           placeholder="Messaggio"
           rows={2}
-          className="w-full resize-none rounded-lg border border-border bg-white px-3 py-2 text-sm text-primary placeholder:text-muted/50"
+          className="w-full resize-none rounded-lg border border-border bg-card px-3 py-2 text-sm text-primary placeholder:text-muted/50"
         />
         <button
           type="submit"
@@ -47,13 +47,13 @@ export function AdminBroadcast() {
       </form>
 
       {result && (
-        <p className="mt-2 text-xs text-emerald-700">
+        <p className="mt-2 text-xs text-success">
           Inviate: {result.sent}, fallite: {result.failed}
         </p>
       )}
 
       {error && (
-        <p className="mt-2 text-xs text-red-600">{error}</p>
+        <p className="mt-2 text-xs text-danger">{error}</p>
       )}
     </div>
   );

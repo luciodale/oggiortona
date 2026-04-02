@@ -11,7 +11,7 @@ type PromotionCardProps = {
 
 export function PromotionCard({ expired, badge, onRenew, onDelete, children }: PromotionCardProps) {
   return (
-    <div className={`rounded-2xl p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)] ${expired ? "border border-dashed border-border bg-surface-alt" : "bg-white"}`}>
+    <div className={`rounded-2xl p-4 shadow-card ${expired ? "border border-dashed border-border bg-surface-alt" : "bg-card"}`}>
       <div className="mb-2 flex flex-wrap items-center gap-1.5">
         <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
           expired ? "bg-danger/10 text-danger" : "bg-success/10 text-success"

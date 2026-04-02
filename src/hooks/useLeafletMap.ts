@@ -1,15 +1,15 @@
 import { useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { buildPopupHtml, TILE_URL } from "../utils/map";
+import { buildPopupHtml, getCardColor, getTileUrl } from "../utils/map";
 import type { MapPin, PinVariant } from "../utils/map";
 
-function createPinIcon(color: string, variant: PinVariant) {
+function createPinIcon(color: string, variant: PinVariant, stroke: string) {
   if (variant === "restaurant") {
     return L.divIcon({
       html: `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
-        <circle cx="18" cy="18" r="16" fill="${color}" stroke="#fdfaf6" stroke-width="2.5"/>
-        <g transform="translate(18,18)" stroke="#fdfaf6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <circle cx="18" cy="18" r="16" fill="${color}" stroke="${stroke}" stroke-width="2.5"/>
+        <g transform="translate(18,18)" stroke="${stroke}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none">
           <line x1="-4" y1="-7" x2="-4" y2="7"/>
           <line x1="-6.5" y1="-7" x2="-6.5" y2="-3"/>
           <line x1="-1.5" y1="-7" x2="-1.5" y2="-3"/>
@@ -27,8 +27,8 @@ function createPinIcon(color: string, variant: PinVariant) {
 
   return L.divIcon({
     html: `<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
-      <circle cx="15" cy="15" r="13" fill="${color}" stroke="#fdfaf6" stroke-width="2.5"/>
-      <circle cx="15" cy="15" r="4" fill="#fdfaf6" opacity="0.9"/>
+      <circle cx="15" cy="15" r="13" fill="${color}" stroke="${stroke}" stroke-width="2.5"/>
+      <circle cx="15" cy="15" r="4" fill="${stroke}" opacity="0.9"/>
     </svg>`,
     className: "custom-pin",
     iconSize: [30, 30],
@@ -58,7 +58,7 @@ export function useLeafletMap(
       attributionControl: false,
     }).setView(center, zoom);
 
-    L.tileLayer(TILE_URL, { maxZoom: 18 }).addTo(map);
+    L.tileLayer(getTileUrl(), { maxZoom: 18 }).addTo(map);
     L.control.zoom({ position: "topright" }).addTo(map);
 
     mapRef.current = map;
@@ -75,8 +75,9 @@ export function useLeafletMap(
 
     const markers: Array<L.Marker> = [];
 
+    const stroke = getCardColor();
     for (const pin of pins) {
-      const icon = createPinIcon(pin.color ?? "#c4512a", pin.variant ?? "default");
+      const icon = createPinIcon(pin.color ?? "#c4512a", pin.variant ?? "default", stroke);
       const marker = L.marker([pin.lat, pin.lng], { icon })
         .addTo(map)
         .bindPopup(buildPopupHtml(pin), {

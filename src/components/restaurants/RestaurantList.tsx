@@ -1,25 +1,22 @@
 import { useSwipeBarContext } from "@luciodale/swipe-bar";
 import { useCallback, useRef } from "react";
-import { usePinnedRestaurants } from "../../hooks/usePinnedRestaurants";
-import { useRestaurantFilters } from "../../hooks/useRestaurantFilters";
 import { useZipperScroll } from "../../hooks/useZipperScroll";
 import type { RestaurantWithStatus } from "../../types/domain";
 import type { SheetMeta } from "../../types/domain";
 import { ContentLoader } from "../shared/ContentLoader";
-import { Pill } from "../ui/Pill";
 import { RestaurantCard } from "./RestaurantCard";
 
 type RestaurantListProps = {
-  restaurants: Array<RestaurantWithStatus>;
+  filtered: Array<RestaurantWithStatus>;
   isLoading: boolean;
   isLoggedIn: boolean;
-  initialPinnedIds: Array<number>;
+  pinnedIds: Set<number>;
+  onTogglePin: (id: number) => void;
 };
 
-export function RestaurantList({ restaurants, isLoading, isLoggedIn, initialPinnedIds }: RestaurantListProps) {
+export function RestaurantList({ filtered, isLoading, isLoggedIn, pinnedIds, onTogglePin }: RestaurantListProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   useZipperScroll(containerRef);
-  const { pinnedIds, togglePin } = usePinnedRestaurants(initialPinnedIds);
   const { openSidebar } = useSwipeBarContext();
 
   const handleCardClick = useCallback(function handleCardClick(restaurant: RestaurantWithStatus) {
@@ -27,34 +24,13 @@ export function RestaurantList({ restaurants, isLoading, isLoggedIn, initialPinn
     openSidebar("bottom", { meta });
   }, [openSidebar]);
 
-  const { filters, filtered, hasActiveFilter, clearFilters, toggleOpenNow, toggleHasPromo, toggleHasNews } =
-    useRestaurantFilters(restaurants, pinnedIds);
-
-  const promoCount = restaurants.filter((r) => r.promotions.some((p) => p.type === "special" || p.type === "deal")).length;
-  const newsCount = restaurants.filter((r) => r.promotions.some((p) => p.type === "news")).length;
-
   return (
     <div ref={containerRef}>
-      <div className="flex flex-wrap gap-2 pb-1" role="toolbar" aria-label="Filtri">
-        <Pill active={!hasActiveFilter} onClick={clearFilters}>
-          Tutti
-        </Pill>
-        <Pill active={filters.openNow} onClick={toggleOpenNow}>
-          Aperto ora
-        </Pill>
-        <Pill active={filters.hasPromo} onClick={toggleHasPromo}>
-          {promoCount > 0 ? `Promozioni (${promoCount})` : "Promozioni"}
-        </Pill>
-        <Pill active={filters.hasNews} onClick={toggleHasNews}>
-          {newsCount > 0 ? `News (${newsCount})` : "News"}
-        </Pill>
-      </div>
-
       {isLoading ? (
         <ContentLoader />
       ) : (
         <>
-          <p className="mb-3 mt-3 text-[11px] font-medium uppercase tracking-[0.1em] text-muted">
+          <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.1em] text-muted">
             {filtered.length} {filtered.length === 1 ? "locale" : "locali"}
           </p>
 
@@ -72,7 +48,7 @@ export function RestaurantList({ restaurants, isLoading, isLoggedIn, initialPinn
                   key={r.id}
                   restaurant={r}
                   isPinned={pinnedIds.has(r.id)}
-                  onTogglePin={isLoggedIn ? togglePin : undefined}
+                  onTogglePin={isLoggedIn ? onTogglePin : undefined}
                   onCardClick={handleCardClick}
                 />
               ))}

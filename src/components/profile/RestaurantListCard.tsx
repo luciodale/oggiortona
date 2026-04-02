@@ -23,7 +23,7 @@ export function RestaurantListCard({ restaurant }: RestaurantListCardProps) {
   }
 
   return (
-    <div className="relative rounded-2xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+    <div className="relative rounded-2xl bg-card p-4 shadow-card">
       <button
         type="button"
         onClick={() => handleDelete(restaurant.id)}
@@ -47,8 +47,8 @@ export function RestaurantListCard({ restaurant }: RestaurantListCardProps) {
         <span
           className={`mt-1.5 inline-block rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
             restaurant.approved === 0
-              ? "bg-amber-50 text-amber-700"
-              : "bg-red-50 text-red-700"
+              ? "bg-status-pending-bg text-status-pending"
+              : "bg-status-rejected-bg text-status-rejected"
           }`}
         >
           {restaurant.approved === 0
@@ -69,7 +69,7 @@ export function RestaurantListCard({ restaurant }: RestaurantListCardProps) {
         <PillActionLink
           to={`/profile/restaurant/${restaurant.id}/storefront`}
           label={t("profile.storefront")}
-          variant="violet"
+          variant="promo"
         />
       </div>
     </div>

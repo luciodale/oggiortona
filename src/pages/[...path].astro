@@ -10,7 +10,7 @@ const user = Astro.locals.user;
 const isAdmin = Astro.locals.isAdmin;
 
 function getThemeColor() {
-  return "#fdfaf6";
+  return "#fdfaf6"; // overridden by theme init script for dark mode
 }
 ---
 
@@ -31,7 +31,7 @@ function getThemeColor() {
     <div
       id="app-loader"
       aria-hidden="true"
-      style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#fdfaf6;transition:opacity 0.4s ease-out;"
+      style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--color-surface);transition:opacity 0.4s ease-out;"
     >
       <img
         src="/icon.svg"
