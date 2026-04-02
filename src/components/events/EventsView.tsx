@@ -1,5 +1,5 @@
-import { lazy, Suspense, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { lazy, Suspense, useState, useCallback } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { EventRow } from "../../types/database";
 import { EventList } from "./EventList";
 import { ViewToggle } from "../shared/ViewToggle";
@@ -13,6 +13,7 @@ import { ContentLoader } from "../shared/ContentLoader";
 import { Pill } from "../ui/Pill";
 import { RefreshIcon } from "../../icons/RefreshIcon";
 import { useLocale } from "../../i18n/useLocale";
+import { useSpaAuth } from "../../hooks/useSpaAuth";
 
 const MapView = lazy(() => import("../shared/MapView").then((m) => ({ default: m.MapView })));
 
@@ -23,6 +24,8 @@ type EventsViewProps = {
 
 export function EventsView({ events, isLoading }: EventsViewProps) {
   const { locale, t } = useLocale();
+  const { isAdmin } = useSpaAuth();
+  const queryClient = useQueryClient();
   const { mode, handleToggle, anchorRef, mapTop } = useViewMode();
   const { isRefreshing, handleRefresh } = useRefresh([["events"], ["events-past"]]);
   const [timeFilter, setTimeFilter] = useState<TimeFilter>("tutti");
@@ -42,6 +45,12 @@ export function EventsView({ events, isLoading }: EventsViewProps) {
   const catLabels = eventCategoryLabels(locale);
 
   const showLoader = timeFilter === "passati" ? isPastLoading : isLoading;
+
+  const handleToggleHighlight = useCallback(async function handleToggleHighlight(id: number) {
+    await fetch(`/api/admin/events/${id}/highlight`, { method: "PUT" });
+    queryClient.invalidateQueries({ queryKey: ["events"] });
+    queryClient.invalidateQueries({ queryKey: ["events-past"] });
+  }, [queryClient]);
 
   return (
     <div>
@@ -94,7 +103,7 @@ export function EventsView({ events, isLoading }: EventsViewProps) {
       {showLoader ? (
         <ContentLoader />
       ) : mode === "list" ? (
-        <EventList grouped={grouped} />
+        <EventList grouped={grouped} isAdmin={isAdmin} onToggleHighlight={isAdmin ? handleToggleHighlight : undefined} />
       ) : (
         mapTop > 0 && (
           <Suspense fallback={<div className="fixed inset-x-0 bottom-0 flex items-center justify-center bg-surface-alt" style={{ top: `${mapTop}px` }}><p className="text-sm text-muted">{t("common.loadingMap")}</p></div>}>

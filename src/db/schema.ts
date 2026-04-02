@@ -105,6 +105,7 @@ export const events = sqliteTable("events", {
   active: integer("active").notNull().default(1),
   deleted: integer("deleted").notNull().default(0),
   approved: integer("approved").notNull().default(1),
+  highlighted: integer("highlighted").notNull().default(0),
   createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
   updatedAt: text("updated_at").notNull().default(sql`(datetime('now'))`),
 }, (table) => [

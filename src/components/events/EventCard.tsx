@@ -1,21 +1,27 @@
 import { eventCategoryColors, eventCategoryLabels } from "../../config/categories";
 import { useLocale } from "../../i18n/useLocale";
 import { ClockIcon } from "../../icons/ClockIcon";
+import { PinIcon } from "../../icons/PinIcon";
 import type { EventRow } from "../../types/database";
 import { CardContactButtons } from "../shared/CardContactButtons";
 import { EventLink } from "./EventLink";
 import { EventPriceBadge } from "./EventPriceBadge";
+import { HighlightWrap } from "./HighlightWrap";
 
 type EventCardProps = {
   event: EventRow;
   zipperCard?: boolean;
   onCardClick?: (event: EventRow) => void;
+  isAdmin?: boolean;
+  onToggleHighlight?: (id: number) => void;
+  isPast?: boolean;
 };
 
-export function EventCard({ event, zipperCard = true, onCardClick }: EventCardProps) {
-  const { locale } = useLocale();
+export function EventCard({ event, zipperCard = true, onCardClick, isAdmin, onToggleHighlight, isPast }: EventCardProps) {
+  const { locale, t } = useLocale();
   const labels = eventCategoryLabels(locale);
   const categories = event.category.split(",").map((c) => c.trim());
+  const isHighlighted = event.highlighted === 1 && !isPast;
 
   function handleClick(e: React.MouseEvent) {
     if (onCardClick) {
@@ -24,9 +30,15 @@ export function EventCard({ event, zipperCard = true, onCardClick }: EventCardPr
     }
   }
 
-  return (
+  function handlePinClick(e: React.MouseEvent) {
+    e.stopPropagation();
+    e.preventDefault();
+    onToggleHighlight?.(event.id);
+  }
+
+  const card = (
     <div
-      className={`${zipperCard ? "zipper-card" : ""} rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] ${onCardClick ? "cursor-pointer" : ""}`}
+      className={`${zipperCard && !isHighlighted ? "zipper-card" : ""} rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] ${onCardClick ? "cursor-pointer" : ""}`}
       onClick={handleClick}
       role={onCardClick ? "button" : undefined}
     >
@@ -36,7 +48,7 @@ export function EventCard({ event, zipperCard = true, onCardClick }: EventCardPr
       >
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap gap-1">
+            <div className="flex flex-wrap items-center gap-1">
               {categories.map((cat) => (
                 <span
                   key={cat}
@@ -57,6 +69,18 @@ export function EventCard({ event, zipperCard = true, onCardClick }: EventCardPr
           </div>
 
           <div className="flex shrink-0 items-center gap-1.5">
+            {isAdmin && onToggleHighlight && (
+              <button
+                type="button"
+                onClick={handlePinClick}
+                aria-pressed={isHighlighted}
+                className={`flex items-center justify-center rounded-full p-1.5 transition-all duration-200 ${
+                  isHighlighted ? "bg-fare/10 text-fare" : "text-muted/50 hover:text-muted/70"
+                }`}
+              >
+                <PinIcon className="h-4 w-4" strokeWidth={isHighlighted ? 2.5 : 2} />
+              </button>
+            )}
             <div className="flex flex-col items-center rounded-xl bg-fare-light px-3 py-2">
               <span className="text-[10px] font-semibold uppercase text-fare/60">
                 {new Date(event.dateStart + "T00:00:00Z").toLocaleDateString(locale === "it" ? "it-IT" : "en-GB", { month: "short", timeZone: "Europe/Rome" })}
@@ -102,6 +126,18 @@ export function EventCard({ event, zipperCard = true, onCardClick }: EventCardPr
         />
       </div>
     </div>
+  );
+
+  if (!isHighlighted) return card;
+
+  return (
+    <HighlightWrap
+      id={event.id}
+      label={t("events.highlighted")}
+      className={zipperCard ? "zipper-card" : ""}
+    >
+      {card}
+    </HighlightWrap>
   );
 }
 

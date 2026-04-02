@@ -14,9 +14,15 @@ type EventGroups = {
 
 type EventListProps = {
   grouped: EventGroups;
+  isAdmin?: boolean;
+  onToggleHighlight?: (id: number) => void;
 };
 
-export function EventList({ grouped }: EventListProps) {
+function sortHighlightedFirst(events: Array<EventRow>): Array<EventRow> {
+  return [...events].sort((a, b) => (b.highlighted ?? 0) - (a.highlighted ?? 0));
+}
+
+export function EventList({ grouped, isAdmin, onToggleHighlight }: EventListProps) {
   const { t } = useLocale();
   const containerRef = useRef<HTMLDivElement>(null);
   useZipperScroll(containerRef);
@@ -43,8 +49,8 @@ export function EventList({ grouped }: EventListProps) {
             <>
               <SectionDivider title={t("events.thisWeek")} />
               <div className="flex flex-col gap-3">
-                {grouped.thisWeek.map((e) => (
-                  <EventCard key={e.id} event={e} onCardClick={handleCardClick} />
+                {sortHighlightedFirst(grouped.thisWeek).map((e) => (
+                  <EventCard key={e.id} event={e} onCardClick={handleCardClick} isAdmin={isAdmin} onToggleHighlight={onToggleHighlight} />
                 ))}
               </div>
             </>
@@ -53,8 +59,8 @@ export function EventList({ grouped }: EventListProps) {
             <>
               <SectionDivider title={t("events.upcoming")} />
               <div className="flex flex-col gap-3">
-                {grouped.upcoming.map((e) => (
-                  <EventCard key={e.id} event={e} onCardClick={handleCardClick} />
+                {sortHighlightedFirst(grouped.upcoming).map((e) => (
+                  <EventCard key={e.id} event={e} onCardClick={handleCardClick} isAdmin={isAdmin} onToggleHighlight={onToggleHighlight} />
                 ))}
               </div>
             </>
@@ -64,7 +70,7 @@ export function EventList({ grouped }: EventListProps) {
               <SectionDivider title={t("events.past")} />
               <div className="flex flex-col gap-3">
                 {grouped.past.map((e) => (
-                  <EventCard key={e.id} event={e} onCardClick={handleCardClick} />
+                  <EventCard key={e.id} event={e} onCardClick={handleCardClick} isPast />
                 ))}
               </div>
             </>
