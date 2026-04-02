@@ -1,4 +1,4 @@
-import { SwipeBarProvider } from "@luciodale/swipe-bar";
+import { SwipeBarProvider, useSwipeBarContext } from "@luciodale/swipe-bar";
 import { Outlet, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { Toaster } from "sonner";
@@ -7,6 +7,21 @@ import { DetailBottomSheet } from "../components/shared/DetailBottomSheet";
 import { NotificationPrompt } from "../components/shared/NotificationPrompt";
 import { PwaInstallPrompt } from "../components/shared/PwaInstallPrompt";
 import { useThemeColor } from "../hooks/useThemeColor";
+
+function MainContent() {
+  const { isBottomOpen } = useSwipeBarContext();
+
+  return (
+    <main
+      id="main-content"
+      className={`h-full overflow-x-hidden scroll-hide overscroll-y-none ${isBottomOpen ? "overflow-y-hidden" : "overflow-y-auto"}`}
+    >
+      <div className="mx-auto max-w-lg px-5 pb-24 pt-safe">
+        <Outlet />
+      </div>
+    </main>
+  );
+}
 
 export function RootLayout() {
   useThemeColor();
@@ -37,11 +52,7 @@ export function RootLayout() {
           },
         }}
       />
-      <main id="main-content" className="h-full overflow-x-hidden overflow-y-auto scroll-hide">
-        <div className="mx-auto max-w-lg px-5 pb-24 pt-safe">
-          <Outlet />
-        </div>
-      </main>
+      <MainContent />
       <BottomNav />
       <PwaInstallPrompt />
       {pathname === "/" && <NotificationPrompt />}
