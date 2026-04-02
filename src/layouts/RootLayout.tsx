@@ -20,6 +20,10 @@ export function RootLayout() {
     setTimeout(() => loader.remove(), 200);
   }, []);
 
+  useEffect(function scrollToTop() {
+    document.getElementById("main-content")?.scrollTo(0, 0);
+  }, [pathname]);
+
   return (
     <SwipeBarProvider>
       <Toaster
