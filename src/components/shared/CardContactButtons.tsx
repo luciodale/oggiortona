@@ -15,10 +15,7 @@ type CardContactButtonsProps = {
 export function CardContactButtons({ phone, name, address, latitude, longitude }: CardContactButtonsProps) {
   const { t } = useLocale();
 
-  const mapsHref =
-    latitude != null && longitude != null
-      ? `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`
-      : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+  const hasCoordinates = latitude != null && longitude != null;
 
   return (
     <div className="flex shrink-0 items-center gap-1.5">
@@ -31,13 +28,15 @@ export function CardContactButtons({ phone, name, address, latitude, longitude }
           <MessageIcon className="h-3.5 w-3.5" />
         </IconBubble>
       )}
-      <IconBubble
-        href={mapsHref}
-        label={t("aria.directionsFor", { name })}
-        external
-      >
-        <MapPinIcon className="h-3.5 w-3.5" />
-      </IconBubble>
+      {hasCoordinates && (
+        <IconBubble
+          href={`https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`}
+          label={t("aria.directionsFor", { name })}
+          external
+        >
+          <MapPinIcon className="h-3.5 w-3.5" />
+        </IconBubble>
+      )}
       {phone && (
         <IconBubble
           href={`tel:${phone}`}

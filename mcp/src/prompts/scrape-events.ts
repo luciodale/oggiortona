@@ -37,7 +37,8 @@ You can use custom categories if none of the above fit well.
 - Description in Italian, max 500 characters
 - Title in Italian
 - link is mandatory — use the source URL where you found the event
-- For well-known Ortona venues, provide approximate lat/lng coordinates
+- Do NOT set latitude/longitude unless you have precise, verified coordinates — approximate or guessed values cause incorrect map pins
+- If the specific address is unknown, default to "Ortona"
 - If price is not mentioned, leave it null (do not guess)
 `;
 

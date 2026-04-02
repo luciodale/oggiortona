@@ -105,6 +105,9 @@ surface EventDetail {
         event.longitude
         event.category
         event.price
+
+    guarantee:
+        "Map pin and directions button only shown when latitude and longitude are set"
 }
 
 -- ---------------------------------------------------------------
@@ -129,6 +132,8 @@ tool insert_events {
     "Batch insert up to 20 events in a single D1 query."
     "Events are created with active=0, approved=0 (admin must approve)."
     "owner_id is set to 'ai_scraper'."
+    "latitude/longitude must only be set with precise, verified coordinates — never approximate or guessed."
+    "If address is unknown, default to 'Ortona'."
     input: Array<EventInput> + target (local | remote)
     output: count + summary of inserted events
 }

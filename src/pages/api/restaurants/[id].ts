@@ -13,7 +13,10 @@ export async function GET({ locals, params }: APIContext): Promise<Response> {
   let [restaurant] = await db.select().from(restaurants).where(dbAnd(eq(restaurants.id, id), eq(restaurants.active, 1), eq(restaurants.deleted, 0))).limit(1);
 
   if (!restaurant && locals.user) {
-    [restaurant] = await db.select().from(restaurants).where(dbAnd(eq(restaurants.id, id), eq(restaurants.ownerId, locals.user.id), eq(restaurants.deleted, 0))).limit(1);
+    const ownerOrAdmin = locals.isAdmin
+      ? eq(restaurants.deleted, 0)
+      : dbAnd(eq(restaurants.ownerId, locals.user.id), eq(restaurants.deleted, 0));
+    [restaurant] = await db.select().from(restaurants).where(dbAnd(eq(restaurants.id, id), ownerOrAdmin)).limit(1);
   }
 
   if (!restaurant) return Response.json({ error: "Non trovato" }, { status: 404 });
@@ -38,7 +41,7 @@ export async function PUT({ locals, params, request }: APIContext): Promise<Resp
 
   const [restaurant] = await db.select().from(restaurants).where(eq(restaurants.id, id)).limit(1);
   if (!restaurant) return Response.json({ error: "Non trovato" }, { status: 404 });
-  if (restaurant.ownerId !== user.id) return Response.json({ error: "Non autorizzato" }, { status: 403 });
+  if (restaurant.ownerId !== user.id && !locals.isAdmin) return Response.json({ error: "Non autorizzato" }, { status: 403 });
   if (restaurant.deleted === 1) return Response.json({ error: "Non trovato" }, { status: 404 });
 
   let raw: unknown;

@@ -7,6 +7,26 @@ import { TagIcon } from "../../icons/TagIcon";
 import { EventLink } from "./EventLink";
 import type { EventRow } from "../../types/database";
 
+type ActionLinkProps = {
+  href: string;
+  label: string;
+  color: string;
+  external?: boolean;
+};
+
+function ActionLink({ href, label, color, external }: ActionLinkProps) {
+  return (
+    <a
+      href={href}
+      target={external ? "_blank" : undefined}
+      rel={external ? "noopener noreferrer" : undefined}
+      className={`flex flex-1 items-center justify-center gap-2 rounded-xl py-3 text-[13px] font-semibold no-underline transition-all active:scale-[0.98] ${color}`}
+    >
+      {label}
+    </a>
+  );
+}
+
 type EventDetailBodyProps = {
   event: EventRow;
 };
@@ -58,11 +78,27 @@ export function EventDetailBody({ event }: EventDetailBodyProps) {
 
       <div className="mt-5 flex gap-2">
         {event.phone && (
-          <a href={`https://wa.me/${event.phone.replace(/[\s\-+()]/g, "")}?text=${encodeURIComponent(t("aria.whatsappMessage"))}`} target="_blank" rel="noopener noreferrer" className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#25D366] py-3 text-[13px] font-semibold text-white no-underline transition-all hover:bg-[#1FAD55] active:scale-[0.98]">{t("common.whatsapp")}</a>
+          <ActionLink
+            href={`https://wa.me/${event.phone.replace(/[\s\-+()]/g, "")}?text=${encodeURIComponent(t("aria.whatsappMessage"))}`}
+            label={t("common.whatsapp")}
+            color="bg-[#25D366] text-white hover:bg-[#1FAD55]"
+            external
+          />
         )}
-        <a href={event.latitude != null && event.longitude != null ? `https://www.google.com/maps/search/?api=1&query=${event.latitude},${event.longitude}` : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.address)}`} target="_blank" rel="noopener noreferrer" className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary py-3 text-[13px] font-semibold text-white no-underline transition-all hover:bg-primary/90 active:scale-[0.98]">{t("common.directions")}</a>
+        {event.latitude != null && event.longitude != null && (
+          <ActionLink
+            href={`https://www.google.com/maps/search/?api=1&query=${event.latitude},${event.longitude}`}
+            label={t("common.directions")}
+            color="bg-primary text-white hover:bg-primary/90"
+            external
+          />
+        )}
         {event.phone && (
-          <a href={`tel:${event.phone}`} className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-white py-3 text-[13px] font-semibold text-primary no-underline transition-all hover:bg-surface-alt active:scale-[0.98]">{t("common.call")}</a>
+          <ActionLink
+            href={`tel:${event.phone}`}
+            label={t("common.call")}
+            color="border border-border bg-white text-primary hover:bg-surface-alt"
+          />
         )}
       </div>
 

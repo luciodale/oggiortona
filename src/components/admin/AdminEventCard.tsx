@@ -1,4 +1,5 @@
 import { useSwipeBarContext } from "@luciodale/swipe-bar";
+import { useNavigate } from "@tanstack/react-router";
 import { eventCategoryColors, eventCategoryLabels } from "../../config/categories";
 import type { EventRow } from "../../types/database";
 import type { SheetMeta } from "../../types/domain";
@@ -12,6 +13,7 @@ type AdminEventCardProps = {
 
 export function AdminEventCard({ event, onToggle, onDelete }: AdminEventCardProps) {
   const { openSidebar } = useSwipeBarContext();
+  const navigate = useNavigate();
   const catLabels = eventCategoryLabels("it");
   const isActive = event.active === 1;
   const colorClass = eventCategoryColors[event.category] ?? "bg-stone-100 text-stone-600";
@@ -55,6 +57,14 @@ export function AdminEventCard({ event, onToggle, onDelete }: AdminEventCardProp
         )}
       </div>
       <div className="flex shrink-0 gap-2">
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); navigate({ to: `/profile/event/${event.id}/edit` }); }}
+          aria-label={`Modifica ${event.title}`}
+          className="rounded-lg bg-accent/10 px-3 py-1.5 text-[11px] font-semibold text-accent transition-colors hover:bg-accent/20"
+        >
+          Modifica
+        </button>
         <button
           type="button"
           onClick={(e) => { e.stopPropagation(); onToggle(); }}

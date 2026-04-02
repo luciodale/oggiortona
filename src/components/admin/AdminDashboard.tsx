@@ -85,7 +85,7 @@ export function AdminDashboard() {
             events={filteredEvents}
             loading={loading}
             onToggle={toggleEvent}
-            onDelete={reviewFilter === "ai_scraper" ? deleteEvent : undefined}
+            onDelete={deleteEvent}
           />
         )}
       </div>

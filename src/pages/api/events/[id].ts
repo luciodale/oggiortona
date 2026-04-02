@@ -11,7 +11,10 @@ export async function GET({ locals, params }: APIContext): Promise<Response> {
   let [event] = await db.select().from(events).where(dbAnd(eq(events.id, id), eq(events.active, 1), eq(events.deleted, 0))).limit(1);
 
   if (!event && locals.user) {
-    [event] = await db.select().from(events).where(dbAnd(eq(events.id, id), eq(events.ownerId, locals.user.id), eq(events.deleted, 0))).limit(1);
+    const ownerOrAdmin = locals.isAdmin
+      ? eq(events.deleted, 0)
+      : dbAnd(eq(events.ownerId, locals.user.id), eq(events.deleted, 0));
+    [event] = await db.select().from(events).where(dbAnd(eq(events.id, id), ownerOrAdmin)).limit(1);
   }
 
   if (!event) return Response.json({ error: "Non trovato" }, { status: 404 });
@@ -30,7 +33,7 @@ export async function PUT({ locals, params, request }: APIContext): Promise<Resp
 
   const [event] = await db.select().from(events).where(eq(events.id, id)).limit(1);
   if (!event) return Response.json({ error: "Non trovato" }, { status: 404 });
-  if (event.ownerId !== user.id) return Response.json({ error: "Non autorizzato" }, { status: 403 });
+  if (event.ownerId !== user.id && !locals.isAdmin) return Response.json({ error: "Non autorizzato" }, { status: 403 });
   if (event.deleted === 1) return Response.json({ error: "Non trovato" }, { status: 404 });
 
   let raw: unknown;

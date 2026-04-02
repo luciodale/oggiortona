@@ -1,6 +1,6 @@
 import type { APIContext } from "astro";
 import { events } from "../../../../db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { requireAdmin } from "../../../../utils/adminGuard";
 import { nowItalyFormatted } from "../../../../utils/sqlite";
 
@@ -32,12 +32,15 @@ export async function DELETE({ locals, params }: APIContext): Promise<Response> 
   const db = locals.db;
   const id = Number(params.id);
 
-  const deleted = await db.delete(events)
-    .where(and(eq(events.id, id), eq(events.ownerId, "ai_scraper")))
-    .returning();
+  const [event] = await db.select().from(events).where(eq(events.id, id)).limit(1);
+  if (!event) return Response.json({ error: "Non trovato" }, { status: 404 });
 
-  if (deleted.length === 0) {
-    return Response.json({ error: "Non trovato o non eliminabile" }, { status: 404 });
+  if (event.ownerId === "ai_scraper") {
+    await db.delete(events).where(eq(events.id, id));
+  } else {
+    await db.update(events)
+      .set({ deleted: 1, updatedAt: nowItalyFormatted() })
+      .where(eq(events.id, id));
   }
 
   return Response.json({ success: true });
