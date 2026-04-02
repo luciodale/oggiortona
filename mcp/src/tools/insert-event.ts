@@ -54,7 +54,7 @@ export const eventFieldsSchema = {
   category: z
     .string()
     .min(1)
-    .describe("Event category (e.g. sport, cibo, musica, cultura, sagra, mercato, altro)"),
+    .describe("Event category"),
   price: z
     .number()
     .min(0)

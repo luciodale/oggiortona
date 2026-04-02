@@ -31,9 +31,9 @@ export function AdminDashboard() {
 
   const filteredEvents = useMemo(
     () => filterBySearch(events, search, (e) => e.title).filter((e) => {
-      if (reviewFilter === "ai_scraper") return e.ownerId === "ai_scraper";
-      if (e.ownerId === "ai_scraper") return false;
-      return reviewFilter === "pending" ? e.approved === 0 : e.approved === 1;
+      if (reviewFilter === "ai_scraper") return e.ownerId === "ai_scraper" && e.approved === 0;
+      if (reviewFilter === "pending") return e.ownerId !== "ai_scraper" && e.approved === 0;
+      return e.approved === 1;
     }),
     [events, search, reviewFilter],
   );

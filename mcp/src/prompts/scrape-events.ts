@@ -50,7 +50,7 @@ You MUST insert at least 10 new events per session. This is non-negotiable. If a
    - Must be a real, upcoming event (not past, not generic info)
    - Must have a verifiable source link
 4. **Deduplicate:** Skip events that match an existing one by title + date, or by source link.
-5. **Balance:** Aim for a balanced mix of categories. Do not let one category dominate. Prioritize city-wide events, traditional festivals, and folklore above all others. Fill the remaining slots evenly across: musica, cultura, sport, cibo, mercato, altro.
+5. **Balance:** Aim for a balanced mix of categories. Do not let one category dominate. Prioritize city-wide events, traditional festivals, and folklore above all others.
 6. **Insert:** Call insert_event for each new, qualifying event. **Minimum 10, maximum 20 new events per session.**
 7. **Fallback if under 10:** If you still have fewer than 10 after all the above, try these additional searches:
    - Google: "Ortona" + any upcoming Italian holiday name (e.g. "25 aprile", "1 maggio", "2 giugno", "Ferragosto")
@@ -59,19 +59,6 @@ You MUST insert at least 10 new events per session. This is non-negotiable. If a
    - Google: "Ortona escursione trekking" + current/next month + year
    - Google: Eventbrite/Facebook events in Ortona
 8. **Report:** Summarize what was found, inserted, and skipped (with reasons).
-
-## Categories
-
-Common categories (use these when they fit, but any string is valid):
-- sagra — traditional local festivals, folklore, patron saint celebrations, processions
-- sport — sporting events, tournaments, matches
-- cibo — food events, tastings, food festivals
-- musica — concerts, live music, DJ sets
-- cultura — exhibitions, theater, guided tours, cultural events
-- mercato — markets, fairs, craft fairs
-- altro — anything that does not fit the above
-
-You can use custom categories if none of the above fit well.
 
 ## Data quality rules
 
