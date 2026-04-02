@@ -44,6 +44,7 @@ export function RootLayout() {
       <Toaster
         position="top-center"
         offset={{ top: "max(32px, calc(env(safe-area-inset-top) + 14px))" }}
+        mobileOffset={{ top: "max(32px, calc(env(safe-area-inset-top) + 14px))" }}
         toastOptions={{
           style: {
             fontFamily: "var(--font-family)",
