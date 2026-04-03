@@ -116,8 +116,9 @@ export function useEventForm(initial?: InitialData) {
       if (res.ok) {
         toast.success(isEdit ? "Evento aggiornato!" : "Evento pubblicato!");
         queryClient.invalidateQueries({ queryKey: ["home"] });
+        queryClient.invalidateQueries({ queryKey: ["my-events"] });
         if (isEdit) {
-          queryClient.invalidateQueries({ queryKey: ["event", eventId] });
+          queryClient.invalidateQueries({ queryKey: ["event", String(eventId)] });
         }
         navigate({ to: "/profile" });
       } else {

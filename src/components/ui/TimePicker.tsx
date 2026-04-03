@@ -11,6 +11,7 @@ import {
 } from "@floating-ui/react";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { ClockIcon } from "../../icons/ClockIcon";
+import { normalizeTimeValue } from "../../utils/time";
 
 type TimePickerProps = {
   value: string;
@@ -162,7 +163,13 @@ function MobileTimePicker({ value, onChange }: TimePickerProps) {
     <input
       type="time"
       value={value}
-      onChange={(e) => onChange(e.target.value)}
+      onChange={(e) => onChange(normalizeTimeValue(e.target.value))}
+      onBlur={(e) => {
+        const normalized = normalizeTimeValue(e.target.value);
+        if (normalized !== value) {
+          onChange(normalized);
+        }
+      }}
       aria-label="Seleziona orario"
       className="h-[42px] flex-1 appearance-none rounded-xl border border-border bg-card px-3 text-[13px] outline-none focus:border-accent"
     />

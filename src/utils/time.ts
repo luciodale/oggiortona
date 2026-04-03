@@ -104,6 +104,15 @@ export function getNowInItaly() {
   return italyTime;
 }
 
+/**
+ * Normalize a time value from `<input type="time">` to HH:MM format.
+ * iOS Safari can return "HH:MM:SS" which breaks the /^\d{2}:\d{2}$/ schema.
+ */
+export function normalizeTimeValue(value: string): string {
+  const match = /^(\d{2}:\d{2})/.exec(value);
+  return match?.[1] ?? value;
+}
+
 // Parse a UTC datetime string from D1 and check if it's still in the future
 // D1 stores datetime('now') as UTC without a Z suffix, so we append it
 export function isUtcDatetimeInFuture(utcDatetime: string) {

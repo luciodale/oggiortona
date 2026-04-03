@@ -8,6 +8,7 @@ import {
   parseOpeningHours,
   isUtcDatetimeInFuture,
   formatUtcAsItalianTime,
+  normalizeTimeValue,
 } from "./time";
 import type { OpeningHours } from "../types/database";
 
@@ -173,6 +174,31 @@ describe("isUtcDatetimeInFuture", () => {
   it("handles datetime with Z suffix", () => {
     const future = new Date(Date.now() + 3600_000).toISOString();
     expect(isUtcDatetimeInFuture(future)).toBe(true);
+  });
+});
+
+describe("normalizeTimeValue", () => {
+  it("keeps HH:MM unchanged", () => {
+    expect(normalizeTimeValue("12:45")).toBe("12:45");
+    expect(normalizeTimeValue("00:00")).toBe("00:00");
+    expect(normalizeTimeValue("23:59")).toBe("23:59");
+  });
+
+  it("strips seconds from HH:MM:SS (iOS Safari)", () => {
+    expect(normalizeTimeValue("12:45:00")).toBe("12:45");
+    expect(normalizeTimeValue("00:45:00")).toBe("00:45");
+    expect(normalizeTimeValue("23:59:59")).toBe("23:59");
+  });
+
+  it("normalizes AM to PM transition (00:45 vs 12:45)", () => {
+    expect(normalizeTimeValue("00:45:00")).toBe("00:45");
+    expect(normalizeTimeValue("12:45:00")).toBe("12:45");
+  });
+
+  it("returns original value for non-matching input", () => {
+    expect(normalizeTimeValue("")).toBe("");
+    expect(normalizeTimeValue("invalid")).toBe("invalid");
+    expect(normalizeTimeValue("9:30")).toBe("9:30");
   });
 });
 

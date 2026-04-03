@@ -185,7 +185,7 @@ export function useRestaurantForm(initial?: InitialData) {
         queryClient.invalidateQueries({ queryKey: ["my-restaurants"] });
         queryClient.invalidateQueries({ queryKey: ["home"] });
         if (isEdit) {
-          queryClient.invalidateQueries({ queryKey: ["restaurant", restaurantId] });
+          queryClient.invalidateQueries({ queryKey: ["restaurant", String(restaurantId)] });
         }
         navigate({ to: "/profile" });
       } else {
