@@ -37,6 +37,11 @@ export function getCardColor() {
   return getComputedStyle(document.documentElement).getPropertyValue("--color-card").trim();
 }
 
+export function getThemeColor(token: string) {
+  if (typeof document === "undefined") return "";
+  return getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+}
+
 export function buildPopupHtml(pin: MapPin) {
   return renderToStaticMarkup(createElement(MapPopup, { pin }));
 }

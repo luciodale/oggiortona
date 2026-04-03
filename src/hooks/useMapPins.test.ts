@@ -61,14 +61,14 @@ describe("restaurantsToMapPins", () => {
     expect(pins).toHaveLength(0);
   });
 
-  it("uses open color when restaurant is open", () => {
+  it("uses success color when restaurant is open", () => {
     const pins = restaurantsToMapPins([makeRestaurant({ isOpen: true })], "it");
-    expect(pins[0]?.color).toBe("#c4512a");
+    expect(pins[0]?.color).toBe("#4a7c59");
   });
 
-  it("uses muted color when restaurant is closed", () => {
+  it("uses danger color when restaurant is closed", () => {
     const pins = restaurantsToMapPins([makeRestaurant({ isOpen: false })], "it");
-    expect(pins[0]?.color).toBe("#8c7e6f");
+    expect(pins[0]?.color).toBe("#b84233");
   });
 
   it("passes promotions array through to pin", () => {

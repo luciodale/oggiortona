@@ -2,9 +2,16 @@ import { useMemo } from "react";
 import type { EventRow } from "../types/database";
 import type { Locale } from "../types/domain";
 import type { MapPin } from "../utils/map";
+import { getThemeColor } from "../utils/map";
 import { eventCategoryLabels } from "../config/categories";
 import { formatDateShort } from "../utils/date";
 import { useLocale } from "../i18n/useLocale";
+
+function isToday(dateStart: string, dateEnd: string | null) {
+  const today = new Date().toISOString().slice(0, 10);
+  if (dateEnd) return dateStart <= today && today <= dateEnd;
+  return dateStart === today;
+}
 
 function eventSubtitle(event: EventRow, locale: Locale) {
   const catLabels = eventCategoryLabels(locale);
@@ -19,6 +26,8 @@ function eventSubtitle(event: EventRow, locale: Locale) {
 }
 
 function eventsToMapPins(events: Array<EventRow>, locale: Locale): Array<MapPin> {
+  const todayColor = getThemeColor("--color-success") || "#4a7c59";
+  const baseColor = getThemeColor("--color-fare") || "#3d6b8e";
   return events
     .filter((e) => e.latitude != null && e.longitude != null)
     .map((e) => ({
@@ -32,7 +41,7 @@ function eventsToMapPins(events: Array<EventRow>, locale: Locale): Array<MapPin>
         e.latitude != null && e.longitude != null
           ? `https://www.google.com/maps/search/?api=1&query=${e.latitude},${e.longitude}`
           : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e.address)}`,
-      color: "#6d28d9",
+      color: isToday(e.dateStart, e.dateEnd) ? todayColor : baseColor,
       variant: "event" as const,
     }));
 }

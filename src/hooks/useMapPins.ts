@@ -1,11 +1,14 @@
 import { useMemo } from "react";
 import type { RestaurantWithStatus, Locale } from "../types/domain";
 import type { MapPin } from "../utils/map";
+import { getThemeColor } from "../utils/map";
 import { restaurantTypeLabels } from "../config/categories";
 import { useLocale } from "../i18n/useLocale";
 
 export function restaurantsToMapPins(restaurants: Array<RestaurantWithStatus>, locale: Locale): Array<MapPin> {
   const typeLabels = restaurantTypeLabels(locale);
+  const openColor = getThemeColor("--color-success") || "#4a7c59";
+  const closedColor = getThemeColor("--color-danger") || "#b84233";
   return restaurants
     .filter((r) => r.latitude != null && r.longitude != null)
     .map((r) => {
@@ -20,7 +23,7 @@ export function restaurantsToMapPins(restaurants: Array<RestaurantWithStatus>, l
           r.latitude != null && r.longitude != null
             ? `https://www.google.com/maps/search/?api=1&query=${r.latitude},${r.longitude}`
             : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(r.address)}`,
-        color: r.isOpen ? "#c4512a" : "#8c7e6f",
+        color: r.isOpen ? openColor : closedColor,
         variant: "restaurant" as const,
         isOpen: r.isOpen,
         priceRange: r.priceRange,

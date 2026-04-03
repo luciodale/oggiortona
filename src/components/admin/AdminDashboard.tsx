@@ -1,7 +1,9 @@
 import { useState, useMemo } from "react";
 import { useAdminRestaurants } from "../../hooks/useAdminRestaurants";
 import { useAdminEvents } from "../../hooks/useAdminEvents";
+import { useRefresh } from "../../hooks/useRefresh";
 import { filterBySearch } from "../../utils/adminFilter";
+import { RefreshIcon } from "../../icons/RefreshIcon";
 import { AdminBroadcast } from "./AdminBroadcast";
 import { AdminEventList } from "./AdminEventList";
 import { AdminPushToggle } from "./AdminPushToggle";
@@ -21,6 +23,7 @@ export function AdminDashboard() {
 
   const { restaurants, loading: loadingRestaurants, toggleRestaurant, deletePromotion } = useAdminRestaurants();
   const { events, loading: loadingEvents, toggleEvent, deleteEvent } = useAdminEvents();
+  const { isRefreshing, handleRefresh } = useRefresh([["admin-restaurants"], ["admin-events"]]);
 
   const filteredRestaurants = useMemo(
     () => filterBySearch(restaurants, search, (r) => r.name).filter(
@@ -46,7 +49,17 @@ export function AdminDashboard() {
         <h1 className="font-family-display text-2xl font-medium tracking-tight text-primary">
           Pannello Admin
         </h1>
-        <AdminPushToggle />
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            aria-label="Aggiorna"
+            onClick={handleRefresh}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border-light bg-surface text-muted transition-all duration-300 hover:border-accent/40 hover:text-accent active:scale-90"
+          >
+            <RefreshIcon className={`h-[18px] w-[18px]${isRefreshing ? " animate-spin" : ""}`} />
+          </button>
+          <AdminPushToggle />
+        </div>
       </div>
 
       <div className="mt-5">

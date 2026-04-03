@@ -114,7 +114,7 @@ export function LocationPickerField({
               ref={mapCallbackRef}
               role="application"
               aria-label="Trascina il segnaposto per scegliere la posizione"
-              className="h-[200px] w-full overflow-hidden rounded-xl border border-border"
+              className="relative z-0 h-[200px] w-full overflow-hidden rounded-xl border border-border"
             />
           </div>
         )}
