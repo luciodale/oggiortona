@@ -13,7 +13,7 @@ import { getTodayISO } from "../utils/date";
 
 type SubmitState = "idle" | "submitting" | "error";
 
-type InitialData = {
+export type EventFormInitialData = {
   title: string;
   description: string | null;
   category: string;
@@ -37,7 +37,7 @@ function splitCategories(category: string) {
   return { fixed, customCategory: custom.join(", ") };
 }
 
-export function useEventForm(initial?: InitialData) {
+export function useEventForm(initial?: EventFormInitialData, onSuccess?: () => void) {
   const initialSplit = initial ? splitCategories(initial.category) : null;
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -117,10 +117,15 @@ export function useEventForm(initial?: InitialData) {
         toast.success(isEdit ? "Evento aggiornato!" : "Evento pubblicato!");
         queryClient.invalidateQueries({ queryKey: ["home"] });
         queryClient.invalidateQueries({ queryKey: ["my-events"] });
+        queryClient.invalidateQueries({ queryKey: ["admin-events"] });
         if (isEdit) {
           queryClient.invalidateQueries({ queryKey: ["event", String(eventId)] });
         }
-        navigate({ to: "/profile" });
+        if (onSuccess) {
+          onSuccess();
+        } else {
+          navigate({ to: "/profile" });
+        }
       } else {
         const resData = (await res.json()) as { error: string };
         setErrorMessage(resData.error);

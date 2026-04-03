@@ -18,7 +18,7 @@ export function useThemeColor() {
       if (pathname.startsWith("/restaurants") || pathname.startsWith("/sign-in")) {
         cssVar = "--color-mangiare-light";
         bodyClass = "page-mangiare";
-      } else if (pathname.startsWith("/events") || pathname.startsWith("/add/event")) {
+      } else if (pathname.startsWith("/events")) {
         cssVar = "--color-fare-light";
         bodyClass = "page-fare";
       }

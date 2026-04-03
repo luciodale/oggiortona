@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { Toaster } from "sonner";
 import { BottomNav } from "../components/BottomNav";
 import { DetailBottomSheet } from "../components/shared/DetailBottomSheet";
+import { FormBottomSheet } from "../components/shared/FormBottomSheet";
 import { NotificationPrompt } from "../components/shared/NotificationPrompt";
 import { PwaInstallPrompt } from "../components/shared/PwaInstallPrompt";
 import { useThemeColor } from "../hooks/useThemeColor";
@@ -50,6 +51,34 @@ export function RootLayout() {
             fontFamily: "var(--font-family)",
             fontSize: "13px",
             borderRadius: "12px",
+            background: "var(--color-card)",
+            color: "var(--color-primary)",
+            border: "1px solid var(--color-border)",
+            boxShadow: "var(--shadow-card)",
+            minHeight: "48px",
+          },
+          actionButtonStyle: {
+            background: "var(--color-danger)",
+            color: "white",
+            fontSize: "12px",
+            fontWeight: 600,
+            padding: "6px 14px",
+            borderRadius: "10px",
+            height: "auto",
+          },
+          cancelButtonStyle: {
+            background: "var(--color-surface-alt)",
+            color: "var(--color-muted)",
+            fontSize: "12px",
+            fontWeight: 500,
+            padding: "6px 14px",
+            borderRadius: "10px",
+            border: "1px solid var(--color-border)",
+            height: "auto",
+          },
+          classNames: {
+            success: "toast-success",
+            error: "toast-error",
           },
         }}
       />
@@ -58,6 +87,7 @@ export function RootLayout() {
       <PwaInstallPrompt />
       {pathname === "/" && <NotificationPrompt />}
       <DetailBottomSheet />
+      <FormBottomSheet />
     </SwipeBarProvider>
   );
 }

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useWatch } from "react-hook-form";
 import { useEventForm } from "../../hooks/useEventForm";
 import { eventFormCategories, eventCategoryLabels } from "../../config/categories";
@@ -14,22 +15,29 @@ import { LocationPickerField } from "../shared/LocationPickerField";
 type EventFormProps = {
   eventId?: number;
   initialData?: Parameters<typeof useEventForm>[0];
+  onSuccess?: () => void;
+  onDirtyChange?: (dirty: boolean) => void;
 };
 
-export function EventForm({ eventId, initialData }: EventFormProps) {
+export function EventForm({ eventId, initialData, onSuccess, onDirtyChange }: EventFormProps) {
   const {
     form,
     toggleCategory,
     onSubmit,
     submitState,
     errorMessage,
-  } = useEventForm(initialData);
+  } = useEventForm(initialData, onSuccess);
 
   const { locale } = useLocale();
   const catLabels = eventCategoryLabels(locale);
   const isEdit = eventId != null;
   const selectedCategories = useWatch({ control: form.control, name: "categories" });
   const categoriesError = form.formState.errors.categories;
+  const { isDirty } = form.formState;
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
 
   return (
     <form

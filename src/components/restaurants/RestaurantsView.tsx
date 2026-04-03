@@ -25,12 +25,11 @@ export function RestaurantsView({ restaurants, isLoading, isLoggedIn, initialPin
   const { mode, handleToggle } = useViewMode();
   const { isRefreshing, handleRefresh } = useRefresh([["restaurants"], ["pins"]]);
   const { pinnedIds, togglePin } = usePinnedRestaurants(initialPinnedIds);
-  const { filters, filtered, hasActiveFilter, clearFilters, toggleOpenNow, toggleHasPromo, toggleHasNews } =
+  const { filters, filtered, hasActiveFilter, clearFilters, toggleOpenNow, toggleHasPromo } =
     useRestaurantFilters(restaurants, pinnedIds);
   const pins = useMapPins(filtered);
 
-  const promoCount = restaurants.filter((r) => r.promotions.some((p) => p.type === "special" || p.type === "deal")).length;
-  const newsCount = restaurants.filter((r) => r.promotions.some((p) => p.type === "news")).length;
+  const promoCount = restaurants.filter((r) => r.promotions.length > 0).length;
 
   return (
     <div>
@@ -50,10 +49,7 @@ export function RestaurantsView({ restaurants, isLoading, isLoggedIn, initialPin
             {t("restaurants.openNow")}
           </Pill>
           <Pill active={filters.hasPromo} onClick={toggleHasPromo}>
-            {promoCount > 0 ? t("restaurants.specialsWithCount", { count: promoCount }) : t("restaurants.specials")}
-          </Pill>
-          <Pill active={filters.hasNews} onClick={toggleHasNews}>
-            {newsCount > 0 ? t("restaurants.dealsWithCount", { count: newsCount }) : t("restaurants.deals")}
+            {promoCount > 0 ? t("restaurants.promotionsWithCount", { count: promoCount }) : t("restaurants.promotions")}
           </Pill>
         </div>
       </ListHeader>

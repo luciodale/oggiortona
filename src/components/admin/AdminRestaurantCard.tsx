@@ -1,6 +1,6 @@
 import { useSwipeBarContext } from "@luciodale/swipe-bar";
-import { useNavigate } from "@tanstack/react-router";
 import { restaurantTypeLabels } from "../../config/categories";
+import { useFormSheet } from "../../hooks/useFormSheet";
 import { TrashIcon } from "../../icons/TrashIcon";
 import type { PromotionRow, RestaurantRow } from "../../types/database";
 import type { SheetMeta } from "../../types/domain";
@@ -22,7 +22,7 @@ export function AdminRestaurantCard({
   onDeletePromotion,
 }: AdminRestaurantCardProps) {
   const { openSidebar } = useSwipeBarContext();
-  const navigate = useNavigate();
+  const { openRestaurantForm } = useFormSheet();
   const labels = restaurantTypeLabels("it");
   const types = restaurant.type.split(",").map((t) => t.trim());
   const isActive = restaurant.active === 1;
@@ -74,7 +74,7 @@ export function AdminRestaurantCard({
         <div className="mt-3 flex gap-2">
           <button
             type="button"
-            onClick={(e) => { e.stopPropagation(); navigate({ to: `/profile/restaurant/${restaurant.id}/edit` }); }}
+            onClick={(e) => { e.stopPropagation(); openRestaurantForm(restaurant); }}
             aria-label={`Modifica ${restaurant.name}`}
             className="rounded-lg bg-accent/10 px-3 py-1.5 text-[11px] font-semibold text-accent transition-colors hover:bg-accent/20"
           >

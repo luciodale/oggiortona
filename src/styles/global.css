@@ -376,3 +376,20 @@ summary,
 astro-dev-toolbar {
   display: none;
 }
+
+/* ==============================
+   Sonner toast variants
+   !important required: these override the inline style prop
+   set on all toasts. Sonner has no per-variant style API.
+   ============================== */
+
+.toast-success {
+  border-color: var(--color-success) !important;
+  color: var(--color-success) !important;
+}
+
+.toast-error {
+  border-color: var(--color-danger) !important;
+  color: var(--color-danger) !important;
+}
+

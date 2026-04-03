@@ -43,11 +43,6 @@ const eventDetailRoute = createRoute({
   path: "/events/$id",
   component: lazyRouteComponent(() => import("./routes/EventDetail"), "EventDetailRoute"),
 });
-const addEventRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/add/event",
-  component: lazyRouteComponent(() => import("./routes/AddEvent"), "AddEventRoute"),
-});
 const signInRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/sign-in",
@@ -70,28 +65,6 @@ const profileIndexRoute = createRoute({
   path: "/",
   component: lazyRouteComponent(() => import("./components/profile/ProfileDashboard"), "ProfileDashboard"),
 });
-const profileRestaurantRoute = createRoute({ getParentRoute: () => profileRoute, path: "/restaurant/$id", component: Outlet });
-const profileRestaurantEditRoute = createRoute({
-  getParentRoute: () => profileRestaurantRoute,
-  path: "/edit",
-  component: lazyRouteComponent(() => import("./components/profile/ProfileRestaurantEdit"), "ProfileRestaurantEdit"),
-});
-const profileStorefrontRoute = createRoute({
-  getParentRoute: () => profileRestaurantRoute,
-  path: "/storefront",
-  component: lazyRouteComponent(() => import("./components/profile/ProfileStorefront"), "ProfileStorefront"),
-});
-const profileAddRestaurantRoute = createRoute({
-  getParentRoute: () => profileRoute,
-  path: "/add/restaurant",
-  component: lazyRouteComponent(() => import("./components/profile/ProfileAddRestaurant"), "ProfileAddRestaurant"),
-});
-const profileEventRoute = createRoute({ getParentRoute: () => profileRoute, path: "/event/$id", component: Outlet });
-const profileEventEditRoute = createRoute({
-  getParentRoute: () => profileEventRoute,
-  path: "/edit",
-  component: lazyRouteComponent(() => import("./components/profile/ProfileEventEdit"), "ProfileEventEdit"),
-});
 
 // Admin routes
 const adminRoute = createRoute({ getParentRoute: () => rootRoute, path: "/admin", component: SectionLayout });
@@ -107,15 +80,9 @@ const routeTree = rootRoute.addChildren([
   restaurantDetailRoute,
   eventsRoute,
   eventDetailRoute,
-  addEventRoute,
   signInRoute,
   ssoCallbackRoute,
-  profileRoute.addChildren([
-    profileIndexRoute,
-    profileRestaurantRoute.addChildren([profileRestaurantEditRoute, profileStorefrontRoute]),
-    profileAddRestaurantRoute,
-    profileEventRoute.addChildren([profileEventEditRoute]),
-  ]),
+  profileRoute.addChildren([profileIndexRoute]),
   adminRoute.addChildren([adminIndexRoute]),
 ]);
 

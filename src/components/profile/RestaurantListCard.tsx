@@ -1,11 +1,11 @@
 import { useSwipeBarContext } from "@luciodale/swipe-bar";
 import { restaurantTypeLabels } from "../../config/categories";
 import { useDeleteEntity } from "../../hooks/useDeleteEntity";
+import { useFormSheet } from "../../hooks/useFormSheet";
 import { useLocale } from "../../i18n/useLocale";
 import { XIcon } from "../../icons/XIcon";
 import type { RestaurantWithStatus, SheetMeta } from "../../types/domain";
 import { PillActionButton } from "../shared/PillAction";
-import { PillActionLink } from "../shared/PillAction";
 
 type RestaurantListCardProps = {
   restaurant: RestaurantWithStatus;
@@ -16,6 +16,7 @@ export function RestaurantListCard({ restaurant }: RestaurantListCardProps) {
   const labels = restaurantTypeLabels(locale);
   const { handleDelete } = useDeleteEntity("restaurant");
   const { openSidebar } = useSwipeBarContext();
+  const { openRestaurantForm, openStorefront } = useFormSheet();
 
   function handlePreview() {
     const meta: SheetMeta = { kind: "restaurant", data: restaurant };
@@ -61,13 +62,13 @@ export function RestaurantListCard({ restaurant }: RestaurantListCardProps) {
           onClick={handlePreview}
           label={t("profile.previewCard")}
         />
-        <PillActionLink
-          to={`/profile/restaurant/${restaurant.id}/edit`}
+        <PillActionButton
+          onClick={() => openRestaurantForm(restaurant)}
           label={t("common.edit")}
           variant="accent"
         />
-        <PillActionLink
-          to={`/profile/restaurant/${restaurant.id}/storefront`}
+        <PillActionButton
+          onClick={() => openStorefront(restaurant.id)}
           label={t("profile.storefront")}
           variant="promo"
         />

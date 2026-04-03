@@ -5,8 +5,6 @@ import { ClockIcon } from "../../icons/ClockIcon";
 import { PinIcon } from "../../icons/PinIcon";
 import type { EventRow } from "../../types/database";
 import { CardContactButtons } from "../shared/CardContactButtons";
-import { EventLink } from "./EventLink";
-import { EventPriceBadge } from "./EventPriceBadge";
 import { HighlightWrap } from "./HighlightWrap";
 
 type EventCardProps = {
@@ -121,10 +119,6 @@ export function EventCard({ event, zipperCard = true, onCardClick, isAdmin, onTo
             latitude={event.latitude}
             longitude={event.longitude}
           />
-          <div className="flex items-center gap-3 text-[11px] text-muted/70">
-            <EventPriceBadge price={event.price} />
-            {event.link && <EventLink href={event.link} />}
-          </div>
         </div>
         {onCardClick && (
           <span className="flex shrink-0 items-center gap-0.5 text-[11px] font-semibold text-accent">

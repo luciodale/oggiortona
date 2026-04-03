@@ -1,8 +1,8 @@
 import { useMemo, useState, useEffect } from "react";
-import { Link } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
 import { useUserEvents } from "../../hooks/useUserEvents";
 import { useUserRestaurants } from "../../hooks/useUserRestaurants";
+import { useFormSheet } from "../../hooks/useFormSheet";
 import { useLocale, localeAtom } from "../../i18n/useLocale";
 import { getTodayISO } from "../../utils/date";
 import { CalendarIcon } from "../../icons/CalendarIcon";
@@ -52,6 +52,7 @@ export function ProfileDashboard() {
     return () => mql.removeEventListener("change", onSystemChange);
   }, []);
 
+  const { openRestaurantForm, openEventForm } = useFormSheet();
   const loading = loadingRestaurants || loadingEvents;
 
   const { activeEvents, pastEvents } = useMemo(() => {
@@ -113,20 +114,22 @@ export function ProfileDashboard() {
       </div>
 
       <div className="mt-6 flex gap-3">
-        <Link
-          to="/profile/add/restaurant"
-          className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-mangiare py-3 text-[13px] font-semibold text-white no-underline transition-all hover:bg-mangiare/90 active:scale-[0.98]"
+        <button
+          type="button"
+          onClick={() => openRestaurantForm()}
+          className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-mangiare py-3 text-[13px] font-semibold text-white transition-all hover:bg-mangiare/90 active:scale-[0.98]"
         >
           <CupIcon className="h-4 w-4" />
           {t("profile.addVenue")}
-        </Link>
-        <Link
-          to="/add/event"
-          className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-fare py-3 text-[13px] font-semibold text-white no-underline transition-all hover:bg-fare/90 active:scale-[0.98]"
+        </button>
+        <button
+          type="button"
+          onClick={() => openEventForm()}
+          className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-fare py-3 text-[13px] font-semibold text-white transition-all hover:bg-fare/90 active:scale-[0.98]"
         >
           <CalendarIcon className="h-4 w-4" />
           {t("profile.addEvent")}
-        </Link>
+        </button>
       </div>
 
       {loading ? (

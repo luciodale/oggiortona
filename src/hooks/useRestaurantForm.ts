@@ -76,7 +76,7 @@ function openingHoursToForm(
   return result;
 }
 
-type InitialData = {
+export type RestaurantFormInitialData = {
   name: string;
   description: string | null;
   types: Array<string>;
@@ -96,7 +96,7 @@ function splitTypes(types: Array<string>) {
   return { fixed, customType: custom.join(", ") };
 }
 
-export function useRestaurantForm(initial?: InitialData) {
+export function useRestaurantForm(initial?: RestaurantFormInitialData, onSuccess?: () => void) {
   const initialSplit = initial ? splitTypes(initial.types) : null;
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -183,11 +183,16 @@ export function useRestaurantForm(initial?: InitialData) {
       if (res.ok) {
         toast.success(isEdit ? "Locale aggiornato!" : "Locale inviato per approvazione!");
         queryClient.invalidateQueries({ queryKey: ["my-restaurants"] });
+        queryClient.invalidateQueries({ queryKey: ["admin-restaurants"] });
         queryClient.invalidateQueries({ queryKey: ["home"] });
         if (isEdit) {
           queryClient.invalidateQueries({ queryKey: ["restaurant", String(restaurantId)] });
         }
-        navigate({ to: "/profile" });
+        if (onSuccess) {
+          onSuccess();
+        } else {
+          navigate({ to: "/profile" });
+        }
       } else {
         const resData = (await res.json()) as { error: string };
         setErrorMessage(resData.error);

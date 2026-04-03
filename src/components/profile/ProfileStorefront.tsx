@@ -1,9 +1,7 @@
-import { Link, useParams } from "@tanstack/react-router";
 import { usePromotionsQuery } from "../../hooks/usePromotionsQuery";
 import { usePromotionMutations } from "../../hooks/usePromotionMutations";
 import { usePromotionForms } from "../../hooks/usePromotionForms";
 import { useLocale } from "../../i18n/useLocale";
-import { ArrowLeftIcon } from "../../icons/ArrowLeftIcon";
 import { Button } from "../ui/Button";
 import { SummaryFormError } from "../ui/FormError";
 import { PromotionForm } from "./storefront/PromotionForm";
@@ -11,11 +9,14 @@ import { PromotionsList } from "./storefront/PromotionsList";
 
 type PromotionTab = "special" | "deal" | "news";
 
-export function ProfileStorefront() {
+type ProfileStorefrontProps = {
+  restaurantId: string;
+};
+
+export function ProfileStorefront({ restaurantId }: ProfileStorefrontProps) {
   const { t } = useLocale();
-  const { id } = useParams({ strict: false });
-  const { items, restaurantName, loading } = usePromotionsQuery(id);
-  const { createPromotion, deletePromotion, renewPromotion, submitting } = usePromotionMutations(id);
+  const { items, restaurantName, loading } = usePromotionsQuery(restaurantId);
+  const { createPromotion, deletePromotion, renewPromotion, submitting } = usePromotionMutations(restaurantId);
   const {
     tab, setTab,
     errorMessage,
@@ -47,22 +48,11 @@ export function ProfileStorefront() {
 
   return (
     <div>
-      <Link
-        to="/profile"
-        className="mb-4 inline-flex items-center gap-1 text-xs font-medium text-muted no-underline hover:text-primary"
-      >
-        <ArrowLeftIcon className="h-3.5 w-3.5" />
-        {t("profile.backToProfile")}
-      </Link>
-
-      <h1 className="font-family-display text-xl font-medium tracking-tight text-primary">
-        {t("profile.storefront")}
-      </h1>
       {restaurantName && (
-        <p className="mt-0.5 text-[11px] text-muted">{restaurantName}</p>
+        <p className="mb-3 text-[11px] text-muted">{restaurantName}</p>
       )}
 
-      <div className="mt-5 flex rounded-xl bg-surface-warm p-0.5" role="tablist" aria-label="Tipo">
+      <div className="flex rounded-xl bg-surface-warm p-0.5" role="tablist" aria-label="Tipo">
         {(["special", "deal", "news"] as const).map((tp) => (
           <button
             key={tp}

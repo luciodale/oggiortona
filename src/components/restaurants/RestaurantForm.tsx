@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useWatch } from "react-hook-form";
 import { useRestaurantForm } from "../../hooks/useRestaurantForm";
 import { restaurantFormTypes, restaurantTypeLabels } from "../../config/categories";
@@ -14,9 +15,11 @@ import { LocationPickerField } from "../shared/LocationPickerField";
 type RestaurantFormProps = {
   restaurantId?: number;
   initialData?: Parameters<typeof useRestaurantForm>[0];
+  onSuccess?: () => void;
+  onDirtyChange?: (dirty: boolean) => void;
 };
 
-export function RestaurantForm({ restaurantId, initialData }: RestaurantFormProps) {
+export function RestaurantForm({ restaurantId, initialData, onSuccess, onDirtyChange }: RestaurantFormProps) {
   const {
     form,
     toggleType,
@@ -24,7 +27,7 @@ export function RestaurantForm({ restaurantId, initialData }: RestaurantFormProp
     onSubmit,
     submitState,
     errorMessage,
-  } = useRestaurantForm(initialData);
+  } = useRestaurantForm(initialData, onSuccess);
 
   const { locale } = useLocale();
   const typeLabels = restaurantTypeLabels(locale);
@@ -32,6 +35,11 @@ export function RestaurantForm({ restaurantId, initialData }: RestaurantFormProp
   const selectedTypes = useWatch({ control: form.control, name: "types" });
   const typesError = form.formState.errors.types;
   const orderedDays = getOrderedDays();
+  const { isDirty } = form.formState;
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
 
   return (
     <form

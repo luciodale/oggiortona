@@ -1,13 +1,13 @@
 import { useSwipeBarContext } from "@luciodale/swipe-bar";
 import { eventCategoryColors, eventCategoryLabels } from "../../config/categories";
 import { useDeleteEntity } from "../../hooks/useDeleteEntity";
+import { useFormSheet } from "../../hooks/useFormSheet";
 import { useLocale } from "../../i18n/useLocale";
 import { XIcon } from "../../icons/XIcon";
 import type { EventRow } from "../../types/database";
 import type { SheetMeta } from "../../types/domain";
 import { formatDateLong } from "../../utils/date";
 import { PillActionButton } from "../shared/PillAction";
-import { PillActionLink } from "../shared/PillAction";
 
 type EventListCardProps = {
   event: EventRow;
@@ -19,6 +19,7 @@ export function EventListCard({ event }: EventListCardProps) {
   const categories = event.category.split(",").map((c) => c.trim());
   const { handleDelete } = useDeleteEntity("event");
   const { openSidebar } = useSwipeBarContext();
+  const { openEventForm } = useFormSheet();
 
   function handlePreview() {
     const meta: SheetMeta = { kind: "event", data: event };
@@ -70,9 +71,8 @@ export function EventListCard({ event }: EventListCardProps) {
           onClick={handlePreview}
           label={t("profile.previewCard")}
         />
-        <PillActionLink
-          to="/profile/event/$id/edit"
-          params={{ id: String(event.id) }}
+        <PillActionButton
+          onClick={() => openEventForm(event)}
           label={t("common.edit")}
           variant="accent"
         />
