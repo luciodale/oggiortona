@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { EventRow } from "../types/database";
+import type { EventWithRestaurant } from "../types/domain";
 import type { Locale } from "../types/domain";
 import type { MapPin } from "../utils/map";
 import { getThemeColor } from "../utils/map";
@@ -13,7 +13,7 @@ function isToday(dateStart: string, dateEnd: string | null) {
   return dateStart === today;
 }
 
-function eventSubtitle(event: EventRow, locale: Locale) {
+function eventSubtitle(event: EventWithRestaurant, locale: Locale) {
   const catLabels = eventCategoryLabels(locale);
   const cats = event.category
     .split(",")
@@ -25,7 +25,7 @@ function eventSubtitle(event: EventRow, locale: Locale) {
   return `${date} · ${cats}`;
 }
 
-function eventsToMapPins(events: Array<EventRow>, locale: Locale): Array<MapPin> {
+function eventsToMapPins(events: Array<EventWithRestaurant>, locale: Locale): Array<MapPin> {
   const todayColor = getThemeColor("--color-success") || "#4a7c59";
   const baseColor = getThemeColor("--color-fare") || "#3d6b8e";
   return events
@@ -36,7 +36,6 @@ function eventsToMapPins(events: Array<EventRow>, locale: Locale): Array<MapPin>
       lng: e.longitude!,
       label: e.title,
       subtitle: eventSubtitle(e, locale),
-      href: `/events/${e.id}`,
       directionsUrl:
         e.latitude != null && e.longitude != null
           ? `https://www.google.com/maps/search/?api=1&query=${e.latitude},${e.longitude}`
@@ -46,7 +45,7 @@ function eventsToMapPins(events: Array<EventRow>, locale: Locale): Array<MapPin>
     }));
 }
 
-export function useEventMapPins(events: Array<EventRow>) {
+export function useEventMapPins(events: Array<EventWithRestaurant>) {
   const { locale } = useLocale();
   return useMemo(() => eventsToMapPins(events, locale), [events, locale]);
 }

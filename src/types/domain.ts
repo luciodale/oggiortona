@@ -19,11 +19,16 @@ export type RestaurantWithStatus = RestaurantRow & {
   promotions: Array<PromotionRow>;
   parsedHours: OpeningHours;
   expiredPromotionCount: number;
+  linkedEventCount: number;
+};
+
+export type EventWithRestaurant = EventRow & {
+  restaurantName: string | null;
 };
 
 export type SheetMeta =
   | { kind: "restaurant"; data: RestaurantWithStatus }
-  | { kind: "event"; data: EventRow };
+  | { kind: "event"; data: EventWithRestaurant };
 
 export function isSheetMeta(value: unknown): value is SheetMeta {
   if (typeof value !== "object" || value === null) return false;

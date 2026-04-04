@@ -101,6 +101,7 @@ export const events = sqliteTable("events", {
   category: text("category").notNull(),
   price: real("price"),
   link: text("link"),
+  restaurantId: integer("restaurant_id").references(() => restaurants.id, { onDelete: "set null" }),
   ownerId: text("owner_id").notNull().references(() => users.id),
   active: integer("active").notNull().default(1),
   deleted: integer("deleted").notNull().default(0),
@@ -111,4 +112,5 @@ export const events = sqliteTable("events", {
 }, (table) => [
   index("idx_events_date_start").on(table.dateStart),
   index("idx_events_category").on(table.category),
+  index("idx_events_restaurant_id").on(table.restaurantId),
 ]);

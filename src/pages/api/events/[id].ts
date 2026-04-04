@@ -1,5 +1,5 @@
 import type { APIContext } from "astro";
-import { events } from "../../../db/schema";
+import { events, restaurants } from "../../../db/schema";
 import { eq, and as dbAnd } from "drizzle-orm";
 import { updateEventApiSchema } from "../../../schemas/event";
 import { nowItalyFormatted } from "../../../utils/sqlite";
@@ -8,20 +8,30 @@ export async function GET({ locals, params }: APIContext): Promise<Response> {
   const db = locals.db;
   const id = Number(params.id);
 
-  let [event] = await db.select().from(events).where(dbAnd(eq(events.id, id), eq(events.active, 1), eq(events.deleted, 0))).limit(1);
+  let [row] = await db
+    .select({ event: events, restaurantName: restaurants.name })
+    .from(events)
+    .leftJoin(restaurants, eq(events.restaurantId, restaurants.id))
+    .where(dbAnd(eq(events.id, id), eq(events.active, 1), eq(events.deleted, 0)))
+    .limit(1);
 
-  if (!event && locals.user) {
+  if (!row && locals.user) {
     const ownerOrAdmin = locals.isAdmin
       ? eq(events.deleted, 0)
       : dbAnd(eq(events.ownerId, locals.user.id), eq(events.deleted, 0));
-    [event] = await db.select().from(events).where(dbAnd(eq(events.id, id), ownerOrAdmin)).limit(1);
+    [row] = await db
+      .select({ event: events, restaurantName: restaurants.name })
+      .from(events)
+      .leftJoin(restaurants, eq(events.restaurantId, restaurants.id))
+      .where(dbAnd(eq(events.id, id), ownerOrAdmin))
+      .limit(1);
   }
 
-  if (!event) return Response.json({ error: "Non trovato" }, { status: 404 });
+  if (!row) return Response.json({ error: "Non trovato" }, { status: 404 });
 
-  const { ownerId: _, ...publicEvent } = event;
+  const { ownerId: _, ...publicEvent } = row.event;
 
-  return Response.json({ event: publicEvent });
+  return Response.json({ event: { ...publicEvent, restaurantName: row.restaurantName ?? null } });
 }
 
 export async function PUT({ locals, params, request }: APIContext): Promise<Response> {
@@ -65,6 +75,7 @@ export async function PUT({ locals, params, request }: APIContext): Promise<Resp
   if (body.longitude !== undefined) updates.longitude = body.longitude;
   if (body.price !== undefined) updates.price = body.price ?? null;
   if (body.link !== undefined) updates.link = body.link?.trim() || null;
+  if (body.restaurant_id !== undefined) updates.restaurantId = body.restaurant_id ?? null;
 
   if (Object.keys(updates).length === 0) {
     return Response.json({ error: "Nessun campo da aggiornare" }, { status: 400 });

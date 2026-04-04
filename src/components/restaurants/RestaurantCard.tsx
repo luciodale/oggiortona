@@ -1,5 +1,6 @@
 import { restaurantTypeLabels } from "../../config/categories";
 import { useLocale } from "../../i18n/useLocale";
+import { CalendarIcon } from "../../icons/CalendarIcon";
 import { ChevronRightIcon } from "../../icons/ChevronRightIcon";
 import { PinIcon } from "../../icons/PinIcon";
 import type { RestaurantWithStatus } from "../../types/domain";
@@ -42,10 +43,7 @@ export function RestaurantCard({ restaurant, isPinned, onTogglePin, zipperCard =
       onClick={handleClick}
       role={onCardClick ? "button" : undefined}
     >
-      <a
-        href={onCardClick ? undefined : `/restaurants/${restaurant.id}`}
-        className="block p-4 pb-0 no-underline"
-      >
+      <div className="p-4 pb-0">
         {/* Top row: name + status */}
         <div className="flex items-start justify-between gap-2">
           <div className="flex min-w-0 flex-1 items-start gap-1">
@@ -109,6 +107,15 @@ export function RestaurantCard({ restaurant, isPinned, onTogglePin, zipperCard =
           </p>
         )}
 
+        {restaurant.linkedEventCount > 0 && (
+          <span className="mt-1.5 flex items-center gap-1 text-[11px] text-fare/70">
+            <CalendarIcon className="h-3 w-3" />
+            {restaurant.linkedEventCount === 1
+              ? t("restaurants.linkedEventOne")
+              : t("restaurants.linkedEventMany", { count: restaurant.linkedEventCount })}
+          </span>
+        )}
+
         {specials.map((special) => (
           <SpecialEntry key={special.id} special={special} />
         ))}
@@ -121,7 +128,7 @@ export function RestaurantCard({ restaurant, isPinned, onTogglePin, zipperCard =
           <NewsEntry key={item.id} news={item} />
         ))}
 
-      </a>
+      </div>
 
       {/* Bottom bar: action buttons */}
       <div className="flex items-end justify-between gap-2 px-4 pb-3.5 pt-3">

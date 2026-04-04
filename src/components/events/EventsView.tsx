@@ -1,3 +1,4 @@
+import { useSwipeBarContext } from "@luciodale/swipe-bar";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { lazy, Suspense, useCallback, useState } from "react";
 import { eventCategoryLabels, eventFilterCategories } from "../../config/categories";
@@ -8,7 +9,7 @@ import { useRefresh } from "../../hooks/useRefresh";
 import { useSpaAuth } from "../../hooks/useSpaAuth";
 import { useViewMode } from "../../hooks/useViewMode";
 import { useLocale } from "../../i18n/useLocale";
-import type { EventRow } from "../../types/database";
+import type { EventWithRestaurant, SheetMeta } from "../../types/domain";
 import { ContentLoader } from "../shared/ContentLoader";
 import { ListHeader } from "../shared/ListHeader";
 import { Pill } from "../ui/Pill";
@@ -17,7 +18,7 @@ import { EventList } from "./EventList";
 const MapView = lazy(() => import("../shared/MapView").then((m) => ({ default: m.MapView })));
 
 type EventsViewProps = {
-  events: Array<EventRow>;
+  events: Array<EventWithRestaurant>;
   isLoading: boolean;
 };
 
@@ -29,7 +30,7 @@ export function EventsView({ events, isLoading }: EventsViewProps) {
   const { isRefreshing, handleRefresh } = useRefresh([["events"], ["events-past"]]);
   const [timeFilter, setTimeFilter] = useState<TimeFilter>("tutti");
 
-  const { data: pastData, isLoading: isPastLoading } = useQuery<{ events: Array<EventRow> }>({
+  const { data: pastData, isLoading: isPastLoading } = useQuery<{ events: Array<EventWithRestaurant> }>({
     queryKey: ["events-past"],
     queryFn: () => fetch("/api/events/past").then((r) => r.json()),
     enabled: timeFilter === "passati",
@@ -44,6 +45,15 @@ export function EventsView({ events, isLoading }: EventsViewProps) {
   const catLabels = eventCategoryLabels(locale);
 
   const showLoader = timeFilter === "passati" ? isPastLoading : isLoading;
+
+  const { openSidebar } = useSwipeBarContext();
+
+  const handlePinClick = useCallback(function handlePinClick(id: number) {
+    const event = filtered.find((e) => e.id === id);
+    if (!event) return;
+    const meta: SheetMeta = { kind: "event", data: event };
+    openSidebar("bottom", { meta });
+  }, [filtered, openSidebar]);
 
   const handleToggleHighlight = useCallback(async function handleToggleHighlight(id: number) {
     await fetch(`/api/admin/events/${id}/highlight`, { method: "PUT" });
@@ -98,7 +108,7 @@ export function EventsView({ events, isLoading }: EventsViewProps) {
       ) : (
         <Suspense fallback={<div className="fixed inset-0 z-20 flex items-center justify-center bg-surface-alt"><p className="text-sm text-muted">{t("common.loadingMap")}</p></div>}>
             <div className="map-fullscreen fixed inset-0 z-20">
-              <MapView pins={pins} />
+              <MapView pins={pins} onPinClick={handlePinClick} />
             </div>
           </Suspense>
       )}

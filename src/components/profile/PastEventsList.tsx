@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useLocale } from "../../i18n/useLocale";
 import { ChevronDownIcon } from "../../icons/ChevronDownIcon";
-import type { EventRow } from "../../types/database";
+import type { EventWithRestaurant } from "../../types/domain";
 import { EventListCard } from "./EventListCard";
 
 type PastEventsListProps = {
-  events: Array<EventRow>;
+  events: Array<EventWithRestaurant>;
 };
 
 export function PastEventsList({ events }: PastEventsListProps) {

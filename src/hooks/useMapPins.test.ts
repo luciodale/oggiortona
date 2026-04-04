@@ -37,6 +37,7 @@ function makeRestaurant(overrides: Partial<RestaurantWithStatus> = {}): Restaura
     promotions: [],
     parsedHours: EMPTY_HOURS,
     expiredPromotionCount: 0,
+    linkedEventCount: 0,
     ...overrides,
   };
 }
@@ -50,7 +51,6 @@ describe("restaurantsToMapPins", () => {
     expect(pins[0]?.lat).toBe(42.35);
     expect(pins[0]?.lng).toBe(14.40);
     expect(pins[0]?.variant).toBe("restaurant");
-    expect(pins[0]?.href).toBe("/restaurants/1");
   });
 
   it("filters out restaurants without coordinates", () => {

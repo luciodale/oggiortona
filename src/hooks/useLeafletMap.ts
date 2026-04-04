@@ -4,6 +4,8 @@ import "leaflet/dist/leaflet.css";
 import { buildPopupHtml, getCardColor, getTileUrl } from "../utils/map";
 import type { MapPin, PinVariant } from "../utils/map";
 
+export type OnPinClick = (id: number, variant: string) => void;
+
 function createPinIcon(color: string, variant: PinVariant, stroke: string) {
   if (variant === "restaurant") {
     return L.divIcon({
@@ -42,6 +44,7 @@ export function useLeafletMap(
   pins: Array<MapPin>,
   center: [number, number],
   zoom: number,
+  onPinClick?: OnPinClick,
 ) {
   const mapRef = useRef<L.Map | null>(null);
 
@@ -63,11 +66,22 @@ export function useLeafletMap(
 
     mapRef.current = map;
 
+    function handlePopupClick(e: MouseEvent) {
+      const target = (e.target as HTMLElement).closest<HTMLElement>("[data-pin-id]");
+      if (!target) return;
+      e.preventDefault();
+      const id = Number(target.dataset.pinId);
+      const variant = target.dataset.pinVariant ?? "default";
+      onPinClick?.(id, variant);
+    }
+    containerRef.current.addEventListener("click", handlePopupClick);
+
     return () => {
+      containerRef.current?.removeEventListener("click", handlePopupClick);
       map.remove();
       mapRef.current = null;
     };
-  }, [center, zoom]);
+  }, [center, zoom, onPinClick]);
 
   useEffect(() => {
     const map = mapRef.current;

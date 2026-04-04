@@ -28,20 +28,10 @@ const restaurantsRoute = createRoute({
   path: "/restaurants",
   component: lazyRouteComponent(() => import("./routes/Restaurants"), "RestaurantsRoute"),
 });
-const restaurantDetailRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/restaurants/$id",
-  component: lazyRouteComponent(() => import("./routes/RestaurantDetail"), "RestaurantDetailRoute"),
-});
 const eventsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/events",
   component: lazyRouteComponent(() => import("./routes/Events"), "EventsRoute"),
-});
-const eventDetailRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/events/$id",
-  component: lazyRouteComponent(() => import("./routes/EventDetail"), "EventDetailRoute"),
 });
 const signInRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -77,9 +67,7 @@ const adminIndexRoute = createRoute({
 const routeTree = rootRoute.addChildren([
   indexRoute,
   restaurantsRoute,
-  restaurantDetailRoute,
   eventsRoute,
-  eventDetailRoute,
   signInRoute,
   ssoCallbackRoute,
   profileRoute.addChildren([profileIndexRoute]),

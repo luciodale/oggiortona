@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import type { EventRow } from "../types/database";
+import type { EventWithRestaurant } from "../types/domain";
 import { isThisWeek, isToday } from "../utils/date";
 import { eventFilterCategories } from "../config/categories";
 
@@ -8,30 +8,30 @@ const KNOWN_CATEGORIES = new Set(eventFilterCategories.filter((c) => c !== "altr
 export type TimeFilter = "oggi" | "tutti" | "passati";
 
 type EventGroups = {
-  thisWeek: Array<EventRow>;
-  upcoming: Array<EventRow>;
-  past: Array<EventRow>;
+  thisWeek: Array<EventWithRestaurant>;
+  upcoming: Array<EventWithRestaurant>;
+  past: Array<EventWithRestaurant>;
 };
 
-function eventCategories(event: EventRow): Array<string> {
+function eventCategories(event: EventWithRestaurant): Array<string> {
   return event.category.split(",").map((c) => c.trim());
 }
 
-function matchesCategory(event: EventRow, filter: string): boolean {
+function matchesCategory(event: EventWithRestaurant, filter: string): boolean {
   if (filter === "all") return true;
   const cats = eventCategories(event);
   if (filter === "altro") return cats.some((c) => !KNOWN_CATEGORIES.has(c));
   return cats.includes(filter);
 }
 
-function matchesTime(event: EventRow, filter: TimeFilter): boolean {
+function matchesTime(event: EventWithRestaurant, filter: TimeFilter): boolean {
   if (filter === "tutti" || filter === "passati") return true;
   return isToday(event.dateStart, event.dateEnd);
 }
 
 type UseEventFiltersParams = {
-  events: Array<EventRow>;
-  pastEvents: Array<EventRow>;
+  events: Array<EventWithRestaurant>;
+  pastEvents: Array<EventWithRestaurant>;
   timeFilter: TimeFilter;
 };
 
@@ -49,8 +49,8 @@ export function useEventFilters({ events, pastEvents, timeFilter }: UseEventFilt
   const grouped = useMemo<EventGroups>(() => {
     if (isPast) return { thisWeek: [], upcoming: [], past: filtered };
 
-    const thisWeek: Array<EventRow> = [];
-    const upcoming: Array<EventRow> = [];
+    const thisWeek: Array<EventWithRestaurant> = [];
+    const upcoming: Array<EventWithRestaurant> = [];
 
     for (const event of filtered) {
       if (isThisWeek(event.dateStart, event.dateEnd)) {

@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { EventsView } from "../components/events/EventsView";
-import type { EventRow } from "../types/database";
+import type { EventWithRestaurant } from "../types/domain";
 
 export function EventsRoute() {
-  const { data, isLoading } = useQuery<{ events: Array<EventRow> }>({
+  const { data, isLoading } = useQuery<{ events: Array<EventWithRestaurant> }>({
     queryKey: ["events"],
     queryFn: () => fetch("/api/events").then((r) => r.json()),
   });

@@ -1,9 +1,12 @@
+import { useSwipeBarContext } from "@luciodale/swipe-bar";
+import { useQuery } from "@tanstack/react-query";
 import { useLocale } from "../../i18n/useLocale";
-import { restaurantTypeLabels } from "../../config/categories";
+import { restaurantTypeLabels, eventCategoryColors, eventCategoryLabels } from "../../config/categories";
 import { PromotionCardPublic } from "../PromotionCardPublic";
 import { formatSchedule, getDayLabel, getOrderedDays } from "../../utils/time";
-import type { RestaurantWithStatus } from "../../types/domain";
-import type { PromotionRow } from "../../types/database";
+import { formatDateShort } from "../../utils/date";
+import type { RestaurantWithStatus, SheetMeta, EventWithRestaurant } from "../../types/domain";
+import type { EventRow, PromotionRow } from "../../types/database";
 
 type RestaurantDetailBodyProps = {
   restaurant: RestaurantWithStatus;
@@ -11,8 +14,15 @@ type RestaurantDetailBodyProps = {
 
 export function RestaurantDetailBody({ restaurant }: RestaurantDetailBodyProps) {
   const { locale, t } = useLocale();
+  const { openSidebar } = useSwipeBarContext();
   const labels = restaurantTypeLabels(locale);
+  const catLabels = eventCategoryLabels(locale);
   const days = getOrderedDays();
+  const { data: eventsData } = useQuery<{ events: Array<EventRow> }>({
+    queryKey: ["restaurant-events", String(restaurant.id)],
+    queryFn: () => fetch(`/api/restaurants/${restaurant.id}/events`).then((r) => r.json()),
+  });
+  const linkedEvents = eventsData?.events ?? [];
 
   return (
     <>
@@ -36,6 +46,42 @@ export function RestaurantDetailBody({ restaurant }: RestaurantDetailBodyProps) 
       </div>
 
       {restaurant.description && <p className="mt-3 text-[13px] leading-relaxed text-muted">{restaurant.description}</p>}
+
+      {linkedEvents.length > 0 && (
+        <div className="mt-5">
+          <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-muted">{t("restaurants.upcomingEvents")}</h2>
+          <div className="space-y-2">
+            {linkedEvents.map((event) => {
+              const cats = event.category.split(",").map((c) => c.trim());
+              function handleEventClick() {
+                const enriched: EventWithRestaurant = { ...event, restaurantName: restaurant.name };
+                const meta: SheetMeta = { kind: "event", data: enriched };
+                openSidebar("bottom", { id: "linked", meta });
+              }
+              return (
+                <button
+                  type="button"
+                  key={event.id}
+                  onClick={handleEventClick}
+                  className="flex w-full items-center justify-between rounded-xl bg-card p-3 text-left shadow-card"
+                >
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap gap-1">
+                      {cats.map((cat) => (
+                        <span key={cat} className={`inline-block rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide ${eventCategoryColors[cat] ?? eventCategoryColors["altro"]}`}>
+                          {catLabels[cat] ?? cat}
+                        </span>
+                      ))}
+                    </div>
+                    <p className="mt-1 text-[13px] font-medium leading-snug text-primary">{event.title}</p>
+                    <p className="mt-0.5 text-[11px] capitalize text-muted">{formatDateShort(event.dateStart, locale)}</p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       <div className="mt-5 flex gap-2">
         {restaurant.phone && (

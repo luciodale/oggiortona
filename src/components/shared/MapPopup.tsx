@@ -40,12 +40,9 @@ export function MapPopup({ pin }: { pin: MapPin }) {
           <PriceRange range={pin.priceRange} />
         )}
       </div>
-      <a
-        href={pin.href}
-        className="mt-1.5 block text-center font-family-display text-[17px] font-medium leading-tight text-primary no-underline"
-      >
+      <p className="mt-1.5 text-center font-family-display text-[17px] font-medium leading-tight text-primary">
         {pin.label}
-      </a>
+      </p>
       {pin.subtitle && (
         <span className="mt-0.5 block text-xs text-center text-muted">{pin.subtitle}</span>
       )}
@@ -55,17 +52,27 @@ export function MapPopup({ pin }: { pin: MapPin }) {
         if (p.type === "news") return <NewsEntry key={p.id} news={p} />;
         return null;
       })}
-      {pin.directionsUrl && (
-        <a
-          href={pin.directionsUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-2.5 inline-flex w-full justify-center items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold tracking-[0.02em] text-card no-underline"
+      <div className="mt-2.5 flex gap-2">
+        <button
+          type="button"
+          data-pin-id={pin.id}
+          data-pin-variant={pin.variant ?? "default"}
+          className="flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-4 py-2 text-xs font-semibold tracking-[0.02em] text-primary"
         >
-          <MapPinIcon className="h-[13px] w-[13px]" strokeWidth={2.5} />
-          Indicazioni
-        </a>
-      )}
+          Dettagli
+        </button>
+        {pin.directionsUrl && (
+          <a
+            href={pin.directionsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold tracking-[0.02em] text-card no-underline"
+          >
+            <MapPinIcon className="h-[13px] w-[13px]" strokeWidth={2.5} />
+            Indicazioni
+          </a>
+        )}
+      </div>
     </div>
   );
 }

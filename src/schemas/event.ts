@@ -21,6 +21,7 @@ export const eventFormSchema = z
     longitude: z.number().nullable(),
     price: z.union([z.number().min(0, "Prezzo non valido"), z.nan()]).nullable(),
     link: z.string().trim(),
+    restaurantId: z.number().nullable(),
   })
   .refine(
     (data) => data.categories.length > 0 || data.customCategory.trim().length > 0,
@@ -50,6 +51,7 @@ export const createEventApiSchema = z.object({
   longitude: z.number(),
   price: z.number().min(0).nullish(),
   link: z.string().trim().nullish(),
+  restaurant_id: z.number().int().positive().nullish(),
 });
 
 export type CreateEventApiPayload = z.infer<typeof createEventApiSchema>;

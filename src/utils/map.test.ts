@@ -26,12 +26,13 @@ describe("buildPopupHtml", () => {
     lat: 42.35,
     lng: 14.40,
     label: "Test Place",
-    href: "/restaurants/1",
+    variant: "restaurant",
   };
 
-  it("renders label as link", () => {
+  it("renders label as button with data attributes", () => {
     const html = buildPopupHtml(basePin);
-    expect(html).toContain('href="/restaurants/1"');
+    expect(html).toContain('data-pin-id="1"');
+    expect(html).toContain('data-pin-variant="restaurant"');
     expect(html).toContain("Test Place");
   });
 

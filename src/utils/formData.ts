@@ -34,5 +34,6 @@ export function eventToFormData(e: EventRow): EventFormInitialData {
     longitude: e.longitude,
     price: e.price,
     link: e.link,
+    restaurantId: e.restaurantId,
   };
 }

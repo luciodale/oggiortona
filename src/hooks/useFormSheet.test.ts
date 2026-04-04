@@ -46,6 +46,7 @@ function makeEventRow(overrides: Partial<EventRow> = {}): EventRow {
     deleted: 0,
     approved: 1,
     highlighted: 0,
+    restaurantId: null,
     createdAt: "2026-03-28",
     updatedAt: "2026-03-28",
     ...overrides,
@@ -117,6 +118,7 @@ describe("eventToFormData", () => {
     expect(result.longitude).toBe(14.40);
     expect(result.price).toBe(10);
     expect(result.link).toBe("https://example.com/event");
+    expect(result.restaurantId).toBeNull();
   });
 
   it("handles null optional fields", () => {

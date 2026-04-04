@@ -1,11 +1,13 @@
+import { useSwipeBarContext } from "@luciodale/swipe-bar";
 import { useLocale } from "../../i18n/useLocale";
 import { eventCategoryColors, eventCategoryLabels } from "../../config/categories";
 import { formatDateLong } from "../../utils/date";
 import { CalendarIcon } from "../../icons/CalendarIcon";
 import { ClockIcon } from "../../icons/ClockIcon";
+import { CupIcon } from "../../icons/CupIcon";
 import { TagIcon } from "../../icons/TagIcon";
 import { EventLink } from "./EventLink";
-import type { EventRow } from "../../types/database";
+import type { EventWithRestaurant, SheetMeta, RestaurantWithStatus } from "../../types/domain";
 
 type ActionLinkProps = {
   href: string;
@@ -28,11 +30,21 @@ function ActionLink({ href, label, color, external }: ActionLinkProps) {
 }
 
 type EventDetailBodyProps = {
-  event: EventRow;
+  event: EventWithRestaurant;
 };
 
 export function EventDetailBody({ event }: EventDetailBodyProps) {
   const { locale, t } = useLocale();
+  const { openSidebar } = useSwipeBarContext();
+
+  function handleRestaurantClick() {
+    fetch(`/api/restaurants/${event.restaurantId}`)
+      .then((r) => r.json())
+      .then((data: { restaurant: RestaurantWithStatus }) => {
+        const meta: SheetMeta = { kind: "restaurant", data: data.restaurant };
+        openSidebar("bottom", { id: "linked", meta });
+      });
+  }
   const categories = event.category.split(",").map((c: string) => c.trim());
   const catLabels = eventCategoryLabels(locale);
 
@@ -103,6 +115,24 @@ export function EventDetailBody({ event }: EventDetailBodyProps) {
       </div>
 
       {event.link && <EventLink href={event.link} className="mt-4 inline-flex text-[13px] font-semibold" />}
+
+      {event.restaurantName && event.restaurantId && (
+        <button
+          type="button"
+          onClick={handleRestaurantClick}
+          className="mt-5 flex w-full items-center gap-3 rounded-2xl bg-card p-4 text-left shadow-card"
+        >
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-mangiare-light">
+            <CupIcon className="h-4 w-4 text-mangiare" />
+          </div>
+          <div>
+            <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted">
+              {t("events.linkedVenue")}
+            </span>
+            <p className="text-[13px] font-medium text-primary">{event.restaurantName}</p>
+          </div>
+        </button>
+      )}
 
       {event.description && (
         <div className="mt-6">

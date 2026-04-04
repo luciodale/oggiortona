@@ -1,8 +1,12 @@
 import { useEffect } from "react";
 import { useWatch } from "react-hook-form";
+import { useQuery } from "@tanstack/react-query";
 import { useEventForm } from "../../hooks/useEventForm";
+import { useUserRestaurants } from "../../hooks/useUserRestaurants";
+import { useSpaAuth } from "../../hooks/useSpaAuth";
 import { eventFormCategories, eventCategoryLabels } from "../../config/categories";
 import { useLocale } from "../../i18n/useLocale";
+import type { RestaurantWithStatus } from "../../types/domain";
 import { Input } from "../ui/Input";
 import { Textarea } from "../ui/Textarea";
 import { Pill } from "../ui/Pill";
@@ -28,9 +32,17 @@ export function EventForm({ eventId, initialData, onSuccess, onDirtyChange }: Ev
     errorMessage,
   } = useEventForm(initialData, onSuccess);
 
-  const { locale } = useLocale();
+  const { locale, t } = useLocale();
   const catLabels = eventCategoryLabels(locale);
   const isEdit = eventId != null;
+  const { isAdmin } = useSpaAuth();
+  const { restaurants: userRestaurants } = useUserRestaurants();
+  const { data: allRestaurantsData } = useQuery<{ restaurants: Array<RestaurantWithStatus> }>({
+    queryKey: ["restaurants"],
+    queryFn: () => fetch("/api/restaurants").then((r) => r.json()),
+    enabled: isAdmin,
+  });
+  const restaurantOptions = isAdmin ? (allRestaurantsData?.restaurants ?? []) : userRestaurants;
   const selectedCategories = useWatch({ control: form.control, name: "categories" });
   const categoriesError = form.formState.errors.categories;
   const { isDirty } = form.formState;
@@ -159,6 +171,24 @@ export function EventForm({ eventId, initialData, onSuccess, onDirtyChange }: Ev
         placeholder="https://..."
         {...form.register("link")}
       />
+
+      {restaurantOptions.length > 0 && (
+        <div>
+          <label className="mb-1.5 block text-[13px] font-medium text-primary">
+            {t("events.linkedVenue")}
+          </label>
+          <select
+            value={form.watch("restaurantId") ?? ""}
+            onChange={(e) => form.setValue("restaurantId", e.target.value ? Number(e.target.value) : null, { shouldDirty: true })}
+            className="w-full rounded-xl border border-border bg-card px-3 py-2.5 text-[13px] text-primary outline-none transition-colors focus:border-accent"
+          >
+            <option value="">{t("events.noLinkedVenue")}</option>
+            {restaurantOptions.map((r) => (
+              <option key={r.id} value={r.id}>{r.name}</option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {errorMessage && <SummaryFormError message={errorMessage} />}
 

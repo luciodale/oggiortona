@@ -20,6 +20,7 @@ export function enrichRestaurant(
   row: RestaurantRow,
   promotions: Array<PromotionRow>,
   expiredPromotionCount = 0,
+  linkedEventCount = 0,
 ): RestaurantWithStatus {
   const parsedHours = parseOpeningHours(row.openingHours);
   return {
@@ -29,5 +30,6 @@ export function enrichRestaurant(
     promotions,
     parsedHours,
     expiredPromotionCount,
+    linkedEventCount,
   };
 }

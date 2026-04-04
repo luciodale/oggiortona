@@ -2,15 +2,16 @@ import { eventCategoryColors, eventCategoryLabels } from "../../config/categorie
 import { useLocale } from "../../i18n/useLocale";
 import { ChevronRightIcon } from "../../icons/ChevronRightIcon";
 import { ClockIcon } from "../../icons/ClockIcon";
+import { CupIcon } from "../../icons/CupIcon";
 import { PinIcon } from "../../icons/PinIcon";
-import type { EventRow } from "../../types/database";
+import type { EventWithRestaurant } from "../../types/domain";
 import { CardContactButtons } from "../shared/CardContactButtons";
 import { HighlightWrap } from "./HighlightWrap";
 
 type EventCardProps = {
-  event: EventRow;
+  event: EventWithRestaurant;
   zipperCard?: boolean;
-  onCardClick?: (event: EventRow) => void;
+  onCardClick?: (event: EventWithRestaurant) => void;
   isAdmin?: boolean;
   onToggleHighlight?: (id: number) => void;
   isPast?: boolean;
@@ -41,10 +42,7 @@ export function EventCard({ event, zipperCard = true, onCardClick, isAdmin, onTo
       onClick={handleClick}
       role={onCardClick ? "button" : undefined}
     >
-      <a
-        href={onCardClick ? undefined : `/events/${event.id}`}
-        className="block p-4 pb-0 no-underline"
-      >
+      <div className="p-4 pb-0">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-1">
@@ -69,6 +67,12 @@ export function EventCard({ event, zipperCard = true, onCardClick, isAdmin, onTo
               <span className="mt-1.5 flex items-center gap-1 text-[11px] text-muted/70">
                 <ClockIcon className="h-3 w-3" />
                 {event.timeStart}{event.timeEnd && ` \u2013 ${event.timeEnd}`}
+              </span>
+            )}
+            {event.restaurantName && (
+              <span className="mt-1.5 flex items-center gap-1 text-[11px] text-mangiare/70">
+                <CupIcon className="h-3 w-3" />
+                {event.restaurantName}
               </span>
             )}
           </div>
@@ -109,7 +113,7 @@ export function EventCard({ event, zipperCard = true, onCardClick, isAdmin, onTo
             )}
           </div>
         </div>
-      </a>
+      </div>
 
       <div className="flex items-end justify-between gap-2 px-4 pb-3.5 pt-3">
         <div className="flex items-center gap-3">

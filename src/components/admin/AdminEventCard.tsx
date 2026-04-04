@@ -6,7 +6,7 @@ import type { SheetMeta } from "../../types/domain";
 import { formatDateShort } from "../../utils/date";
 
 type AdminEventCardProps = {
-  event: EventRow & { ownerEmail: string | null; ownerName: string | null };
+  event: EventRow & { ownerEmail: string | null; ownerName: string | null; restaurantName: string | null };
   onToggle: () => void;
   onDelete?: () => void;
 };

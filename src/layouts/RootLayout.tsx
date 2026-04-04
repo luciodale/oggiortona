@@ -1,13 +1,14 @@
 import { SwipeBarProvider, useSwipeBarContext } from "@luciodale/swipe-bar";
 import { Outlet, useRouterState } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Toaster } from "sonner";
 import { BottomNav } from "../components/BottomNav";
-import { DetailBottomSheet } from "../components/shared/DetailBottomSheet";
-import { FormBottomSheet } from "../components/shared/FormBottomSheet";
+import { DetailBottomSheet, LinkedDetailBottomSheet } from "../components/shared/DetailBottomSheet";
 import { NotificationPrompt } from "../components/shared/NotificationPrompt";
 import { PwaInstallPrompt } from "../components/shared/PwaInstallPrompt";
 import { useThemeColor } from "../hooks/useThemeColor";
+
+const FormBottomSheet = lazy(() => import("../components/shared/FormBottomSheet").then((m) => ({ default: m.FormBottomSheet })));
 
 function MainContent() {
   const { isBottomOpen } = useSwipeBarContext();
@@ -87,7 +88,10 @@ export function RootLayout() {
       <PwaInstallPrompt />
       {pathname === "/" && <NotificationPrompt />}
       <DetailBottomSheet />
-      <FormBottomSheet />
+      <LinkedDetailBottomSheet />
+      <Suspense>
+        <FormBottomSheet />
+      </Suspense>
     </SwipeBarProvider>
   );
 }

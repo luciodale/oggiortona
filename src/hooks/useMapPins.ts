@@ -18,7 +18,6 @@ export function restaurantsToMapPins(restaurants: Array<RestaurantWithStatus>, l
         lng: r.longitude!,
         label: r.name,
         subtitle: r.types.map((t) => typeLabels[t] ?? t).join(" · "),
-        href: `/restaurants/${r.id}`,
         directionsUrl:
           r.latitude != null && r.longitude != null
             ? `https://www.google.com/maps/search/?api=1&query=${r.latitude},${r.longitude}`

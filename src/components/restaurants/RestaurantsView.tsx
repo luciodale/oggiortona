@@ -1,5 +1,6 @@
-import { lazy, Suspense } from "react";
-import type { RestaurantWithStatus } from "../../types/domain";
+import { useSwipeBarContext } from "@luciodale/swipe-bar";
+import { lazy, Suspense, useCallback } from "react";
+import type { RestaurantWithStatus, SheetMeta } from "../../types/domain";
 import { RestaurantList } from "./RestaurantList";
 import { Pill } from "../ui/Pill";
 import { ListHeader } from "../shared/ListHeader";
@@ -28,6 +29,15 @@ export function RestaurantsView({ restaurants, isLoading, isLoggedIn, initialPin
   const { filters, filtered, hasActiveFilter, clearFilters, toggleOpenNow, toggleHasPromo } =
     useRestaurantFilters(restaurants, pinnedIds);
   const pins = useMapPins(filtered);
+
+  const { openSidebar } = useSwipeBarContext();
+
+  const handlePinClick = useCallback(function handlePinClick(id: number) {
+    const restaurant = filtered.find((r) => r.id === id);
+    if (!restaurant) return;
+    const meta: SheetMeta = { kind: "restaurant", data: restaurant };
+    openSidebar("bottom", { meta });
+  }, [filtered, openSidebar]);
 
   const promoCount = restaurants.filter((r) => r.promotions.length > 0).length;
 
@@ -67,7 +77,7 @@ export function RestaurantsView({ restaurants, isLoading, isLoggedIn, initialPin
       ) : (
         <Suspense fallback={<div className="fixed inset-0 z-20 flex items-center justify-center bg-surface-alt"><p className="text-sm text-muted">{t("common.loadingMap")}</p></div>}>
             <div className="map-fullscreen fixed inset-0 z-20">
-              <MapView pins={pins} />
+              <MapView pins={pins} onPinClick={handlePinClick} />
             </div>
           </Suspense>
       )}

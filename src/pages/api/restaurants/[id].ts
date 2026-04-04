@@ -1,6 +1,6 @@
 import type { APIContext } from "astro";
-import { restaurants, promotions } from "../../../db/schema";
-import { eq, and as dbAnd, lte, gte } from "drizzle-orm";
+import { restaurants, promotions, events } from "../../../db/schema";
+import { eq, and as dbAnd, lte, gte, or, sql } from "drizzle-orm";
 import { getTodayISO } from "../../../utils/date";
 import { updateRestaurantApiSchema } from "../../../schemas/restaurant";
 import { nowItalyFormatted } from "../../../utils/sqlite";
@@ -23,11 +23,16 @@ export async function GET({ locals, params }: APIContext): Promise<Response> {
 
   const today = getTodayISO();
 
-  const activePromotions = await db.select().from(promotions).where(
-    dbAnd(eq(promotions.restaurantId, id), lte(promotions.dateStart, today), gte(promotions.dateEnd, today)),
-  ).limit(6);
+  const [activePromotions, [eventCountRow]] = await Promise.all([
+    db.select().from(promotions).where(
+      dbAnd(eq(promotions.restaurantId, id), lte(promotions.dateStart, today), gte(promotions.dateEnd, today)),
+    ).limit(6),
+    db.select({ count: sql<number>`count(*)` }).from(events).where(
+      dbAnd(eq(events.restaurantId, id), eq(events.active, 1), eq(events.deleted, 0), or(gte(events.dateStart, today), gte(events.dateEnd, today))),
+    ),
+  ]);
 
-  const { ownerId: _, ...publicRestaurant } = enrichRestaurant(restaurant, activePromotions);
+  const { ownerId: _, ...publicRestaurant } = enrichRestaurant(restaurant, activePromotions, 0, eventCountRow?.count ?? 0);
 
   return Response.json({ restaurant: publicRestaurant });
 }
@@ -93,7 +98,11 @@ export async function DELETE({ locals, params }: APIContext): Promise<Response> 
   if (!restaurant) return Response.json({ error: "Non trovato" }, { status: 404 });
   if (restaurant.ownerId !== user.id) return Response.json({ error: "Non autorizzato" }, { status: 403 });
 
-  await db.update(restaurants).set({ deleted: 1, updatedAt: nowItalyFormatted() }).where(eq(restaurants.id, id));
+  const now = nowItalyFormatted();
+  await db.update(restaurants).set({ deleted: 1, updatedAt: now }).where(eq(restaurants.id, id));
+
+  // Disable linked events when restaurant is deleted
+  await db.update(events).set({ active: 0, updatedAt: now }).where(eq(events.restaurantId, id));
 
   return Response.json({ message: "Locale rimosso" });
 }

@@ -11,7 +11,6 @@ export type MapPin = {
   lng: number;
   label: string;
   subtitle?: string;
-  href: string;
   directionsUrl?: string;
   color?: string;
   variant?: PinVariant;

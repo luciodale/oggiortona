@@ -27,6 +27,7 @@ export type EventFormInitialData = {
   longitude: number | null;
   price: number | null;
   link: string | null;
+  restaurantId: number | null;
 };
 
 function splitCategories(category: string) {
@@ -59,6 +60,7 @@ export function useEventForm(initial?: EventFormInitialData, onSuccess?: () => v
       longitude: initial?.longitude ?? null,
       price: initial?.price ?? null,
       link: initial?.link ?? "",
+      restaurantId: initial?.restaurantId ?? null,
     },
     mode: "onBlur",
   });
@@ -99,6 +101,7 @@ export function useEventForm(initial?: EventFormInitialData, onSuccess?: () => v
       longitude: data.longitude ?? undefined,
       price: data.price != null && !Number.isNaN(data.price) ? data.price : undefined,
       link: data.link || undefined,
+      restaurant_id: data.restaurantId ?? undefined,
     };
 
     const isEdit = eventId != null;

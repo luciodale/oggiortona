@@ -5,6 +5,7 @@ import type { EventRow } from "../types/database";
 type AdminEvent = EventRow & {
   ownerEmail: string | null;
   ownerName: string | null;
+  restaurantName: string | null;
 };
 
 type ToggleVars = { id: number; wasActive: boolean };

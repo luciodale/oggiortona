@@ -4,13 +4,12 @@ import { useDeleteEntity } from "../../hooks/useDeleteEntity";
 import { useFormSheet } from "../../hooks/useFormSheet";
 import { useLocale } from "../../i18n/useLocale";
 import { XIcon } from "../../icons/XIcon";
-import type { EventRow } from "../../types/database";
-import type { SheetMeta } from "../../types/domain";
+import type { EventWithRestaurant, SheetMeta } from "../../types/domain";
 import { formatDateLong } from "../../utils/date";
 import { PillActionButton } from "../shared/PillAction";
 
 type EventListCardProps = {
-  event: EventRow;
+  event: EventWithRestaurant;
 };
 
 export function EventListCard({ event }: EventListCardProps) {
