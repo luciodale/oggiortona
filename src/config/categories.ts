@@ -20,18 +20,6 @@ export const eventCategoryColors: Record<string, string> = {
   altro: "bg-cat-altro-bg text-cat-altro",
 };
 
-export const restaurantTypes = [
-  "restaurant",
-  "pizzeria",
-  "trattoria",
-  "coffee shop",
-  "ice cream shop",
-  "bakery",
-  "fish shop",
-  "micro bakery",
-  "other",
-];
-
 
 export const eventFormCategories = [
   "sport",
@@ -44,7 +32,6 @@ export const eventFilterCategories = [
   "sport",
   "cibo",
   "cultura",
-  "altro",
 ];
 
 export const eventCategories = [

@@ -18,7 +18,7 @@ function MainContent() {
       id="main-content"
       className={`h-full overflow-x-hidden scroll-hide overscroll-y-none ${isBottomOpen ? "overflow-y-hidden" : "overflow-y-auto"}`}
     >
-      <div className="mx-auto max-w-lg px-5 pb-24 pt-safe">
+      <div className="mx-auto h-full flex-flex-col max-w-lg px-5 pb-24 pt-safe">
         <Outlet />
       </div>
     </main>

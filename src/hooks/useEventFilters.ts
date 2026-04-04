@@ -1,9 +1,6 @@
 import { useState, useMemo } from "react";
 import type { EventWithRestaurant } from "../types/domain";
 import { isThisWeek, isToday } from "../utils/date";
-import { eventFilterCategories } from "../config/categories";
-
-const KNOWN_CATEGORIES = new Set(eventFilterCategories.filter((c) => c !== "altro"));
 
 export type TimeFilter = "oggi" | "tutti" | "passati";
 
@@ -19,9 +16,7 @@ function eventCategories(event: EventWithRestaurant): Array<string> {
 
 function matchesCategory(event: EventWithRestaurant, filter: string): boolean {
   if (filter === "all") return true;
-  const cats = eventCategories(event);
-  if (filter === "altro") return cats.some((c) => !KNOWN_CATEGORIES.has(c));
-  return cats.includes(filter);
+  return eventCategories(event).includes(filter);
 }
 
 function matchesTime(event: EventWithRestaurant, filter: TimeFilter): boolean {

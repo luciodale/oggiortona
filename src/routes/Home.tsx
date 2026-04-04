@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { useLocale } from "../i18n/useLocale";
-import { useHomeData } from "../hooks/useHomeData";
 import { ContentLoader } from "../components/shared/ContentLoader";
+import { useHomeData } from "../hooks/useHomeData";
+import { DAY_NAMES, MONTH_NAMES_LOWER as MONTH_NAMES } from "../i18n/t";
+import { useLocale } from "../i18n/useLocale";
 import { CalendarIcon } from "../icons/CalendarIcon";
 import { ChevronRightIcon } from "../icons/ChevronRightIcon";
 import { ClockIcon } from "../icons/ClockIcon";
@@ -10,7 +11,6 @@ import { DiningIllustration } from "../icons/DiningIllustration";
 import { SparkleIllustration } from "../icons/SparkleIllustration";
 import { StarIcon } from "../icons/StarIcon";
 import { TagIcon } from "../icons/TagIcon";
-import { DAY_NAMES, MONTH_NAMES_LOWER as MONTH_NAMES } from "../i18n/t";
 import { getNowInItaly } from "../utils/time";
 
 export function HomeRoute() {
@@ -26,7 +26,7 @@ export function HomeRoute() {
   const { restaurantCount, specials, deals, newsCount, todayEvents, upcomingEvents } = data;
 
   return (
-    <div className="flex flex-col py-6">
+    <div className="flex flex-col pt-6">
       <p className="mb-4 text-center text-[10px] italic tracking-wide text-muted/40">made by Lucio D'Alessandro</p>
       <div className="animate-fade-up">
         <div className="flex items-end justify-between gap-4">
@@ -36,7 +36,7 @@ export function HomeRoute() {
               {t("home.whatHappens")}<br /><em className="text-accent">{t("home.today")}</em>
             </h1>
           </div>
-          <div className="shrink-0 rounded-3xl bg-gradient-to-br from-surface-warm to-border px-5 py-4 text-right shadow-[0_2px_20px_rgba(0,0,0,0.04)]">
+          <div className="shrink-0 rounded-3xl bg-linear-to-br from-surface-warm to-border px-5 py-4 text-right shadow-[0_2px_20px_rgba(0,0,0,0.04)]">
             <p className="font-family-display text-[2.25rem] font-semibold leading-none text-primary">{d.getDate()}</p>
             <p className="mt-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-muted">{MONTH_NAMES[locale][d.getMonth()]}</p>
             <p className="text-[10px] capitalize text-muted/70">{DAY_NAMES[locale][d.getDay()]}</p>
@@ -45,14 +45,14 @@ export function HomeRoute() {
       </div>
 
       <nav className="flex flex-col gap-5 pt-10 stagger-children" aria-label={t("home.mainSections")}>
-        <Link to="/restaurants" className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-mangiare-light via-mangiare-mid to-mangiare-deep px-6 pb-6 pt-7 no-underline shadow-[0_2px_20px_rgba(196,81,42,0.07)] transition-all hover:shadow-[0_4px_28px_rgba(196,81,42,0.13)] active:scale-[0.98]">
-          <DiningIllustration className="absolute -right-4 bottom-0 h-28 w-56 text-mangiare/[0.22]" />
+        <Link to="/restaurants" className="group relative overflow-hidden rounded-3xl bg-linear-to-br from-mangiare-light via-mangiare-mid to-mangiare-deep px-6 pb-6 pt-7 no-underline shadow-[0_2px_20px_rgba(196,81,42,0.07)] transition-all hover:shadow-[0_4px_28px_rgba(196,81,42,0.13)] active:scale-[0.98]">
+          <DiningIllustration className="absolute -right-4 bottom-0 h-28 w-56 text-mangiare/22" />
           <div className="relative flex items-start justify-between">
             <div>
               <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-mangiare">{t("home.whereToEat")}</span>
               <h2 className="mt-2 font-family-display text-[2.25rem] font-semibold leading-none text-primary">{t("nav.restaurants")}</h2>
             </div>
-            <div className="shrink-0 rounded-2xl bg-mangiare/[0.08] p-3.5">
+            <div className="shrink-0 rounded-2xl bg-mangiare/8 p-3.5">
               <CupIcon className="h-7 w-7 text-mangiare" strokeWidth={1.5} />
             </div>
           </div>

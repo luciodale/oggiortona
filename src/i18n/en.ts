@@ -255,7 +255,6 @@ export const en: Translations = {
   "eventCategory.cultura": "Culture",
   "eventCategory.sport": "Sport",
   "eventCategory.cibo": "Food",
-  "eventCategory.altro": "Other",
 
   // Push notifications
   "push.promptTitle": "Stay updated",

@@ -251,7 +251,6 @@ export const it = {
   "eventCategory.cultura": "Cultura",
   "eventCategory.sport": "Sport",
   "eventCategory.cibo": "Cibo",
-  "eventCategory.altro": "Altro",
 
   // Push notifications
   "push.promptTitle": "Resta aggiornato",
