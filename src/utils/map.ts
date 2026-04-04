@@ -17,6 +17,12 @@ export type MapPin = {
   isOpen?: boolean;
   priceRange?: number;
   promotions?: Array<PromotionRow>;
+  labels?: {
+    open?: string;
+    closed?: string;
+    details?: string;
+    directions?: string;
+  };
 };
 
 export const ORTONA_CENTER: [number, number] = [42.3548, 14.4030];

@@ -25,7 +25,9 @@ function eventSubtitle(event: EventWithRestaurant, locale: Locale) {
   return `${date} · ${cats}`;
 }
 
-function eventsToMapPins(events: Array<EventWithRestaurant>, locale: Locale): Array<MapPin> {
+type PinLabels = MapPin["labels"];
+
+function eventsToMapPins(events: Array<EventWithRestaurant>, locale: Locale, pinLabels?: PinLabels): Array<MapPin> {
   const todayColor = getThemeColor("--color-success") || "#4a7c59";
   const baseColor = getThemeColor("--color-fare") || "#3d6b8e";
   return events
@@ -42,10 +44,15 @@ function eventsToMapPins(events: Array<EventWithRestaurant>, locale: Locale): Ar
           : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e.address)}`,
       color: isToday(e.dateStart, e.dateEnd) ? todayColor : baseColor,
       variant: "event" as const,
+      labels: pinLabels,
     }));
 }
 
 export function useEventMapPins(events: Array<EventWithRestaurant>) {
-  const { locale } = useLocale();
-  return useMemo(() => eventsToMapPins(events, locale), [events, locale]);
+  const { locale, t } = useLocale();
+  const pinLabels: PinLabels = useMemo(() => ({
+    details: t("common.details"),
+    directions: t("common.directions"),
+  }), [t]);
+  return useMemo(() => eventsToMapPins(events, locale, pinLabels), [events, locale, pinLabels]);
 }

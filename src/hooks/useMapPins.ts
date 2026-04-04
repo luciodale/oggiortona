@@ -5,7 +5,9 @@ import { getThemeColor } from "../utils/map";
 import { restaurantTypeLabels } from "../config/categories";
 import { useLocale } from "../i18n/useLocale";
 
-export function restaurantsToMapPins(restaurants: Array<RestaurantWithStatus>, locale: Locale): Array<MapPin> {
+type PinLabels = MapPin["labels"];
+
+export function restaurantsToMapPins(restaurants: Array<RestaurantWithStatus>, locale: Locale, pinLabels?: PinLabels): Array<MapPin> {
   const typeLabels = restaurantTypeLabels(locale);
   const openColor = getThemeColor("--color-success") || "#4a7c59";
   const closedColor = getThemeColor("--color-danger") || "#b84233";
@@ -27,11 +29,18 @@ export function restaurantsToMapPins(restaurants: Array<RestaurantWithStatus>, l
         isOpen: r.isOpen,
         priceRange: r.priceRange,
         promotions: r.promotions,
+        labels: pinLabels,
       };
     });
 }
 
 export function useMapPins(restaurants: Array<RestaurantWithStatus>) {
-  const { locale } = useLocale();
-  return useMemo(() => restaurantsToMapPins(restaurants, locale), [restaurants, locale]);
+  const { locale, t } = useLocale();
+  const pinLabels: PinLabels = useMemo(() => ({
+    open: t("common.open"),
+    closed: t("common.closed"),
+    details: t("common.details"),
+    directions: t("common.directions"),
+  }), [t]);
+  return useMemo(() => restaurantsToMapPins(restaurants, locale, pinLabels), [restaurants, locale, pinLabels]);
 }

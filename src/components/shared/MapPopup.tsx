@@ -4,7 +4,7 @@ import { DealEntry } from "../restaurants/DealEntry";
 import { NewsEntry } from "../restaurants/NewsEntry";
 import { SpecialEntry } from "../restaurants/SpecialEntry";
 
-function StatusBadge({ isOpen }: { isOpen: boolean }) {
+function StatusBadge({ isOpen, openLabel, closedLabel }: { isOpen: boolean; openLabel: string; closedLabel: string }) {
   return (
     <span
       className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.05em] ${
@@ -14,7 +14,7 @@ function StatusBadge({ isOpen }: { isOpen: boolean }) {
       <span
         className={`h-1.5 w-1.5 rounded-full ${isOpen ? "bg-success" : "bg-danger"}`}
       />
-      {isOpen ? "Aperto" : "Chiuso"}
+      {isOpen ? openLabel : closedLabel}
     </span>
   );
 }
@@ -35,7 +35,7 @@ export function MapPopup({ pin }: { pin: MapPin }) {
   return (
     <div className="min-w-[180px] py-1" style={{ fontFamily: "var(--font-family)" }}>
       <div className="flex flex-wrap items-center justify-center gap-1.5">
-        {pin.isOpen != null && <StatusBadge isOpen={pin.isOpen} />}
+        {pin.isOpen != null && <StatusBadge isOpen={pin.isOpen} openLabel={pin.labels?.open ?? "Aperto"} closedLabel={pin.labels?.closed ?? "Chiuso"} />}
         {pin.priceRange != null && pin.priceRange > 0 && (
           <PriceRange range={pin.priceRange} />
         )}
@@ -59,7 +59,7 @@ export function MapPopup({ pin }: { pin: MapPin }) {
           data-pin-variant={pin.variant ?? "default"}
           className="flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-4 py-2 text-xs font-semibold tracking-[0.02em] text-primary"
         >
-          Dettagli
+          {pin.labels?.details ?? "Dettagli"}
         </button>
         {pin.directionsUrl && (
           <a
@@ -69,7 +69,7 @@ export function MapPopup({ pin }: { pin: MapPin }) {
             className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold tracking-[0.02em] text-card no-underline"
           >
             <MapPinIcon className="h-[13px] w-[13px]" strokeWidth={2.5} />
-            Indicazioni
+            {pin.labels?.directions ?? "Indicazioni"}
           </a>
         )}
       </div>
