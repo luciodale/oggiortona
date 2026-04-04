@@ -1,5 +1,4 @@
 import { useSwipeBarContext } from "@luciodale/swipe-bar";
-import { restaurantTypeLabels } from "../../config/categories";
 import { useFormSheet } from "../../hooks/useFormSheet";
 import { TrashIcon } from "../../icons/TrashIcon";
 import type { PromotionRow, RestaurantRow } from "../../types/database";
@@ -23,7 +22,6 @@ export function AdminRestaurantCard({
 }: AdminRestaurantCardProps) {
   const { openSidebar } = useSwipeBarContext();
   const { openRestaurantForm } = useFormSheet();
-  const labels = restaurantTypeLabels("it");
   const types = restaurant.type.split(",").map((t) => t.trim());
   const isActive = restaurant.active === 1;
 
@@ -64,7 +62,7 @@ export function AdminRestaurantCard({
           {restaurant.name}
         </p>
         <p className="mt-0.5 text-[11px] capitalize text-muted">
-          {types.map((tp) => labels[tp] ?? tp).join(" · ")}
+          {types.join(" · ")}
         </p>
         {(restaurant.ownerName || restaurant.ownerEmail) && (
           <p className="mt-0.5 text-[10px] text-muted/50">

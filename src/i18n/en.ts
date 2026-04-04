@@ -42,6 +42,9 @@ export const en: Translations = {
   "common.skipToContent": "Skip to content",
   "common.siteName": "Oggi a Ortona",
   "common.type": "Type",
+  "common.errorTitle": "Something went wrong",
+  "common.errorDescription": "An unexpected error occurred. Please try again.",
+  "common.goBack": "Back to home",
 
   // Promotions
   "promo.dailySpecial": "Daily special",
@@ -245,14 +248,6 @@ export const en: Translations = {
   "date.daysAgo": "{count}d ago",
 
   // Categories
-  "category.ristorante": "Restaurant",
-  "category.pizzeria": "Pizzeria",
-  "category.trattoria": "Trattoria",
-  "category.bar": "Bar",
-  "category.gelateria": "Ice cream shop",
-  "category.pasticceria": "Bakery",
-  "category.pescheria": "Fish shop",
-  "category.altro": "Other",
 
   "eventCategory.sagra": "Festival",
   "eventCategory.musica": "Music",

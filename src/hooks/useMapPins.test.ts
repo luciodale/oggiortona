@@ -18,7 +18,7 @@ function makeRestaurant(overrides: Partial<RestaurantWithStatus> = {}): Restaura
     id: 1,
     name: "Test Bar",
     description: null,
-    type: "bar",
+    type: "coffee shop",
     priceRange: 2,
     phone: null,
     address: "Via Roma 1",
@@ -32,7 +32,7 @@ function makeRestaurant(overrides: Partial<RestaurantWithStatus> = {}): Restaura
     approved: 1,
     createdAt: "2026-03-28",
     updatedAt: "2026-03-28",
-    types: ["bar"],
+    types: ["coffee shop"],
     isOpen: true,
     promotions: [],
     parsedHours: EMPTY_HOURS,
@@ -44,7 +44,7 @@ function makeRestaurant(overrides: Partial<RestaurantWithStatus> = {}): Restaura
 
 describe("restaurantsToMapPins", () => {
   it("converts restaurant to map pin", () => {
-    const pins = restaurantsToMapPins([makeRestaurant()], "it");
+    const pins = restaurantsToMapPins([makeRestaurant()]);
 
     expect(pins).toHaveLength(1);
     expect(pins[0]?.label).toBe("Test Bar");
@@ -56,18 +56,18 @@ describe("restaurantsToMapPins", () => {
   it("filters out restaurants without coordinates", () => {
     const pins = restaurantsToMapPins([
       makeRestaurant({ latitude: null, longitude: null }),
-    ], "it");
+    ]);
 
     expect(pins).toHaveLength(0);
   });
 
   it("uses success color when restaurant is open", () => {
-    const pins = restaurantsToMapPins([makeRestaurant({ isOpen: true })], "it");
+    const pins = restaurantsToMapPins([makeRestaurant({ isOpen: true })]);
     expect(pins[0]?.color).toBe("#4a7c59");
   });
 
   it("uses danger color when restaurant is closed", () => {
-    const pins = restaurantsToMapPins([makeRestaurant({ isOpen: false })], "it");
+    const pins = restaurantsToMapPins([makeRestaurant({ isOpen: false })]);
     expect(pins[0]?.color).toBe("#b84233");
   });
 
@@ -102,7 +102,7 @@ describe("restaurantsToMapPins", () => {
     ];
     const pins = restaurantsToMapPins([
       makeRestaurant({ promotions }),
-    ], "it");
+    ]);
 
     expect(pins[0]?.promotions).toEqual(promotions);
   });
@@ -110,14 +110,14 @@ describe("restaurantsToMapPins", () => {
   it("builds directions URL from coordinates", () => {
     const pins = restaurantsToMapPins([
       makeRestaurant({ latitude: 42.35, longitude: 14.40 }),
-    ], "it");
+    ]);
     expect(pins[0]?.directionsUrl).toContain("42.35,14.4");
   });
 
   it("joins type labels for subtitle", () => {
     const pins = restaurantsToMapPins([
-      makeRestaurant({ types: ["bar", "gelateria"] }),
-    ], "it");
-    expect(pins[0]?.subtitle).toBe("Bar · Gelateria");
+      makeRestaurant({ types: ["coffee shop", "ice cream shop"] }),
+    ]);
+    expect(pins[0]?.subtitle).toBe("coffee shop · ice cream shop");
   });
 });

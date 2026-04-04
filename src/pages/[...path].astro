@@ -67,6 +67,60 @@ function getThemeColor() {
       isAdmin={isAdmin}
     />
 
+    <div
+      id="app-error"
+      hidden
+      style="position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--color-surface);padding:1.5rem;text-align:center;font-family:var(--font-family);"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--color-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:1.5rem;">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M8 15s1.5-2 4-2 4 2 4 2"/>
+        <line x1="9" y1="9" x2="9.01" y2="9"/>
+        <line x1="15" y1="9" x2="15.01" y2="9"/>
+      </svg>
+      <h1 id="app-error-title" style="font-family:'Playfair Display',Georgia,serif;font-size:1.5rem;font-weight:500;letter-spacing:-0.025em;color:var(--color-primary);margin:0;"></h1>
+      <p id="app-error-desc" style="margin-top:0.5rem;max-width:20rem;font-size:0.875rem;color:var(--color-muted);"></p>
+      <button
+        onclick="window.location.href='/'"
+        style="margin-top:2rem;padding:0.75rem 1.5rem;border:none;border-radius:0.75rem;background:var(--color-accent);color:white;font-size:0.875rem;font-weight:600;cursor:pointer;"
+        id="app-error-btn"
+      ></button>
+    </div>
+
+    <script is:inline>
+      (function() {
+        var isIt = document.documentElement.lang === "it";
+        document.getElementById("app-error-title").textContent = isIt ? "Qualcosa non ha funzionato" : "Something went wrong";
+        document.getElementById("app-error-desc").textContent = isIt ? "Si è verificato un errore imprevisto. Riprova." : "An unexpected error occurred. Please try again.";
+        document.getElementById("app-error-btn").textContent = isIt ? "Torna alla home" : "Back to home";
+
+        var shown = false;
+        function showError() {
+          if (shown) return;
+          shown = true;
+          var loader = document.getElementById("app-loader");
+          if (loader) loader.style.display = "none";
+          document.getElementById("app-error").hidden = false;
+        }
+
+        // Catch resource load failures (script/link/img)
+        window.addEventListener("error", function(e) {
+          if (e.target !== window && e.target.tagName) showError();
+        }, true);
+
+        // Catch any unhandled promise rejection
+        window.addEventListener("unhandledrejection", function() {
+          showError();
+        });
+
+        // Fallback: if app-loader is still visible after 15s, something failed silently
+        setTimeout(function() {
+          var loader = document.getElementById("app-loader");
+          if (loader && loader.style.opacity !== "0") showError();
+        }, 15000);
+      })();
+    </script>
+
     <script is:inline>
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("/sw.js");

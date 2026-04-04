@@ -1,4 +1,3 @@
-import { restaurantTypeLabels } from "../../config/categories";
 import { useLocale } from "../../i18n/useLocale";
 import { CalendarIcon } from "../../icons/CalendarIcon";
 import { ChevronRightIcon } from "../../icons/ChevronRightIcon";
@@ -18,7 +17,7 @@ type RestaurantCardProps = {
 };
 
 export function RestaurantCard({ restaurant, isPinned, onTogglePin, zipperCard = true, onCardClick }: RestaurantCardProps) {
-  const { locale, t } = useLocale();
+  const { t } = useLocale();
 
   function handlePinClick(e: React.MouseEvent) {
     e.preventDefault();
@@ -32,7 +31,6 @@ export function RestaurantCard({ restaurant, isPinned, onTogglePin, zipperCard =
       onCardClick(restaurant);
     }
   }
-  const labels = restaurantTypeLabels(locale);
   const specials = restaurant.promotions.filter((p) => p.type === "special");
   const deals = restaurant.promotions.filter((p) => p.type === "deal");
   const newsItems = restaurant.promotions.filter((p) => p.type === "news");
@@ -68,9 +66,7 @@ export function RestaurantCard({ restaurant, isPinned, onTogglePin, zipperCard =
               </h3>
               <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-muted">
                 <span className="capitalize">
-                  {restaurant.types
-                    .map((tp) => labels[tp] ?? tp)
-                    .join(" · ")}
+                  {restaurant.types.join(" · ")}
                 </span>
                 <span aria-hidden="true">&middot;</span>
                 <span aria-label={t("aria.priceRange", { range: restaurant.priceRange })}>

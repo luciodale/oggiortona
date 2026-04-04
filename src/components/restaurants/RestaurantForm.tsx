@@ -1,14 +1,10 @@
 import { useEffect } from "react";
-import { useWatch } from "react-hook-form";
 import { useRestaurantForm } from "../../hooks/useRestaurantForm";
-import { restaurantFormTypes, restaurantTypeLabels } from "../../config/categories";
-import { useLocale } from "../../i18n/useLocale";
 import { getOrderedDays } from "../../utils/time";
 import { Input } from "../ui/Input";
 import { Textarea } from "../ui/Textarea";
-import { Pill } from "../ui/Pill";
 import { Button } from "../ui/Button";
-import { FormError, SummaryFormError } from "../ui/FormError";
+import { SummaryFormError } from "../ui/FormError";
 import { DayRow } from "./form/DayRow";
 import { LocationPickerField } from "../shared/LocationPickerField";
 
@@ -22,18 +18,13 @@ type RestaurantFormProps = {
 export function RestaurantForm({ restaurantId, initialData, onSuccess, onDirtyChange }: RestaurantFormProps) {
   const {
     form,
-    toggleType,
     copyFromPrevious,
     onSubmit,
     submitState,
     errorMessage,
   } = useRestaurantForm(initialData, onSuccess);
 
-  const { locale } = useLocale();
-  const typeLabels = restaurantTypeLabels(locale);
   const isEdit = restaurantId != null;
-  const selectedTypes = useWatch({ control: form.control, name: "types" });
-  const typesError = form.formState.errors.types;
   const orderedDays = getOrderedDays();
   const { isDirty } = form.formState;
 
@@ -64,29 +55,13 @@ export function RestaurantForm({ restaurantId, initialData, onSuccess, onDirtyCh
         {...form.register("description")}
       />
 
-      <fieldset>
-        <legend className="mb-1.5 block text-[13px] font-medium text-primary">
-          Tipo<span className="ml-0.5 text-danger" aria-hidden="true">*</span>
-        </legend>
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Tipi di locale">
-          {restaurantFormTypes.map((t) => (
-            <Pill
-              key={t}
-              active={selectedTypes.includes(t)}
-              onClick={() => toggleType(t)}
-            >
-              {typeLabels[t]}
-            </Pill>
-          ))}
-        </div>
-        <div className="mt-3">
-          <Input
-            placeholder="Altro tipo (es: pescheria, pasticceria...)"
-            {...form.register("customType")}
-          />
-        </div>
-        {typesError?.message && <FormError message={typesError.message} />}
-      </fieldset>
+      <Input
+        label="Tipo"
+        required
+        placeholder="Es: coffee shop, restaurant, ice cream shop"
+        error={form.formState.errors.type?.message}
+        {...form.register("type")}
+      />
 
       <fieldset>
         <legend className="mb-1.5 block text-[13px] font-medium text-primary">

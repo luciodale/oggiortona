@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-export const FORM_TYPES = ["ristorante", "bar", "gelateria"] as const;
-
 const timeString = z.string().regex(/^\d{2}:\d{2}$/, "Formato orario non valido");
 
 const dayFormSchema = z.object({
@@ -19,8 +17,7 @@ export const restaurantFormSchema = z
   .object({
     name: z.string().trim().min(1, "Nome obbligatorio"),
     description: z.string().max(300, "Max 300 caratteri"),
-    types: z.array(z.string()),
-    customType: z.string(),
+    type: z.string().trim().min(1, "Inserisci almeno un tipo"),
     priceRange: z.number().int().min(1).max(3),
     phone: z.string(),
     address: z.string().trim().min(1, "Indirizzo obbligatorio"),
@@ -29,13 +26,6 @@ export const restaurantFormSchema = z
     menuUrl: z.string(),
     hours: z.record(z.string(), dayFormSchema),
   })
-  .refine(
-    (data) => data.types.length > 0 || data.customType.trim().length > 0,
-    {
-      message: "Seleziona almeno un tipo o inserisci un tipo personalizzato",
-      path: ["types"],
-    },
-  )
   .refine((data) => data.latitude != null && data.longitude != null, {
     message: "Seleziona una posizione sulla mappa",
     path: ["latitude"],

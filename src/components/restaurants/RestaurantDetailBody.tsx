@@ -1,7 +1,7 @@
 import { useSwipeBarContext } from "@luciodale/swipe-bar";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale } from "../../i18n/useLocale";
-import { restaurantTypeLabels, eventCategoryColors, eventCategoryLabels } from "../../config/categories";
+import { eventCategoryColors, eventCategoryLabels } from "../../config/categories";
 import { PromotionCardPublic } from "../PromotionCardPublic";
 import { formatSchedule, getDayLabel, getOrderedDays } from "../../utils/time";
 import { formatDateShort } from "../../utils/date";
@@ -15,7 +15,6 @@ type RestaurantDetailBodyProps = {
 export function RestaurantDetailBody({ restaurant }: RestaurantDetailBodyProps) {
   const { locale, t } = useLocale();
   const { openSidebar } = useSwipeBarContext();
-  const labels = restaurantTypeLabels(locale);
   const catLabels = eventCategoryLabels(locale);
   const days = getOrderedDays();
   const { data: eventsData } = useQuery<{ events: Array<EventRow> }>({
@@ -30,7 +29,7 @@ export function RestaurantDetailBody({ restaurant }: RestaurantDetailBodyProps) 
         <div>
           <h1 className="font-family-display text-2xl font-medium leading-tight text-primary">{restaurant.name}</h1>
           <div className="mt-1 flex items-center gap-2 text-[11px] text-muted">
-            <span className="capitalize">{restaurant.types.map((tp) => labels[tp] ?? tp).join(" \u00b7 ")}</span>
+            <span className="capitalize">{restaurant.types.join(" \u00b7 ")}</span>
             <span aria-hidden="true">&middot;</span>
             <span aria-label={t("aria.priceRange", { range: restaurant.priceRange })}>
               {[1, 2, 3].map((i) => (

@@ -1,14 +1,12 @@
 import { useMemo } from "react";
-import type { RestaurantWithStatus, Locale } from "../types/domain";
+import type { RestaurantWithStatus } from "../types/domain";
 import type { MapPin } from "../utils/map";
 import { getThemeColor } from "../utils/map";
-import { restaurantTypeLabels } from "../config/categories";
 import { useLocale } from "../i18n/useLocale";
 
 type PinLabels = MapPin["labels"];
 
-export function restaurantsToMapPins(restaurants: Array<RestaurantWithStatus>, locale: Locale, pinLabels?: PinLabels): Array<MapPin> {
-  const typeLabels = restaurantTypeLabels(locale);
+export function restaurantsToMapPins(restaurants: Array<RestaurantWithStatus>, pinLabels?: PinLabels): Array<MapPin> {
   const openColor = getThemeColor("--color-success") || "#4a7c59";
   const closedColor = getThemeColor("--color-danger") || "#b84233";
   return restaurants
@@ -19,7 +17,7 @@ export function restaurantsToMapPins(restaurants: Array<RestaurantWithStatus>, l
         lat: r.latitude!,
         lng: r.longitude!,
         label: r.name,
-        subtitle: r.types.map((t) => typeLabels[t] ?? t).join(" · "),
+        subtitle: r.types.join(" · "),
         directionsUrl:
           r.latitude != null && r.longitude != null
             ? `https://www.google.com/maps/search/?api=1&query=${r.latitude},${r.longitude}`
@@ -35,12 +33,12 @@ export function restaurantsToMapPins(restaurants: Array<RestaurantWithStatus>, l
 }
 
 export function useMapPins(restaurants: Array<RestaurantWithStatus>) {
-  const { locale, t } = useLocale();
+  const { t } = useLocale();
   const pinLabels: PinLabels = useMemo(() => ({
     open: t("common.open"),
     closed: t("common.closed"),
     details: t("common.details"),
     directions: t("common.directions"),
   }), [t]);
-  return useMemo(() => restaurantsToMapPins(restaurants, locale, pinLabels), [restaurants, locale, pinLabels]);
+  return useMemo(() => restaurantsToMapPins(restaurants, pinLabels), [restaurants, pinLabels]);
 }

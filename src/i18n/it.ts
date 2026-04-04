@@ -38,6 +38,9 @@ export const it = {
   "common.skipToContent": "Vai al contenuto",
   "common.siteName": "Oggi a Ortona",
   "common.type": "Tipo",
+  "common.errorTitle": "Qualcosa non ha funzionato",
+  "common.errorDescription": "Si è verificato un errore imprevisto. Riprova.",
+  "common.goBack": "Torna alla home",
 
   // Promotions
   "promo.dailySpecial": "Piatto del giorno",
@@ -241,14 +244,6 @@ export const it = {
   "date.daysAgo": "{count} giorni fa",
 
   // Categories
-  "category.ristorante": "Ristorante",
-  "category.pizzeria": "Pizzeria",
-  "category.trattoria": "Trattoria",
-  "category.bar": "Bar",
-  "category.gelateria": "Gelateria",
-  "category.pasticceria": "Pasticceria",
-  "category.pescheria": "Pescheria",
-  "category.altro": "Altro",
 
   "eventCategory.sagra": "Sagra",
   "eventCategory.musica": "Musica",

@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useHydrateAtoms } from "jotai/utils";
 import { localeAtom } from "./i18n/useLocale";
 import { authAtom } from "./hooks/useSpaAuth";
+import { ErrorBoundary } from "./components/shared/ErrorBoundary";
 import { RootLayout } from "./layouts/RootLayout";
 import type { Locale } from "./types/domain";
 
@@ -45,7 +46,7 @@ const ssoCallbackRoute = createRoute({
 });
 
 function SectionLayout() {
-  return <div className="py-4"><Outlet /></div>;
+  return <div className="pt-safe pb-4"><Outlet /></div>;
 }
 
 // Profile routes
@@ -89,8 +90,10 @@ export function SpaApp({ locale, user, isAdmin }: SpaAppProps) {
   ]);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }

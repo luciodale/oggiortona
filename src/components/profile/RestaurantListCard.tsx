@@ -1,5 +1,4 @@
 import { useSwipeBarContext } from "@luciodale/swipe-bar";
-import { restaurantTypeLabels } from "../../config/categories";
 import { useDeleteEntity } from "../../hooks/useDeleteEntity";
 import { useFormSheet } from "../../hooks/useFormSheet";
 import { useLocale } from "../../i18n/useLocale";
@@ -12,8 +11,7 @@ type RestaurantListCardProps = {
 };
 
 export function RestaurantListCard({ restaurant }: RestaurantListCardProps) {
-  const { locale, t } = useLocale();
-  const labels = restaurantTypeLabels(locale);
+  const { t } = useLocale();
   const { handleDelete } = useDeleteEntity("restaurant");
   const { openSidebar } = useSwipeBarContext();
   const { openRestaurantForm, openStorefront } = useFormSheet();
@@ -37,7 +35,7 @@ export function RestaurantListCard({ restaurant }: RestaurantListCardProps) {
         {restaurant.name}
       </p>
       <p className="mt-0.5 text-[11px] capitalize text-muted">
-        {restaurant.types.map((tp) => labels[tp] ?? tp).join(" · ")}
+        {restaurant.types.join(" · ")}
       </p>
       {restaurant.expiredPromotionCount > 0 && (
         <span className="mt-1.5 inline-block rounded-full bg-danger/10 px-2.5 py-0.5 text-[10px] font-semibold text-danger">

@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import type { OpeningHours, DaySchedule, ItalianDay } from "../types/database";
 import {
   restaurantFormSchema,
-  FORM_TYPES,
   type RestaurantFormValues,
   type DayFormValues,
 } from "../schemas/restaurant";
@@ -89,15 +88,7 @@ export type RestaurantFormInitialData = {
   parsedHours: OpeningHours;
 };
 
-function splitTypes(types: Array<string>) {
-  const formTypeStrings = FORM_TYPES as readonly string[];
-  const fixed = types.filter((t) => formTypeStrings.includes(t));
-  const custom = types.filter((t) => !formTypeStrings.includes(t));
-  return { fixed, customType: custom.join(", ") };
-}
-
 export function useRestaurantForm(initial?: RestaurantFormInitialData, onSuccess?: () => void) {
-  const initialSplit = initial ? splitTypes(initial.types) : null;
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -106,8 +97,7 @@ export function useRestaurantForm(initial?: RestaurantFormInitialData, onSuccess
     defaultValues: {
       name: initial?.name ?? "",
       description: initial?.description ?? "",
-      types: initialSplit?.fixed ?? [],
-      customType: initialSplit?.customType ?? "",
+      type: initial?.types.join(", ") ?? "",
       priceRange: initial?.priceRange ?? 2,
       phone: initial?.phone ?? "",
       address: initial?.address ?? "",
@@ -123,13 +113,6 @@ export function useRestaurantForm(initial?: RestaurantFormInitialData, onSuccess
 
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
-
-  function toggleType(t: string) {
-    const current = form.getValues("types");
-    const has = current.includes(t);
-    const next = has ? current.filter((x) => x !== t) : [...current, t];
-    form.setValue("types", next, { shouldValidate: true });
-  }
 
   function copyFromPrevious(day: ItalianDay) {
     const days = getOrderedDays();
@@ -147,18 +130,16 @@ export function useRestaurantForm(initial?: RestaurantFormInitialData, onSuccess
     setSubmitState("submitting");
     setErrorMessage("");
 
-    const allTypes = [
-      ...data.types,
-      ...data.customType
-        .split(",")
-        .map((s) => s.trim().toLowerCase())
-        .filter(Boolean),
-    ];
+    const type = data.type
+      .split(",")
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean)
+      .join(",");
 
     const payload = {
       name: data.name,
       description: data.description || undefined,
-      type: allTypes.join(","),
+      type,
       price_range: data.priceRange,
       phone: data.phone || undefined,
       address: data.address,
@@ -206,7 +187,6 @@ export function useRestaurantForm(initial?: RestaurantFormInitialData, onSuccess
 
   return {
     form,
-    toggleType,
     copyFromPrevious,
     onSubmit,
     submitState,
