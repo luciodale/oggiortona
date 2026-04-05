@@ -1,11 +1,30 @@
 import { createRouter, createRoute, createRootRoute, Outlet, RouterProvider, lazyRouteComponent } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { compareVersions } from "compare-versions";
 import { useHydrateAtoms } from "jotai/utils";
 import { localeAtom } from "./i18n/useLocale";
 import { authAtom } from "./hooks/useSpaAuth";
+import { APP_VERSION } from "./config/version";
 import { ErrorBoundary } from "./components/shared/ErrorBoundary";
 import { RootLayout } from "./layouts/RootLayout";
 import type { Locale } from "./types/domain";
+
+function lazyWithReload<T extends Record<string, unknown>>(loader: () => Promise<T>, exportName: string) {
+  return lazyRouteComponent(
+    () => loader().catch(async (err) => {
+      const res = await fetch("/api/version").catch(() => null);
+      if (res?.ok) {
+        const data = (await res.json()) as { version: string };
+        if (compareVersions(data.version, APP_VERSION) !== 0) {
+          window.location.reload();
+          return new Promise<T>(() => {});
+        }
+      }
+      throw err;
+    }),
+    exportName,
+  );
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,27 +42,27 @@ const rootRoute = createRootRoute({ component: RootLayout });
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/",
-  component: lazyRouteComponent(() => import("./routes/Home"), "HomeRoute"),
+  component: lazyWithReload(() => import("./routes/Home"), "HomeRoute"),
 });
 const restaurantsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/restaurants",
-  component: lazyRouteComponent(() => import("./routes/Restaurants"), "RestaurantsRoute"),
+  component: lazyWithReload(() => import("./routes/Restaurants"), "RestaurantsRoute"),
 });
 const eventsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/events",
-  component: lazyRouteComponent(() => import("./routes/Events"), "EventsRoute"),
+  component: lazyWithReload(() => import("./routes/Events"), "EventsRoute"),
 });
 const signInRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/sign-in",
-  component: lazyRouteComponent(() => import("./routes/SignIn"), "SignInRoute"),
+  component: lazyWithReload(() => import("./routes/SignIn"), "SignInRoute"),
 });
 const ssoCallbackRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/sign-in/sso-callback",
-  component: lazyRouteComponent(() => import("./routes/SSOCallback"), "SSOCallbackRoute"),
+  component: lazyWithReload(() => import("./routes/SSOCallback"), "SSOCallbackRoute"),
 });
 
 function SectionLayout() {
@@ -55,7 +74,7 @@ const profileRoute = createRoute({ getParentRoute: () => rootRoute, path: "/prof
 const profileIndexRoute = createRoute({
   getParentRoute: () => profileRoute,
   path: "/",
-  component: lazyRouteComponent(() => import("./components/profile/ProfileDashboard"), "ProfileDashboard"),
+  component: lazyWithReload(() => import("./components/profile/ProfileDashboard"), "ProfileDashboard"),
 });
 
 // Admin routes
@@ -63,7 +82,7 @@ const adminRoute = createRoute({ getParentRoute: () => rootRoute, path: "/admin"
 const adminIndexRoute = createRoute({
   getParentRoute: () => adminRoute,
   path: "/",
-  component: lazyRouteComponent(() => import("./components/admin/AdminDashboard"), "AdminDashboard"),
+  component: lazyWithReload(() => import("./components/admin/AdminDashboard"), "AdminDashboard"),
 });
 
 const routeTree = rootRoute.addChildren([
