@@ -140,7 +140,7 @@ body {
   padding-bottom: var(--bottomnav-padding-bottom);
 }
 
-.home-bottom-padding {
+.layout-bottom-padding {
   padding-bottom: calc(var(--bottomnav-padding-bottom) + var(--height-bottomnav));
 }
 
