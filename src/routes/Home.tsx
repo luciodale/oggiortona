@@ -8,6 +8,7 @@ import { ChevronRightIcon } from "../icons/ChevronRightIcon";
 import { ClockIcon } from "../icons/ClockIcon";
 import { CupIcon } from "../icons/CupIcon";
 import { DiningIllustration } from "../icons/DiningIllustration";
+import { MessageIcon } from "../icons/MessageIcon";
 import { SparkleIllustration } from "../icons/SparkleIllustration";
 import { StarIcon } from "../icons/StarIcon";
 import { TagIcon } from "../icons/TagIcon";
@@ -23,7 +24,7 @@ export function HomeRoute() {
     return <ContentLoader />;
   }
 
-  const { restaurantCount, specials, deals, newsCount, todayEvents, upcomingEvents } = data;
+  const { restaurantCount, generaleCount, specials, deals, newsCount, todayEvents, upcomingEvents } = data;
 
   return (
     <div className="flex flex-col pt-6">
@@ -59,7 +60,7 @@ export function HomeRoute() {
 
           <p className="mt-4 text-[15px] leading-relaxed text-muted">{t("home.venuesInOrtona", { count: restaurantCount })}</p>
 
-          {(specials > 0 || deals > 0 || newsCount > 0) && (
+          {(specials > 0 || deals > 0 || newsCount > 0 || generaleCount > 0) && (
             <div className="mt-5 flex flex-wrap gap-2">
               {specials > 0 && (
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-card/60 px-3 py-1.5 text-xs font-medium text-mangiare shadow-[0_1px_4px_rgba(0,0,0,0.05)]">
@@ -77,6 +78,12 @@ export function HomeRoute() {
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-card/60 px-3 py-1.5 text-xs font-medium text-promo-news shadow-[0_1px_4px_rgba(0,0,0,0.05)]">
                   <StarIcon className="h-3 w-3" strokeWidth={2.5} />
                   {t("home.newsCount", { count: newsCount })}
+                </span>
+              )}
+              {generaleCount > 0 && (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-card/60 px-3 py-1.5 text-xs font-medium text-promo-generale shadow-[0_1px_4px_rgba(0,0,0,0.05)]">
+                  <MessageIcon className="h-3 w-3" strokeWidth={2.5} />
+                  {generaleCount === 1 ? t("home.generaleOne", { count: generaleCount }) : t("home.generaleMany", { count: generaleCount })}
                 </span>
               )}
             </div>

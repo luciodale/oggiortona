@@ -1,6 +1,18 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+type ApiErrorBody = { error: string; code?: string };
+
+async function throwIfError(res: Response) {
+  if (res.ok) return;
+  let body: ApiErrorBody | undefined;
+  try { body = await res.json() as ApiErrorBody; } catch { /* ignore */ }
+  if (body?.code === "LIMIT_REACHED") {
+    throw new Error("LIMIT_REACHED");
+  }
+  throw new Error(body?.error ?? "Request failed");
+}
+
 export function usePromotionMutations(restaurantId: string) {
   const queryClient = useQueryClient();
 
@@ -9,30 +21,34 @@ export function usePromotionMutations(restaurantId: string) {
   }
 
   const createMutation = useMutation({
-    mutationFn: (body: Record<string, unknown>) =>
-      fetch(`/api/my-restaurants/${restaurantId}/promotions`, {
+    mutationFn: async (body: Record<string, unknown>) => {
+      const res = await fetch(`/api/my-restaurants/${restaurantId}/promotions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
-      }).then((res) => {
-        if (!res.ok) throw new Error("Save failed");
-      }),
+      });
+      await throwIfError(res);
+    },
     onSuccess: () => {
       toast.success("Pubblicato!");
       invalidate();
     },
-    onError: () => {
-      toast.error("Errore durante il salvataggio");
+    onError: (err: Error) => {
+      if (err.message === "LIMIT_REACHED") {
+        toast.error("Limite raggiunto: massimo 3 pubblicazioni attive");
+      } else {
+        toast.error("Errore durante il salvataggio");
+      }
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) =>
-      fetch(`/api/my-restaurants/${restaurantId}/promotions/${id}`, {
+    mutationFn: async (id: number) => {
+      const res = await fetch(`/api/my-restaurants/${restaurantId}/promotions/${id}`, {
         method: "DELETE",
-      }).then((res) => {
-        if (!res.ok) throw new Error("Delete failed");
-      }),
+      });
+      await throwIfError(res);
+    },
     onSuccess: () => {
       toast.success("Eliminato");
       invalidate();
@@ -43,18 +59,22 @@ export function usePromotionMutations(restaurantId: string) {
   });
 
   const renewMutation = useMutation({
-    mutationFn: (id: number) =>
-      fetch(`/api/my-restaurants/${restaurantId}/promotions/${id}`, {
+    mutationFn: async (id: number) => {
+      const res = await fetch(`/api/my-restaurants/${restaurantId}/promotions/${id}`, {
         method: "PUT",
-      }).then((res) => {
-        if (!res.ok) throw new Error("Renew failed");
-      }),
+      });
+      await throwIfError(res);
+    },
     onSuccess: () => {
       toast.success("Rinnovato!");
       invalidate();
     },
-    onError: () => {
-      toast.error("Errore durante il rinnovo");
+    onError: (err: Error) => {
+      if (err.message === "LIMIT_REACHED") {
+        toast.error("Limite raggiunto: massimo 3 pubblicazioni attive");
+      } else {
+        toast.error("Errore durante il rinnovo");
+      }
     },
   });
 

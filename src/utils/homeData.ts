@@ -5,6 +5,7 @@ import { getTodayISO } from "./date";
 
 export type HomePageData = {
   restaurantCount: number;
+  generaleCount: number;
   specials: number;
   deals: number;
   newsCount: number;
@@ -38,6 +39,7 @@ export async function fetchHomePageData(db: Db): Promise<HomePageData> {
 
   return {
     restaurantCount: restaurantCountResult[0]?.count ?? 0,
+    generaleCount: countByType.get("generale") ?? 0,
     specials: countByType.get("special") ?? 0,
     deals: countByType.get("deal") ?? 0,
     newsCount: countByType.get("news") ?? 0,

@@ -40,6 +40,8 @@
   --color-promo-deal-bg: #f5eef3;
   --color-promo-news: #3a6e65;
   --color-promo-news-bg: #eef5f3;
+  --color-promo-generale: #6b7a45;
+  --color-promo-generale-bg: #f2f4ed;
 
   /* Event categories */
   --color-cat-sagra: #8a6d20;
@@ -189,6 +191,8 @@ html.dark {
   --color-promo-deal-bg: #241c22;
   --color-promo-news: #7ab5a8;
   --color-promo-news-bg: #182420;
+  --color-promo-generale: #a0b870;
+  --color-promo-generale-bg: #1a1e14;
 
   /* Event categories */
   --color-cat-sagra: #d4b060;

@@ -1,6 +1,7 @@
 import { MapPinIcon } from "../../icons/MapPinIcon";
 import type { MapPin } from "../../utils/map";
 import { DealEntry } from "../restaurants/DealEntry";
+import { GeneraleEntry } from "../restaurants/GeneraleEntry";
 import { NewsEntry } from "../restaurants/NewsEntry";
 import { SpecialEntry } from "../restaurants/SpecialEntry";
 
@@ -50,6 +51,7 @@ export function MapPopup({ pin }: { pin: MapPin }) {
         if (p.type === "special") return <SpecialEntry key={p.id} special={p} />;
         if (p.type === "deal") return <DealEntry key={p.id} deal={p} />;
         if (p.type === "news") return <NewsEntry key={p.id} news={p} />;
+        if (p.type === "generale") return <GeneraleEntry key={p.id} item={p} />;
         return null;
       })}
       <div className="mt-2.5 flex gap-2">

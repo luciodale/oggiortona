@@ -1,10 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import type { PromotionRow } from "../types/database";
-
-type PromotionsResponse = {
-  items: Array<PromotionRow>;
-  restaurantName: string;
-};
+import type { PromotionsResponse } from "../types/api";
 
 export function usePromotionsQuery(restaurantId: string) {
   const { data, isLoading } = useQuery<PromotionsResponse>({
@@ -16,6 +11,7 @@ export function usePromotionsQuery(restaurantId: string) {
   return {
     items: data?.items ?? [],
     restaurantName: data?.restaurantName ?? "",
+    activeCount: data?.activeCount ?? 0,
     loading: isLoading,
   };
 }

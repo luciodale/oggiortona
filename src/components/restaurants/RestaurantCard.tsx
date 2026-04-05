@@ -5,6 +5,7 @@ import { PinIcon } from "../../icons/PinIcon";
 import type { RestaurantWithStatus } from "../../types/domain";
 import { CardContactButtons } from "../shared/CardContactButtons";
 import { DealEntry } from "./DealEntry";
+import { GeneraleEntry } from "./GeneraleEntry";
 import { NewsEntry } from "./NewsEntry";
 import { SpecialEntry } from "./SpecialEntry";
 
@@ -31,6 +32,7 @@ export function RestaurantCard({ restaurant, isPinned, onTogglePin, zipperCard =
       onCardClick(restaurant);
     }
   }
+  const generaleItems = restaurant.promotions.filter((p) => p.type === "generale");
   const specials = restaurant.promotions.filter((p) => p.type === "special");
   const deals = restaurant.promotions.filter((p) => p.type === "deal");
   const newsItems = restaurant.promotions.filter((p) => p.type === "news");
@@ -122,6 +124,10 @@ export function RestaurantCard({ restaurant, isPinned, onTogglePin, zipperCard =
 
         {newsItems.map((item) => (
           <NewsEntry key={item.id} news={item} />
+        ))}
+
+        {generaleItems.map((item) => (
+          <GeneraleEntry key={item.id} item={item} />
         ))}
 
       </div>

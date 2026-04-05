@@ -47,8 +47,14 @@ describe("getBadgeStyle", () => {
     expect(badge.cls).toContain("promo-news");
   });
 
+  it("returns generale style", () => {
+    const badge = getBadgeStyle("generale", "it");
+    expect(badge.label).toBe("Generale");
+    expect(badge.cls).toContain("promo-generale");
+  });
+
   it("returns fallback for unknown type", () => {
     const badge = getBadgeStyle("unknown", "it");
-    expect(badge.label).toBe("News");
+    expect(badge.label).toBe("Generale");
   });
 });

@@ -1,12 +1,11 @@
-import { useSwipeBarContext } from "@luciodale/swipe-bar";
-import { eventCategoryColors, eventCategoryLabels } from "../../config/categories";
+import { eventCategoryLabels } from "../../config/categories";
 import { useDeleteEntity } from "../../hooks/useDeleteEntity";
 import { useFormSheet } from "../../hooks/useFormSheet";
 import { useLocale } from "../../i18n/useLocale";
+import { PencilIcon } from "../../icons/PencilIcon";
 import { XIcon } from "../../icons/XIcon";
-import type { EventWithRestaurant, SheetMeta } from "../../types/domain";
+import type { EventWithRestaurant } from "../../types/domain";
 import { formatDateLong } from "../../utils/date";
-import { PillActionButton } from "../shared/PillAction";
 
 type EventListCardProps = {
   event: EventWithRestaurant;
@@ -17,65 +16,65 @@ export function EventListCard({ event }: EventListCardProps) {
   const catLabels = eventCategoryLabels(locale);
   const categories = event.category.split(",").map((c) => c.trim());
   const { handleDelete } = useDeleteEntity("event");
-  const { openSidebar } = useSwipeBarContext();
   const { openEventForm } = useFormSheet();
 
-  function handlePreview() {
-    const meta: SheetMeta = { kind: "event", data: event };
-    openSidebar("bottom", { meta });
-  }
+  const isPending = event.active === 0;
 
   return (
     <div className="relative rounded-2xl bg-card p-4 shadow-card">
-      <button
-        type="button"
-        onClick={() => handleDelete(event.id)}
-        aria-label={t("common.delete")}
-        className="absolute top-2 right-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-danger/10 text-danger transition-colors hover:bg-danger/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-      >
-        <XIcon className="h-3.5 w-3.5" strokeWidth={2.5} />
-      </button>
-      <div className="flex flex-wrap gap-1 pr-8">
-        {categories.map((cat) => (
-          <span
-            key={cat}
-            className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${eventCategoryColors[cat] ?? eventCategoryColors["altro"]}`}
-          >
-            {catLabels[cat] ?? cat}
-          </span>
-        ))}
-      </div>
-      <p className="mt-1 font-family-display text-base font-medium text-primary">
-        {event.title}
-      </p>
-      <p className="mt-0.5 text-[11px] capitalize text-muted">
-        {formatDateLong(event.dateStart, locale)}
-        {event.dateEnd && ` \u2013 ${formatDateLong(event.dateEnd, locale)}`}
-      </p>
-      {event.active === 0 && (
-        <span
-          className={`mt-1.5 inline-block rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
-            event.approved === 0
-              ? "bg-status-pending-bg text-status-pending"
-              : "bg-status-rejected-bg text-status-rejected"
-          }`}
-        >
-          {event.approved === 0
-            ? t("profile.pendingApproval")
-            : t("profile.disabledByAdmin")}
-        </span>
-      )}
-      <div className="mt-3 flex flex-wrap gap-2">
-        <PillActionButton
-          onClick={handlePreview}
-          label={t("profile.previewCard")}
-        />
-        <PillActionButton
+      {/* Top-right icon buttons */}
+      <div className="absolute top-3 right-3 flex gap-1.5">
+        <button
+          type="button"
           onClick={() => openEventForm(event)}
-          label={t("common.edit")}
-          variant="accent"
-        />
+          aria-label={t("common.edit")}
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-accent/10 text-accent transition-colors hover:bg-accent/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          <PencilIcon className="h-3.5 w-3.5" strokeWidth={2.5} />
+        </button>
+        <button
+          type="button"
+          onClick={() => handleDelete(event.id)}
+          aria-label={t("common.delete")}
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-danger/10 text-danger transition-colors hover:bg-danger/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          <XIcon className="h-3.5 w-3.5" strokeWidth={2.5} />
+        </button>
       </div>
+
+      {/* Info */}
+      <div className="pr-20">
+        <p className="font-family-display text-base font-medium text-primary">
+          {event.title}
+        </p>
+        <p className="mt-0.5 text-[11px] capitalize text-muted">
+          {categories.map((cat) => catLabels[cat] ?? cat).join(" · ")}
+          {" · "}
+          {formatDateLong(event.dateStart, locale)}
+          {event.dateEnd && ` \u2013 ${formatDateLong(event.dateEnd, locale)}`}
+        </p>
+        {event.description && (
+          <p className="mt-1.5 line-clamp-2 text-[12px] leading-relaxed text-muted">
+            {event.description}
+          </p>
+        )}
+      </div>
+
+      {isPending && (
+        <div className="mt-2">
+          <span
+            className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+              event.approved === 0
+                ? "bg-status-pending-bg text-status-pending"
+                : "bg-status-rejected-bg text-status-rejected"
+            }`}
+          >
+            {event.approved === 0
+              ? t("profile.pendingApproval")
+              : t("profile.disabledByAdmin")}
+          </span>
+        </div>
+      )}
     </div>
   );
 }

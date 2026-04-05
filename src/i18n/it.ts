@@ -26,6 +26,7 @@ export const it = {
   "common.edit": "Modifica",
   "common.delete": "Elimina",
   "common.publish": "Pubblica",
+  "common.manage": "Gestisci",
   "common.refresh": "Aggiorna",
   "common.explore": "Esplora",
   "common.discover": "Scopri",
@@ -43,6 +44,7 @@ export const it = {
   "common.goBack": "Torna alla home",
 
   // Promotions
+  "promo.generale": "Generale",
   "promo.dailySpecial": "Piatto del giorno",
   "promo.deal": "Offerta",
   "promo.news": "News",
@@ -60,6 +62,8 @@ export const it = {
   "home.dealOne": "{count} offerta attiva",
   "home.dealMany": "{count} offerte attive",
   "home.newsCount": "{count} news",
+  "home.generaleOne": "{count} annuncio",
+  "home.generaleMany": "{count} annunci",
   "home.eventTodayOne": "{count} evento oggi",
   "home.eventTodayMany": "{count} eventi oggi",
   "home.eventUpcomingOne": "{count} evento in programma",
@@ -157,18 +161,20 @@ export const it = {
   "profile.disabledByAdmin": "Disabilitato",
 
   // Storefront
-  "storefront.dish": "Piatto",
+  "storefront.generale": "Generale",
+  "storefront.piatto": "Piatto",
   "storefront.deal": "Offerta",
   "storefront.news": "News",
-  "storefront.descLabel": "Descrizione",
-  "storefront.dishDescPlaceholder": "Es. Pasta alla chitarra con ragu",
-  "storefront.dealTitlePlaceholder": "Es. 2x1 Birra artigianale",
-  "storefront.dealDescPlaceholder": "Dettagli dell'offerta",
-  "storefront.newsTitlePlaceholder": "Es. Nuovo menu estivo",
-  "storefront.newsDescPlaceholder": "Racconta la news",
+  "storefront.titlePlaceholder": "Es. Serata karaoke questo venerdi",
+  "storefront.piattoPlaceholder": "Es. Pasta alla chitarra con ragu",
+  "storefront.dealPlaceholder": "Es. 2x1 Birra artigianale",
+  "storefront.newsPlaceholder": "Es. Nuovo menu estivo",
   "storefront.priceLabel": "Prezzo",
   "storefront.pricePlaceholder": "\u20AC",
   "storefront.setTime": "Imposta orario",
+  "storefront.activeCount": "{current} di {max} pubblicazioni attive",
+  "storefront.limitReached": "Hai raggiunto il limite di {max} pubblicazioni attive",
+  "storefront.preview": "Anteprima",
 
   // Auth
   "auth.signIn": "Accedi",

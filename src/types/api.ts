@@ -50,6 +50,7 @@ export type DashboardResponse = {
 export type PromotionsResponse = {
   restaurantName: string;
   items: Array<PromotionRow>;
+  activeCount: number;
 };
 
 // -- Admin --

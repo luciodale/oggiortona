@@ -1,6 +1,7 @@
 -- Oggi a Ortona: Promotion domain
 -- Covers promotion lifecycle: creation, expiry, renewal, deletion.
--- Three types: special (piatto del giorno), deal (offerta), news (novita).
+-- Four types: generale (catch-all), special (piatto del giorno), deal (offerta), news (novita).
+-- Unified form: single form with type selector, title only (no description), live preview.
 
 use "./restaurants.allium" as rest
 
@@ -8,7 +9,7 @@ use "./restaurants.allium" as rest
 -- Enumerations
 -- ---------------------------------------------------------------
 
-enum PromotionType { special, deal, news }
+enum PromotionType { generale, special, deal, news }
 
 -- ---------------------------------------------------------------
 -- Entities
@@ -17,13 +18,13 @@ enum PromotionType { special, deal, news }
 entity Promotion {
     restaurant: rest/Restaurant,
     type: PromotionType,
-    title: String,
-    description: String?,
+    title: String,                  -- max 150 chars, required for all types
+    description: String?,           -- legacy: always null for new promotions, kept for backward compat
     price: Decimal?,
-    date_start: String,            -- ISO date YYYY-MM-DD
-    date_end: String,              -- ISO date YYYY-MM-DD
-    time_start: String?,           -- HH:MM
-    time_end: String?,             -- HH:MM
+    date_start: String,             -- ISO date YYYY-MM-DD
+    date_end: String,               -- ISO date YYYY-MM-DD
+    time_start: String?,            -- HH:MM
+    time_end: String?,              -- HH:MM
     created_at: Timestamp,
 
     -- Derived (all use getTodayISO() — Europe/Rome timezone)
@@ -39,6 +40,7 @@ entity Promotion {
 config {
     min_duration_days: Integer = 1,
     max_duration_days: Integer = 7,
+    max_active_per_restaurant: Integer = 3,
     max_promotions_in_admin: Integer = 60,
     max_expired_notifications: Integer = 10,
     timezone: String = "Europe/Rome"
@@ -56,38 +58,24 @@ invariant TimezoneAwareDates {
     "Same utils (getTodayISO, isToday, isThisWeek) used across public and owner surfaces."
 }
 
+invariant MaxActivePromotions {
+    "Each restaurant may have at most config.max_active_per_restaurant active promotions at any time."
+    "Enforced server-side on both creation (POST) and renewal (PUT)."
+    "Active = date_start <= today AND date_end >= today."
+    "Returns HTTP 409 with code LIMIT_REACHED when exceeded."
+}
+
 -- ---------------------------------------------------------------
 -- Rules: Creation
 -- ---------------------------------------------------------------
 
-rule CreateSpecial {
+rule CreatePromotion {
     when: OwnerCreatesPromotion(owner, restaurant, data)
     requires: restaurant.owner = owner
     requires: restaurant.active
-    requires: data.type = special
-    requires: data.description != null and data.description != ""
-    let clamped_days = clamp(data.duration_days, config.min_duration_days, config.max_duration_days)
-    let start = today_iso()
-    let end = compute_date_end(start, clamped_days)
-    ensures: Promotion.created(
-        restaurant: restaurant,
-        type: special,
-        title: data.description,     -- special uses description as title
-        description: null,
-        price: data.price,
-        date_start: start,
-        date_end: end,
-        time_start: data.time_start,
-        time_end: data.time_end
-    )
-}
-
-rule CreateDealOrNews {
-    when: OwnerCreatesPromotion(owner, restaurant, data)
-    requires: restaurant.owner = owner
-    requires: restaurant.active
-    requires: data.type in {deal, news}
-    requires: data.title != null and data.title != ""
+    requires: data.type in PromotionType
+    requires: data.title != null and data.title != "" and len(data.title) <= 150
+    requires: count(Promotions where restaurant = restaurant and is_active) < config.max_active_per_restaurant
     let clamped_days = clamp(data.duration_days, config.min_duration_days, config.max_duration_days)
     let start = today_iso()
     let end = compute_date_end(start, clamped_days)
@@ -95,7 +83,7 @@ rule CreateDealOrNews {
         restaurant: restaurant,
         type: data.type,
         title: data.title,
-        description: data.description,
+        description: null,
         price: data.price,
         date_start: start,
         date_end: end,
@@ -112,6 +100,7 @@ rule RenewPromotion {
     when: OwnerRenewsPromotion(owner, promotion)
     requires: promotion.restaurant.owner = owner
     requires: promotion.is_expired
+    requires: count(Promotions where restaurant = promotion.restaurant and is_active) < config.max_active_per_restaurant
     let original_duration = promotion.duration_days
     let new_start = today_iso()
     let new_end = compute_date_end(new_start, original_duration)
@@ -140,6 +129,7 @@ surface OwnerStorefront {
 
     exposes:
         restaurant.name
+        active_count: count(Promotions where restaurant = restaurant and is_active)
         for p in Promotions where restaurant = restaurant:
             p.type
             p.title
@@ -161,8 +151,13 @@ surface OwnerStorefront {
             when promotion.is_expired and promotion.restaurant = restaurant
 
     guidance:
+        "Unified single form with type selector (pills: Generale, Piatto, Offerta, News)"
+        "Type defaults to 'generale'; owner can switch without losing form data"
+        "Title only (max 150 chars), no description field"
+        "Live preview using PromotionCardPublic below the form"
+        "Active count banner: '{current} di {max} pubblicazioni attive'"
+        "Publish button disabled when at limit"
         "Promotions sorted by created_at DESC"
-        "Tab UI groups by type: special, deal, news"
         "Expired promotions shown with dashed border and renew action"
 }
 

@@ -6,12 +6,14 @@ import { useFormSheet } from "../../hooks/useFormSheet";
 import { RestaurantForm } from "../restaurants/RestaurantForm";
 import { EventForm } from "../events/EventForm";
 import { ProfileStorefront } from "../profile/ProfileStorefront";
+import { ProfilePromotionsList } from "../profile/ProfilePromotionsList";
 
 function getTitle(meta: ReturnType<typeof useSwipeBarContext>["bottomSidebars"]["form"]["meta"]) {
   if (!isFormSheetMeta(meta)) return "";
   if (meta.kind === "restaurant-form") return meta.restaurantId ? "Modifica locale" : "Aggiungi locale";
   if (meta.kind === "event-form") return meta.eventId ? "Modifica evento" : "Aggiungi evento";
-  return "Vetrina";
+  if (meta.kind === "promotions-list") return "Pubblicazioni";
+  return "Pubblica";
 }
 
 export function FormBottomSheet() {
@@ -86,6 +88,9 @@ export function FormBottomSheet() {
               )}
               {validMeta.kind === "storefront" && (
                 <ProfileStorefront restaurantId={String(validMeta.restaurantId)} />
+              )}
+              {validMeta.kind === "promotions-list" && (
+                <ProfilePromotionsList restaurantId={String(validMeta.restaurantId)} />
               )}
               <button
                 type="button"

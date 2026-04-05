@@ -1,13 +1,18 @@
 import { usePromotionsQuery } from "../../hooks/usePromotionsQuery";
 import { usePromotionMutations } from "../../hooks/usePromotionMutations";
-import { usePromotionForms } from "../../hooks/usePromotionForms";
+import { usePromotionForm } from "../../hooks/usePromotionForms";
+import { useFormSheet } from "../../hooks/useFormSheet";
 import { useLocale } from "../../i18n/useLocale";
+import { getTodayISO } from "../../utils/date";
+import { computeDateEnd } from "../../utils/promotions";
+import type { PromotionRow } from "../../types/database";
 import { Button } from "../ui/Button";
 import { SummaryFormError } from "../ui/FormError";
 import { PromotionForm } from "./storefront/PromotionForm";
-import { PromotionsList } from "./storefront/PromotionsList";
+import { PromotionCardPublic } from "../PromotionCardPublic";
+import { ListIcon } from "../../icons/ListIcon";
 
-type PromotionTab = "special" | "deal" | "news";
+const MAX_ACTIVE = 3;
 
 type ProfileStorefrontProps = {
   restaurantId: string;
@@ -15,28 +20,33 @@ type ProfileStorefrontProps = {
 
 export function ProfileStorefront({ restaurantId }: ProfileStorefrontProps) {
   const { t } = useLocale();
-  const { items, restaurantName, loading } = usePromotionsQuery(restaurantId);
-  const { createPromotion, deletePromotion, renewPromotion, submitting } = usePromotionMutations(restaurantId);
-  const {
-    tab, setTab,
-    errorMessage,
-    specialForm, setSpecialForm,
-    dealForm, setDealForm,
-    newsForm, setNewsForm,
-    buildCreateBody, resetCurrentForm,
-  } = usePromotionForms();
+  const { restaurantName, activeCount, loading } = usePromotionsQuery(restaurantId);
+  const { createPromotion, submitting } = usePromotionMutations(restaurantId);
+  const { form, setForm, setType, errorMessage, buildCreateBody, resetForm } = usePromotionForm();
+  const { openPromotionsList } = useFormSheet();
 
-  const TAB_LABELS: Record<PromotionTab, string> = {
-    special: t("storefront.dish"),
-    deal: t("storefront.deal"),
-    news: t("storefront.news"),
-  };
+  const limitReached = activeCount >= MAX_ACTIVE;
 
   function handleCreate() {
     const body = buildCreateBody();
     if (!body) return;
-    createPromotion(body, { onSuccess: resetCurrentForm });
+    createPromotion(body, { onSuccess: resetForm });
   }
+
+  const today = getTodayISO();
+  const previewItem: PromotionRow = {
+    id: 0,
+    restaurantId: Number(restaurantId),
+    type: form.type,
+    title: form.title || "(titolo)",
+    description: null,
+    price: form.price ? Number(form.price) : null,
+    dateStart: today,
+    dateEnd: computeDateEnd(today, Number(form.durationDays)),
+    timeStart: form.hasTime ? form.timeStart : null,
+    timeEnd: form.hasTime ? form.timeEnd : null,
+    createdAt: today,
+  };
 
   if (loading) {
     return (
@@ -52,51 +62,20 @@ export function ProfileStorefront({ restaurantId }: ProfileStorefrontProps) {
         <p className="mb-3 text-[11px] text-muted">{restaurantName}</p>
       )}
 
-      <div className="flex rounded-xl bg-surface-warm p-0.5" role="tablist" aria-label="Tipo">
-        {(["special", "deal", "news"] as const).map((tp) => (
-          <button
-            key={tp}
-            type="button"
-            role="tab"
-            aria-selected={tab === tp}
-            onClick={() => setTab(tp)}
-            className={`flex flex-1 items-center justify-center rounded-lg py-2 text-[11px] font-semibold uppercase tracking-[0.06em] transition-all ${
-              tab === tp ? "bg-card text-primary shadow-sm" : "text-muted"
-            }`}
-          >
-            {TAB_LABELS[tp]}
-          </button>
-        ))}
+      <div className="mb-3 flex items-center justify-between rounded-xl bg-surface-warm px-3 py-2">
+        <span className={`text-[12px] font-medium ${limitReached ? "text-danger" : "text-muted"}`}>
+          {limitReached
+            ? t("storefront.limitReached", { max: MAX_ACTIVE })
+            : t("storefront.activeCount", { current: activeCount, max: MAX_ACTIVE })}
+        </span>
       </div>
 
-      <div className="mt-4 rounded-2xl bg-card p-4 shadow-card">
-        {tab === "special" && (
-          <PromotionForm
-            form={specialForm}
-            onChange={setSpecialForm}
-            showTitle={false}
-            descriptionLabel={t("storefront.descLabel")}
-            descriptionPlaceholder={t("storefront.dishDescPlaceholder")}
-          />
-        )}
-        {tab === "deal" && (
-          <PromotionForm
-            form={dealForm}
-            onChange={setDealForm}
-            showTitle={true}
-            titlePlaceholder={t("storefront.dealTitlePlaceholder")}
-            descriptionPlaceholder={t("storefront.dealDescPlaceholder")}
-          />
-        )}
-        {tab === "news" && (
-          <PromotionForm
-            form={newsForm}
-            onChange={setNewsForm}
-            showTitle={true}
-            titlePlaceholder={t("storefront.newsTitlePlaceholder")}
-            descriptionPlaceholder={t("storefront.newsDescPlaceholder")}
-          />
-        )}
+      <div className="rounded-2xl bg-card p-4 shadow-card">
+        <PromotionForm
+          form={form}
+          onChange={setForm}
+          onTypeChange={setType}
+        />
 
         {errorMessage && (
           <div className="mt-4">
@@ -108,17 +87,27 @@ export function ProfileStorefront({ restaurantId }: ProfileStorefrontProps) {
           fullWidth
           className="mt-4"
           onClick={handleCreate}
-          disabled={submitting}
+          disabled={submitting || limitReached}
         >
           {submitting ? t("common.saving") : t("common.publish")}
         </Button>
       </div>
 
-      <PromotionsList
-        items={items}
-        onRenew={renewPromotion}
-        onDelete={deletePromotion}
-      />
+      <div className="mt-4">
+        <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-muted">
+          {t("storefront.preview")}
+        </p>
+        <PromotionCardPublic item={previewItem} />
+      </div>
+
+      <button
+        type="button"
+        onClick={() => openPromotionsList(Number(restaurantId))}
+        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-border py-3 text-[13px] font-semibold text-muted transition-colors hover:text-primary"
+      >
+        <ListIcon className="h-4 w-4" />
+        Gestisci pubblicazioni
+      </button>
     </div>
   );
 }

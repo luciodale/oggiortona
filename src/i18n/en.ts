@@ -30,6 +30,7 @@ export const en: Translations = {
   "common.edit": "Edit",
   "common.delete": "Delete",
   "common.publish": "Publish",
+  "common.manage": "Manage",
   "common.refresh": "Refresh",
   "common.explore": "Explore",
   "common.discover": "Discover",
@@ -47,6 +48,7 @@ export const en: Translations = {
   "common.goBack": "Back to home",
 
   // Promotions
+  "promo.generale": "General",
   "promo.dailySpecial": "Daily special",
   "promo.deal": "Deal",
   "promo.news": "News",
@@ -64,6 +66,8 @@ export const en: Translations = {
   "home.dealOne": "{count} active deal",
   "home.dealMany": "{count} active deals",
   "home.newsCount": "{count} news",
+  "home.generaleOne": "{count} announcement",
+  "home.generaleMany": "{count} announcements",
   "home.eventTodayOne": "{count} event today",
   "home.eventTodayMany": "{count} events today",
   "home.eventUpcomingOne": "{count} upcoming event",
@@ -161,18 +165,20 @@ export const en: Translations = {
   "profile.disabledByAdmin": "Disabled",
 
   // Storefront
-  "storefront.dish": "Dish",
+  "storefront.generale": "General",
+  "storefront.piatto": "Dish",
   "storefront.deal": "Deal",
   "storefront.news": "News",
-  "storefront.descLabel": "Description",
-  "storefront.dishDescPlaceholder": "E.g. Pasta alla chitarra with ragu",
-  "storefront.dealTitlePlaceholder": "E.g. 2-for-1 Craft beer",
-  "storefront.dealDescPlaceholder": "Deal details",
-  "storefront.newsTitlePlaceholder": "E.g. New summer menu",
-  "storefront.newsDescPlaceholder": "Tell about the news",
+  "storefront.titlePlaceholder": "E.g. Karaoke night this Friday",
+  "storefront.piattoPlaceholder": "E.g. Pasta alla chitarra with ragu",
+  "storefront.dealPlaceholder": "E.g. 2-for-1 Craft beer",
+  "storefront.newsPlaceholder": "E.g. New summer menu",
   "storefront.priceLabel": "Price",
   "storefront.pricePlaceholder": "\u20AC",
   "storefront.setTime": "Set time",
+  "storefront.activeCount": "{current} of {max} active publications",
+  "storefront.limitReached": "You've reached the limit of {max} active publications",
+  "storefront.preview": "Preview",
 
   // Auth
   "auth.signIn": "Sign in",

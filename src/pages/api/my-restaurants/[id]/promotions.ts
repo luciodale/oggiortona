@@ -1,11 +1,27 @@
 import type { APIContext } from "astro";
 import { restaurants, promotions } from "../../../../db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and as dbAnd, lte, gte, count } from "drizzle-orm";
+import type { Db } from "../../../../db/client";
 import { getTodayISO } from "../../../../utils/date";
 import { computeDateEnd } from "../../../../utils/promotions";
 
+const VALID_TYPES = ["generale", "special", "deal", "news"] as const;
+const MAX_ACTIVE = 3;
+
 function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === "object" && v !== null && !Array.isArray(v);
+}
+
+async function countActive(db: Db, restaurantId: number, today: string) {
+  const [row] = await db
+    .select({ count: count() })
+    .from(promotions)
+    .where(dbAnd(
+      eq(promotions.restaurantId, restaurantId),
+      lte(promotions.dateStart, today),
+      gte(promotions.dateEnd, today),
+    ));
+  return row?.count ?? 0;
 }
 
 export async function GET({ params, locals }: APIContext) {
@@ -25,14 +41,20 @@ export async function GET({ params, locals }: APIContext) {
     return Response.json({ error: "Non autorizzato" }, { status: 403 });
   }
 
-  const items = await db.select().from(promotions)
-    .where(eq(promotions.restaurantId, restaurantId))
-    .orderBy(desc(promotions.createdAt))
-    .limit(60);
+  const today = getTodayISO();
+
+  const [items, activeCount] = await Promise.all([
+    db.select().from(promotions)
+      .where(eq(promotions.restaurantId, restaurantId))
+      .orderBy(desc(promotions.createdAt))
+      .limit(60),
+    countActive(db, restaurantId, today),
+  ]);
 
   return Response.json({
     restaurantName: restaurant.name,
     items,
+    activeCount,
   });
 }
 
@@ -67,47 +89,27 @@ export async function POST({ params, locals, request }: APIContext) {
   const type = typeof raw.type === "string" ? raw.type : "";
   const today = getTodayISO();
 
-  if (type !== "special" && type !== "deal" && type !== "news") {
+  if (!VALID_TYPES.includes(type as typeof VALID_TYPES[number])) {
     return Response.json({ error: "Tipo non valido" }, { status: 400 });
   }
 
-  let title: string;
-  let description: string | null = null;
-  let price: number | null = null;
-
-  switch (type) {
-    case "special": {
-      const desc = typeof raw.description === "string" ? raw.description.trim() : "";
-      if (!desc) {
-        return Response.json({ error: "Descrizione obbligatoria" }, { status: 400 });
-      }
-      if (desc.length > 200) {
-        return Response.json({ error: "Descrizione troppo lunga (max 200)" }, { status: 400 });
-      }
-      title = desc;
-      price = typeof raw.price === "number" ? raw.price : null;
-      break;
-    }
-    case "deal":
-    case "news": {
-      const t = typeof raw.title === "string" ? raw.title.trim() : "";
-      if (!t) {
-        return Response.json({ error: "Titolo obbligatorio" }, { status: 400 });
-      }
-      if (t.length > 100) {
-        return Response.json({ error: "Titolo troppo lungo (max 100)" }, { status: 400 });
-      }
-      title = t;
-      const d = typeof raw.description === "string" ? raw.description.trim() || null : null;
-      if (d && d.length > 300) {
-        return Response.json({ error: "Descrizione troppo lunga (max 300)" }, { status: 400 });
-      }
-      description = d;
-      price = typeof raw.price === "number" ? raw.price : null;
-      break;
-    }
+  const activeCount = await countActive(db, restaurantId, today);
+  if (activeCount >= MAX_ACTIVE) {
+    return Response.json(
+      { error: "Limite raggiunto: massimo 3 pubblicazioni attive", code: "LIMIT_REACHED" },
+      { status: 409 },
+    );
   }
 
+  const title = typeof raw.title === "string" ? raw.title.trim() : "";
+  if (!title) {
+    return Response.json({ error: "Titolo obbligatorio" }, { status: 400 });
+  }
+  if (title.length > 150) {
+    return Response.json({ error: "Titolo troppo lungo (max 150)" }, { status: 400 });
+  }
+
+  const price = typeof raw.price === "number" ? raw.price : null;
   const timeStart = typeof raw.timeStart === "string" && raw.timeStart.length <= 5 ? raw.timeStart : null;
   const timeEnd = typeof raw.timeEnd === "string" && raw.timeEnd.length <= 5 ? raw.timeEnd : null;
   const durationDays = typeof raw.durationDays === "number"
@@ -120,7 +122,7 @@ export async function POST({ params, locals, request }: APIContext) {
     restaurantId,
     type,
     title,
-    description,
+    description: null,
     price,
     dateStart: today,
     dateEnd,

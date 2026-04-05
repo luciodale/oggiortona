@@ -7,7 +7,7 @@ const dateString = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Formato data non val
 
 export const eventFormSchema = z
   .object({
-    title: z.string().trim().min(1, "Titolo obbligatorio"),
+    title: z.string().trim().min(1, "Titolo obbligatorio").max(150, "Max 150 caratteri"),
     description: z.string().max(500, "Max 500 caratteri"),
     categories: z.array(z.string()),
     customCategory: z.string(),
@@ -38,7 +38,7 @@ export const eventFormSchema = z
 export type EventFormValues = z.infer<typeof eventFormSchema>;
 
 export const createEventApiSchema = z.object({
-  title: z.string().trim().min(1, "Titolo obbligatorio"),
+  title: z.string().trim().min(1, "Titolo obbligatorio").max(150),
   description: z.string().trim().max(500).nullish(),
   category: z.string().trim().min(1, "Categoria obbligatoria"),
   date_start: dateString,

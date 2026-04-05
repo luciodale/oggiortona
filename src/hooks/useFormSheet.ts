@@ -29,9 +29,14 @@ export function useFormSheet() {
     openSidebarFully("bottom", { id: "form", meta });
   }
 
+  function openPromotionsList(restaurantId: number) {
+    const meta: FormSheetMeta = { kind: "promotions-list", restaurantId };
+    openSidebarFully("bottom", { id: "form", meta });
+  }
+
   function closeForm() {
     closeSidebar("bottom", { id: "form" });
   }
 
-  return { openRestaurantForm, openEventForm, openStorefront, closeForm };
+  return { openRestaurantForm, openEventForm, openStorefront, openPromotionsList, closeForm };
 }

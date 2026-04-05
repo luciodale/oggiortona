@@ -15,7 +15,7 @@ export type DayFormValues = z.infer<typeof dayFormSchema>;
 
 export const restaurantFormSchema = z
   .object({
-    name: z.string().trim().min(1, "Nome obbligatorio"),
+    name: z.string().trim().min(1, "Nome obbligatorio").max(100, "Max 100 caratteri"),
     description: z.string().max(300, "Max 300 caratteri"),
     type: z.string().trim().min(1, "Inserisci almeno un tipo"),
     priceRange: z.number().int().min(1).max(3),
@@ -34,7 +34,7 @@ export const restaurantFormSchema = z
 export type RestaurantFormValues = z.infer<typeof restaurantFormSchema>;
 
 export const createRestaurantApiSchema = z.object({
-  name: z.string().trim().min(1, "Nome obbligatorio"),
+  name: z.string().trim().min(1, "Nome obbligatorio").max(100),
   description: z.string().trim().max(300).nullish(),
   type: z.string().trim().min(1, "Tipo obbligatorio"),
   price_range: z.number().int().min(1).max(3),

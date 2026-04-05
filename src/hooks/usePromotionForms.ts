@@ -1,19 +1,10 @@
 import { useState } from "react";
 
-type PromotionTab = "special" | "deal" | "news";
+export type PromotionType = "generale" | "special" | "deal" | "news";
 
-export type SpecialFormState = {
-  description: string;
-  price: string;
-  durationDays: string;
-  hasTime: boolean;
-  timeStart: string;
-  timeEnd: string;
-};
-
-export type DealFormState = {
+export type PromotionFormState = {
+  type: PromotionType;
   title: string;
-  description: string;
   price: string;
   durationDays: string;
   hasTime: boolean;
@@ -21,18 +12,9 @@ export type DealFormState = {
   timeEnd: string;
 };
 
-export type NewsFormState = {
-  title: string;
-  description: string;
-  price: string;
-  durationDays: string;
-  hasTime: boolean;
-  timeStart: string;
-  timeEnd: string;
-};
-
-const INITIAL_SPECIAL: SpecialFormState = {
-  description: "",
+const INITIAL: PromotionFormState = {
+  type: "generale",
+  title: "",
   price: "",
   durationDays: "1",
   hasTime: false,
@@ -40,100 +22,47 @@ const INITIAL_SPECIAL: SpecialFormState = {
   timeEnd: "15:00",
 };
 
-const INITIAL_DEAL: DealFormState = {
-  title: "",
-  description: "",
-  price: "",
-  durationDays: "1",
-  hasTime: false,
-  timeStart: "18:00",
-  timeEnd: "22:00",
-};
-
-const INITIAL_NEWS: NewsFormState = {
-  title: "",
-  description: "",
-  price: "",
-  durationDays: "1",
-  hasTime: false,
-  timeStart: "10:00",
-  timeEnd: "18:00",
-};
-
-export function usePromotionForms() {
-  const [tab, setTab] = useState<PromotionTab>("special");
+export function usePromotionForm() {
+  const [form, setForm] = useState<PromotionFormState>(INITIAL);
   const [errorMessage, setErrorMessage] = useState("");
-  const [specialForm, setSpecialForm] = useState<SpecialFormState>(INITIAL_SPECIAL);
-  const [dealForm, setDealForm] = useState<DealFormState>(INITIAL_DEAL);
-  const [newsForm, setNewsForm] = useState<NewsFormState>(INITIAL_NEWS);
+
+  function setType(type: PromotionType) {
+    setForm((prev) => ({ ...prev, type }));
+  }
 
   function buildCreateBody(): Record<string, unknown> | null {
     setErrorMessage("");
 
-    switch (tab) {
-      case "special": {
-        if (!specialForm.description.trim()) {
-          setErrorMessage("La descrizione è obbligatoria");
-          return null;
-        }
-        return {
-          type: "special",
-          description: specialForm.description.trim(),
-          durationDays: Number(specialForm.durationDays),
-          ...(specialForm.price ? { price: Number(specialForm.price) } : {}),
-          ...(specialForm.hasTime ? { timeStart: specialForm.timeStart, timeEnd: specialForm.timeEnd } : {}),
-        };
-      }
-      case "deal": {
-        if (!dealForm.title.trim()) {
-          setErrorMessage("Il titolo è obbligatorio");
-          return null;
-        }
-        return {
-          type: "deal",
-          title: dealForm.title.trim(),
-          durationDays: Number(dealForm.durationDays),
-          ...(dealForm.description.trim() ? { description: dealForm.description.trim() } : {}),
-          ...(dealForm.price ? { price: Number(dealForm.price) } : {}),
-          ...(dealForm.hasTime ? { timeStart: dealForm.timeStart, timeEnd: dealForm.timeEnd } : {}),
-        };
-      }
-      case "news": {
-        if (!newsForm.title.trim()) {
-          setErrorMessage("Il titolo è obbligatorio");
-          return null;
-        }
-        return {
-          type: "news",
-          title: newsForm.title.trim(),
-          ...(newsForm.description.trim() ? { description: newsForm.description.trim() } : {}),
-          ...(newsForm.price ? { price: Number(newsForm.price) } : {}),
-          durationDays: Number(newsForm.durationDays),
-          ...(newsForm.hasTime ? { timeStart: newsForm.timeStart, timeEnd: newsForm.timeEnd } : {}),
-        };
-      }
+    const title = form.title.trim();
+    if (!title) {
+      setErrorMessage("Il titolo è obbligatorio");
+      return null;
     }
+    if (title.length > 150) {
+      setErrorMessage("Titolo troppo lungo (max 150)");
+      return null;
+    }
+
+    return {
+      type: form.type,
+      title,
+      durationDays: Number(form.durationDays),
+      ...(form.price ? { price: Number(form.price) } : {}),
+      ...(form.hasTime ? { timeStart: form.timeStart, timeEnd: form.timeEnd } : {}),
+    };
   }
 
-  function resetCurrentForm() {
-    switch (tab) {
-      case "special": setSpecialForm(INITIAL_SPECIAL); break;
-      case "deal": setDealForm(INITIAL_DEAL); break;
-      case "news": setNewsForm(INITIAL_NEWS); break;
-    }
+  function resetForm() {
+    setForm(INITIAL);
+    setErrorMessage("");
   }
 
   return {
-    tab,
-    setTab,
+    form,
+    setForm,
+    setType,
     errorMessage,
-    specialForm,
-    setSpecialForm,
-    dealForm,
-    setDealForm,
-    newsForm,
-    setNewsForm,
     buildCreateBody,
-    resetCurrentForm,
+    resetForm,
   };
 }
