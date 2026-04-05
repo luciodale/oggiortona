@@ -6,7 +6,7 @@
 
 @theme {
   /* Layout */
-  --height-bottomnav: 5rem;
+  --height-bottomnav: 100px;
   --bottomnav-padding-bottom: max(0.625rem, env(safe-area-inset-bottom));
 
   /* Warm Mediterranean palette */
@@ -130,9 +130,14 @@ body {
   background-size: 256px 256px, 100% 100%;
 }
 
+@media (hover: hover) and (pointer: fine) {
+  :root {
+    --height-bottomnav: 80px;
+  }
+}
+
 .bottom-nav-padding-bottom {
   padding-bottom: var(--bottomnav-padding-bottom);
-
 }
 
 .home-bottom-padding {
