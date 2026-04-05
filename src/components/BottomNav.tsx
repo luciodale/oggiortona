@@ -76,7 +76,7 @@ export function BottomNav() {
     <div
       ref={navRef}
       data-bottom-nav
-      className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-5 pb-[max(0.625rem,env(safe-area-inset-bottom))]"
+      className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-5 h-(--height-bottomnav) bottom-nav-padding-bottom"
     >
       <nav
         className="nav-glass flex w-full max-w-sm items-center justify-around px-1 py-2"

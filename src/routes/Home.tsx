@@ -27,7 +27,7 @@ export function HomeRoute() {
   const { restaurantCount, generaleCount, specials, deals, newsCount, todayEvents, upcomingEvents } = data;
 
   return (
-    <div className="flex flex-col pt-6">
+    <div className="flex flex-col pt-6 home-bottom-padding">
       <p className="mb-4 text-center text-[10px] italic tracking-wide text-muted/40">made by Lucio D'Alessandro</p>
       <div className="animate-fade-up">
         <div className="flex items-end justify-between gap-4">

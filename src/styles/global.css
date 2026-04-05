@@ -6,7 +6,8 @@
 
 @theme {
   /* Layout */
-  --height-bottomnav: 3.5rem;
+  --height-bottomnav: 5rem;
+  --bottomnav-padding-bottom: max(0.625rem, env(safe-area-inset-bottom));
 
   /* Warm Mediterranean palette */
   --color-primary: #2c1810;
@@ -127,6 +128,15 @@ body {
   background-color: var(--color-fare-light);
   background-image: var(--noise-texture), linear-gradient(180deg, var(--color-fare-light) 0%, var(--color-surface) 280px);
   background-size: 256px 256px, 100% 100%;
+}
+
+.bottom-nav-padding-bottom {
+  padding-bottom: var(--bottomnav-padding-bottom);
+
+}
+
+.home-bottom-padding {
+  padding-bottom: calc(var(--bottomnav-padding-bottom) + var(--height-bottomnav));
 }
 
 /* ==============================
