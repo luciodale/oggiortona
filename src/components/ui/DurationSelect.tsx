@@ -1,3 +1,5 @@
+import { useLocale } from "../../i18n/useLocale";
+
 type DurationSelectProps = {
   label?: string;
   value: string;
@@ -5,12 +7,13 @@ type DurationSelectProps = {
   max?: number;
 };
 
-export function DurationSelect({ label = "Durata", value, onChange, max = 7 }: DurationSelectProps) {
+export function DurationSelect({ label, value, onChange, max = 7 }: DurationSelectProps) {
+  const { t } = useLocale();
   const options = Array.from({ length: max }, (_, i) => i + 1);
 
   return (
     <fieldset>
-      <legend className="mb-1.5 block text-[13px] font-medium text-primary">{label}</legend>
+      <legend className="mb-1.5 block text-[13px] font-medium text-primary">{label ?? t("ui.duration")}</legend>
       <div className="flex gap-1.5" role="group">
         {options.map((n) => (
           <button
@@ -18,7 +21,7 @@ export function DurationSelect({ label = "Durata", value, onChange, max = 7 }: D
             type="button"
             onClick={() => onChange(String(n))}
             aria-pressed={String(n) === value}
-            aria-label={`${n} ${n === 1 ? "giorno" : "giorni"}`}
+            aria-label={`${n} ${n === 1 ? t("ui.dayOne") : t("ui.dayMany")}`}
             className={`flex-1 rounded-xl py-2 text-center text-[13px] font-semibold transition-all ${
               String(n) === value
                 ? "bg-muted text-card"

@@ -34,6 +34,8 @@ export const it = {
   "common.directions": "Indicazioni",
   "common.call": "Chiama",
   "common.menu": "Menu",
+  "common.link": "Link",
+  "common.phonePlaceholder": "+39 085 906 1234",
 
   "common.untilDate": "fino al {date}",
   "common.skipToContent": "Vai al contenuto",
@@ -96,10 +98,12 @@ export const it = {
   "events.descPlaceholder": "Descrivi l'evento...",
   "events.category": "Categoria",
   "events.otherCategory": "Altra categoria (es: sagra, mercato...)",
-  "events.dateStart": "Data inizio",
-  "events.dateEnd": "Data fine",
+  "events.dateStart": "Data evento",
+  "events.dateEnd": "Data fine (più giorni)",
   "events.optional": "Facoltativa",
   "events.time": "Orario",
+  "events.timeStart": "Orario di inizio",
+  "events.timeEnd": "Orario di fine",
   "events.location": "Luogo",
   "events.searchLocation": "Cerca luogo...",
   "events.priceEur": "Prezzo (EUR)",
@@ -137,6 +141,7 @@ export const it = {
   "restaurants.menuLink": "Link al menu",
   "restaurants.openingHours": "Orari di apertura",
   "restaurants.searchAddress": "Cerca indirizzo...",
+  "restaurants.typePlaceholder": "Es: coffee shop, restaurant, ice cream shop",
 
   // Profile
   "profile.pageTitle": "Profilo",
@@ -175,6 +180,8 @@ export const it = {
   "storefront.activeCount": "{current} di {max} pubblicazioni attive",
   "storefront.limitReached": "Hai raggiunto il limite di {max} pubblicazioni attive",
   "storefront.preview": "Anteprima",
+  "storefront.managePublications": "Gestisci pubblicazioni",
+  "storefront.titleFallback": "(titolo)",
 
   // Auth
   "auth.signIn": "Accedi",
@@ -225,6 +232,8 @@ export const it = {
   "ui.duration": "Durata",
   "ui.dayOne": "giorno",
   "ui.dayMany": "giorni",
+  "ui.removeDate": "Rimuovi data",
+  "ui.removeTime": "Rimuovi orario",
 
   // Day row (opening hours form)
   "dayRow.copyFrom": "Copia da {day}",
@@ -276,6 +285,30 @@ export const it = {
   // Language
   "lang.italian": "Italiano",
   "lang.english": "English",
+
+  // Form
+  "form.mapPosition": "Posizione sulla mappa",
+  "form.mapHint": "Cerca un indirizzo o trascina il segnaposto per le coordinate esatte",
+  "form.visibleOnPage": "Visibile sulla pagina",
+  "form.searchOnMap": "Cerca sulla mappa...",
+  "form.dragMarkerHint": "Trascina il segnaposto per scegliere la posizione",
+  "form.positionSelected": "Posizione selezionata",
+
+  // Validation
+  "validation.titleRequired": "Titolo obbligatorio",
+  "validation.nameRequired": "Nome obbligatorio",
+  "validation.maxChars": "Max {max} caratteri",
+  "validation.locationRequired": "Luogo obbligatorio",
+  "validation.addressRequired": "Indirizzo obbligatorio",
+  "validation.typeRequired": "Inserisci almeno un tipo",
+  "validation.invalidPrice": "Prezzo non valido",
+  "validation.invalidTime": "Formato orario non valido",
+  "validation.invalidDate": "Formato data non valido",
+  "validation.selectCategory": "Seleziona almeno una categoria o inserisci una personalizzata",
+  "validation.selectMapPosition": "Seleziona una posizione sulla mappa",
+  "validation.requiredFields": "Compila tutti i campi obbligatori prima di procedere",
+  "validation.titleTooLong": "Titolo troppo lungo (max {max})",
+  "validation.connectionError": "Errore di connessione",
 
   // Theme
   "theme.system": "Sistema",

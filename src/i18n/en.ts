@@ -38,6 +38,8 @@ export const en: Translations = {
   "common.directions": "Directions",
   "common.call": "Call",
   "common.menu": "Menu",
+  "common.link": "Link",
+  "common.phonePlaceholder": "+39 085 906 1234",
 
   "common.untilDate": "until {date}",
   "common.skipToContent": "Skip to content",
@@ -100,10 +102,12 @@ export const en: Translations = {
   "events.descPlaceholder": "Describe the event...",
   "events.category": "Category",
   "events.otherCategory": "Other category (e.g. festival, market...)",
-  "events.dateStart": "Start date",
-  "events.dateEnd": "End date",
+  "events.dateStart": "Event date",
+  "events.dateEnd": "End date (multi-day)",
   "events.optional": "Optional",
   "events.time": "Time",
+  "events.timeStart": "Start time",
+  "events.timeEnd": "End time",
   "events.location": "Location",
   "events.searchLocation": "Search location...",
   "events.priceEur": "Price (EUR)",
@@ -141,6 +145,7 @@ export const en: Translations = {
   "restaurants.menuLink": "Menu link",
   "restaurants.openingHours": "Opening hours",
   "restaurants.searchAddress": "Search address...",
+  "restaurants.typePlaceholder": "E.g. bar, restaurant, ice cream shop",
 
   // Profile
   "profile.pageTitle": "Profile",
@@ -179,6 +184,8 @@ export const en: Translations = {
   "storefront.activeCount": "{current} of {max} active publications",
   "storefront.limitReached": "You've reached the limit of {max} active publications",
   "storefront.preview": "Preview",
+  "storefront.managePublications": "Manage publications",
+  "storefront.titleFallback": "(title)",
 
   // Auth
   "auth.signIn": "Sign in",
@@ -229,6 +236,8 @@ export const en: Translations = {
   "ui.duration": "Duration",
   "ui.dayOne": "day",
   "ui.dayMany": "days",
+  "ui.removeDate": "Remove date",
+  "ui.removeTime": "Remove time",
 
   // Day row (opening hours form)
   "dayRow.copyFrom": "Copy from {day}",
@@ -280,6 +289,30 @@ export const en: Translations = {
   // Language
   "lang.italian": "Italiano",
   "lang.english": "English",
+
+  // Form
+  "form.mapPosition": "Position on map",
+  "form.mapHint": "Search for an address or drag the marker for exact coordinates",
+  "form.visibleOnPage": "Visible on the page",
+  "form.searchOnMap": "Search on map...",
+  "form.dragMarkerHint": "Drag the marker to choose the position",
+  "form.positionSelected": "Position selected",
+
+  // Validation
+  "validation.titleRequired": "Title required",
+  "validation.nameRequired": "Name required",
+  "validation.maxChars": "Max {max} characters",
+  "validation.locationRequired": "Location required",
+  "validation.addressRequired": "Address required",
+  "validation.typeRequired": "Enter at least one type",
+  "validation.invalidPrice": "Invalid price",
+  "validation.invalidTime": "Invalid time format",
+  "validation.invalidDate": "Invalid date format",
+  "validation.selectCategory": "Select at least one category or enter a custom one",
+  "validation.selectMapPosition": "Select a position on the map",
+  "validation.requiredFields": "Fill in all required fields before proceeding",
+  "validation.titleTooLong": "Title too long (max {max})",
+  "validation.connectionError": "Connection error",
 
   // Theme
   "theme.system": "System",

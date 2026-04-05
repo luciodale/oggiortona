@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocale } from "../i18n/useLocale";
 
 export type PromotionType = "generale" | "special" | "deal" | "news";
 
@@ -7,7 +8,6 @@ export type PromotionFormState = {
   title: string;
   price: string;
   durationDays: string;
-  hasTime: boolean;
   timeStart: string;
   timeEnd: string;
 };
@@ -17,44 +17,53 @@ const INITIAL: PromotionFormState = {
   title: "",
   price: "",
   durationDays: "1",
-  hasTime: false,
-  timeStart: "12:00",
-  timeEnd: "15:00",
+  timeStart: "",
+  timeEnd: "",
 };
 
 export function usePromotionForm() {
+  const { t } = useLocale();
   const [form, setForm] = useState<PromotionFormState>(INITIAL);
   const [errorMessage, setErrorMessage] = useState("");
+  const [titleError, setTitleError] = useState("");
 
   function setType(type: PromotionType) {
     setForm((prev) => ({ ...prev, type }));
   }
 
+  function validateTitle(title: string) {
+    const trimmed = title.trim();
+    if (!trimmed) {
+      setTitleError(t("validation.titleRequired"));
+      return false;
+    }
+    if (trimmed.length > 150) {
+      setTitleError(t("validation.titleTooLong", { max: 150 }));
+      return false;
+    }
+    setTitleError("");
+    return true;
+  }
+
   function buildCreateBody(): Record<string, unknown> | null {
     setErrorMessage("");
 
-    const title = form.title.trim();
-    if (!title) {
-      setErrorMessage("Il titolo è obbligatorio");
-      return null;
-    }
-    if (title.length > 150) {
-      setErrorMessage("Titolo troppo lungo (max 150)");
-      return null;
-    }
+    if (!validateTitle(form.title)) return null;
 
     return {
       type: form.type,
-      title,
+      title: form.title.trim(),
       durationDays: Number(form.durationDays),
       ...(form.price ? { price: Number(form.price) } : {}),
-      ...(form.hasTime ? { timeStart: form.timeStart, timeEnd: form.timeEnd } : {}),
+      ...(form.timeStart ? { timeStart: form.timeStart } : {}),
+      ...(form.timeEnd ? { timeEnd: form.timeEnd } : {}),
     };
   }
 
   function resetForm() {
     setForm(INITIAL);
     setErrorMessage("");
+    setTitleError("");
   }
 
   return {
@@ -62,6 +71,8 @@ export function usePromotionForm() {
     setForm,
     setType,
     errorMessage,
+    titleError,
+    validateTitle,
     buildCreateBody,
     resetForm,
   };

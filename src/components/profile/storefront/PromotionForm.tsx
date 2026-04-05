@@ -2,7 +2,7 @@ import { useLocale } from "../../../i18n/useLocale";
 import type { PromotionFormState, PromotionType } from "../../../hooks/usePromotionForms";
 import type { TranslationKey } from "../../../i18n/t";
 import { Input } from "../../ui/Input";
-import { TimePicker } from "../../ui/TimePicker";
+import { OptionalTimePicker } from "../../ui/OptionalTimePicker";
 import { DurationSelect } from "../../ui/DurationSelect";
 
 const TYPE_OPTIONS: Array<{ value: PromotionType; labelKey: TranslationKey }> = [
@@ -30,15 +30,17 @@ type PromotionFormProps = {
   form: PromotionFormState;
   onChange: (f: PromotionFormState) => void;
   onTypeChange: (type: PromotionType) => void;
+  titleError?: string;
+  onValidateTitle?: (title: string) => void;
 };
 
-export function PromotionForm({ form, onChange, onTypeChange }: PromotionFormProps) {
+export function PromotionForm({ form, onChange, onTypeChange, titleError, onValidateTitle }: PromotionFormProps) {
   const { t } = useLocale();
 
   return (
     <div className="space-y-3">
       <fieldset>
-        <legend className="mb-1.5 block text-[13px] font-medium text-primary">Tipo</legend>
+        <legend className="mb-1.5 block text-[13px] font-medium text-primary">{t("common.type")}</legend>
         <div className="flex rounded-xl bg-surface-warm p-0.5" role="group">
           {TYPE_OPTIONS.map(({ value, labelKey }) => {
             const isActive = form.type === value;
@@ -62,11 +64,13 @@ export function PromotionForm({ form, onChange, onTypeChange }: PromotionFormPro
 
       <div>
         <Input
-          label="Titolo"
+          label={t("common.title")}
           required
           maxLength={150}
           value={form.title}
           onChange={(e) => onChange({ ...form, title: e.target.value })}
+          onBlur={() => onValidateTitle?.(form.title)}
+          error={titleError}
           placeholder={t(PLACEHOLDER_KEYS[form.type])}
         />
         <p className="mt-1 text-right text-[10px] text-muted">{form.title.length}/150</p>
@@ -87,23 +91,18 @@ export function PromotionForm({ form, onChange, onTypeChange }: PromotionFormPro
         onChange={(v) => onChange({ ...form, durationDays: v })}
       />
 
-      <div>
-        <label className="flex items-center gap-2 text-[13px] text-muted">
-          <input
-            type="checkbox"
-            checked={form.hasTime}
-            onChange={(e) => onChange({ ...form, hasTime: e.target.checked })}
-            className="accent-accent"
-          />
-          {t("storefront.setTime")}
-        </label>
-        {form.hasTime && (
-          <div className="mt-2 flex items-center gap-2">
-            <TimePicker value={form.timeStart} onChange={(v) => onChange({ ...form, timeStart: v })} />
-            <span className="text-xs text-muted">&ndash;</span>
-            <TimePicker value={form.timeEnd} onChange={(v) => onChange({ ...form, timeEnd: v })} />
-          </div>
-        )}
+      <div className="space-y-2">
+        <p className="text-[13px] font-medium text-primary">{t("events.time")}</p>
+        <OptionalTimePicker
+          label={t("events.timeStart")}
+          value={form.timeStart}
+          onChange={(v) => onChange({ ...form, timeStart: v })}
+        />
+        <OptionalTimePicker
+          label={t("events.timeEnd")}
+          value={form.timeEnd}
+          onChange={(v) => onChange({ ...form, timeEnd: v })}
+        />
       </div>
     </div>
   );

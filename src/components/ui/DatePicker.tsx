@@ -11,7 +11,9 @@ import {
   FloatingFocusManager,
 } from "@floating-ui/react";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { useLocale } from "../../i18n/useLocale";
 import { CalendarIcon } from "../../icons/CalendarIcon";
+import { XIcon } from "../../icons/XIcon";
 import { CalendarGrid, parseISO, MONTH_NAMES } from "./CalendarGrid";
 import { FormError } from "./FormError";
 
@@ -22,6 +24,7 @@ type DatePickerProps = {
   onChange: (value: string) => void;
   error?: string;
   placeholder?: string;
+  clearable?: boolean;
 };
 
 function formatDisplay(value: string) {
@@ -56,13 +59,13 @@ function DesktopDatePicker({ value, onChange, placeholder, label }: {
         type="button"
         aria-expanded={isOpen}
         aria-haspopup="dialog"
-        aria-label={label ? `${label}: ${value ? formatDisplay(value) : (placeholder ?? "Seleziona data")}` : undefined}
+        aria-label={label ? `${label}: ${value ? formatDisplay(value) : (placeholder ?? "")}` : undefined}
         {...getReferenceProps()}
         className="flex w-full items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-left text-[13px] outline-none transition-colors hover:border-accent focus:border-accent"
       >
         <CalendarIcon className="h-3.5 w-3.5 text-muted" />
         <span className={value ? "text-primary" : "text-muted/40"}>
-          {value ? formatDisplay(value) : (placeholder ?? "Seleziona data")}
+          {value ? formatDisplay(value) : (placeholder ?? "")}
         </span>
       </button>
       {isOpen && (
@@ -71,7 +74,7 @@ function DesktopDatePicker({ value, onChange, placeholder, label }: {
             <div
               ref={refs.setFloating}
               role="dialog"
-              aria-label="Seleziona data"
+              aria-label={label ?? ""}
               style={floatingStyles}
               {...getFloatingProps()}
               className="z-50 rounded-xl border border-border bg-card shadow-lg"
@@ -96,22 +99,24 @@ function MobileDatePicker({ value, onChange, placeholder, label }: {
       <div className="pointer-events-none flex w-full items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-left text-[13px]" aria-hidden="true">
         <CalendarIcon className="h-3.5 w-3.5 text-muted" />
         <span className={value ? "text-primary" : "text-muted/40"}>
-          {value ? formatDisplay(value) : (placeholder ?? "Seleziona data")}
+          {value ? formatDisplay(value) : (placeholder ?? "")}
         </span>
       </div>
       <input
         type="date"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        aria-label={label ?? "Seleziona data"}
+        aria-label={label ?? ""}
         className="absolute inset-0 cursor-pointer opacity-0"
       />
     </div>
   );
 }
 
-export function DatePicker({ label, required, value, onChange, error, placeholder }: DatePickerProps) {
+export function DatePicker({ label, required, value, onChange, error, placeholder, clearable }: DatePickerProps) {
+  const { t } = useLocale();
   const isDesktop = useMediaQuery("(hover: hover) and (pointer: fine)");
+  const fallback = placeholder ?? t("ui.selectDate");
   return (
     <div>
       {label && (
@@ -120,10 +125,24 @@ export function DatePicker({ label, required, value, onChange, error, placeholde
           {required && <span className="ml-0.5 text-danger" aria-hidden="true">*</span>}
         </label>
       )}
-      {isDesktop
-        ? <DesktopDatePicker value={value} onChange={onChange} placeholder={placeholder} label={label} />
-        : <MobileDatePicker value={value} onChange={onChange} placeholder={placeholder} label={label} />
-      }
+      <div className="flex items-center gap-2">
+        <div className="flex-1">
+          {isDesktop
+            ? <DesktopDatePicker value={value} onChange={onChange} placeholder={fallback} label={label} />
+            : <MobileDatePicker value={value} onChange={onChange} placeholder={fallback} label={label} />
+          }
+        </div>
+        {clearable && value && (
+          <button
+            type="button"
+            onClick={() => onChange("")}
+            aria-label={t("ui.removeDate")}
+            className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-xl border border-border text-muted transition-colors hover:border-danger hover:text-danger"
+          >
+            <XIcon className="h-3.5 w-3.5" strokeWidth={2.5} />
+          </button>
+        )}
+      </div>
       {error && <FormError message={error} />}
     </div>
   );

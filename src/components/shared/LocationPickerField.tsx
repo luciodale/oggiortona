@@ -3,6 +3,8 @@ import { FormError } from "../ui/FormError";
 import { SearchableDropdown } from "@luciodale/react-searchable-dropdown";
 import { useAddressSearch } from "../../hooks/useAddressSearch";
 import { useLocationPicker } from "../../hooks/useLocationPicker";
+import { useLocale } from "../../i18n/useLocale";
+import { CircleCheckIcon } from "../../icons/CircleCheckIcon";
 import { MAP_CSS } from "../../utils/map";
 
 type LocationPickerFieldProps = {
@@ -28,6 +30,7 @@ export function LocationPickerField({
   onAddressChange,
   onCoordinatesChange,
 }: LocationPickerFieldProps) {
+  const { t } = useLocale();
   const addressId = useId();
   const errorId = useId();
   const { query: searchQuery, setQuery: setSearchQuery, suggestions } = useAddressSearch("");
@@ -64,7 +67,7 @@ export function LocationPickerField({
           {label}<span className="ml-0.5 text-danger" aria-hidden="true">*</span>
         </label>
         <p className="mb-1.5 text-[11px] text-muted">
-          Visibile sulla pagina
+          {t("form.visibleOnPage")}
         </p>
         <input
           id={addressId}
@@ -82,11 +85,17 @@ export function LocationPickerField({
 
       <div>
         <label className="mb-1.5 block text-[13px] font-medium text-primary">
-          Posizione sulla mappa<span className="ml-0.5 text-danger">*</span>
+          {t("form.mapPosition")}<span className="ml-0.5 text-danger">*</span>
         </label>
         <p className="mb-1.5 text-[11px] text-muted">
-          Cerca un indirizzo o trascina il segnaposto per le coordinate esatte
+          {t("form.mapHint")}
         </p>
+        {lat != null && lng != null && (
+          <p className="mb-1.5 flex items-center gap-1 text-[11px] text-success">
+            <CircleCheckIcon className="h-3 w-3" />
+            {t("form.positionSelected")}
+          </p>
+        )}
         <SearchableDropdown
           options={options}
           value={undefined}
@@ -95,7 +104,7 @@ export function LocationPickerField({
           onSearchQueryChange={(q) => setSearchQuery(q ?? "")}
           filterType="NO_MATCH"
           createNewOptionIfNoMatch={false}
-          placeholder="Cerca sulla mappa..."
+          placeholder={t("form.searchOnMap")}
           classNameSearchableDropdownContainer="relative flex items-center rounded-xl border border-border bg-card focus-within:border-accent"
           classNameSearchQueryInput="w-full rounded-xl bg-transparent px-3 py-2.5 text-[13px] text-primary outline-none placeholder:text-muted/40"
           classNameDropdownOptions="absolute z-50 w-full mt-1 max-h-60 overflow-y-auto rounded-xl border border-border bg-card shadow-lg"
@@ -113,7 +122,7 @@ export function LocationPickerField({
             <div
               ref={mapCallbackRef}
               role="application"
-              aria-label="Trascina il segnaposto per scegliere la posizione"
+              aria-label={t("form.dragMarkerHint")}
               className="relative z-0 h-[200px] w-full overflow-hidden rounded-xl border border-border"
             />
           </div>

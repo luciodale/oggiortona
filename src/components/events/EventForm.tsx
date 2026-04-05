@@ -12,7 +12,7 @@ import { Textarea } from "../ui/Textarea";
 import { Pill } from "../ui/Pill";
 import { Button } from "../ui/Button";
 import { FormError, SummaryFormError } from "../ui/FormError";
-import { TimePicker } from "../ui/TimePicker";
+import { OptionalTimePicker } from "../ui/OptionalTimePicker";
 import { DatePicker } from "../ui/DatePicker";
 import { LocationPickerField } from "../shared/LocationPickerField";
 
@@ -30,9 +30,10 @@ export function EventForm({ eventId, initialData, onSuccess, onDirtyChange }: Ev
     onSubmit,
     submitState,
     errorMessage,
+    t,
   } = useEventForm(initialData, onSuccess);
 
-  const { locale, t } = useLocale();
+  const { locale } = useLocale();
   const catLabels = eventCategoryLabels(locale);
   const isEdit = eventId != null;
   const { isAdmin } = useSpaAuth();
@@ -55,20 +56,20 @@ export function EventForm({ eventId, initialData, onSuccess, onDirtyChange }: Ev
     <form
       onSubmit={form.handleSubmit((data) => onSubmit(data, eventId))}
       className="space-y-5"
-      aria-label={isEdit ? "Modifica evento" : "Pubblica evento"}
+      aria-label={t(isEdit ? "events.editEvent" : "events.publishEvent")}
     >
       <Input
-        label="Titolo"
+        label={t("common.title")}
         required
-        placeholder="Es: Sagra del pesce"
+        placeholder={t("events.titlePlaceholder")}
         error={form.formState.errors.title?.message}
         {...form.register("title")}
       />
 
       <Textarea
-        label="Descrizione"
-        placeholder="Descrivi l'evento..."
-        rows={3}
+        label={t("common.description")}
+        placeholder={t("events.descPlaceholder")}
+        rows={4}
         maxLength={500}
         error={form.formState.errors.description?.message}
         {...form.register("description")}
@@ -76,9 +77,9 @@ export function EventForm({ eventId, initialData, onSuccess, onDirtyChange }: Ev
 
       <fieldset>
         <legend className="mb-1.5 block text-[13px] font-medium text-primary">
-          Categoria<span className="ml-0.5 text-danger" aria-hidden="true">*</span>
+          {t("events.category")}<span className="ml-0.5 text-danger" aria-hidden="true">*</span>
         </legend>
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Categorie disponibili">
+        <div className="flex flex-wrap gap-2" role="group" aria-label={t("events.category")}>
           {eventFormCategories.map((cat) => (
             <Pill
               key={cat}
@@ -91,7 +92,7 @@ export function EventForm({ eventId, initialData, onSuccess, onDirtyChange }: Ev
         </div>
         <div className="mt-3">
           <Input
-            placeholder="Altra categoria (es: sagra, mercato...)"
+            placeholder={t("events.otherCategory")}
             {...form.register("customCategory")}
           />
         </div>
@@ -100,41 +101,39 @@ export function EventForm({ eventId, initialData, onSuccess, onDirtyChange }: Ev
 
       <div className="grid grid-cols-2 gap-3">
         <DatePicker
-          label="Data inizio"
+          label={t("events.dateStart")}
           required
           value={form.watch("dateStart")}
           onChange={(v) => form.setValue("dateStart", v, { shouldValidate: true, shouldDirty: true })}
           error={form.formState.errors.dateStart?.message}
         />
         <DatePicker
-          label="Data fine"
+          label={t("events.dateEnd")}
           value={form.watch("dateEnd")}
           onChange={(v) => form.setValue("dateEnd", v, { shouldValidate: true, shouldDirty: true })}
           error={form.formState.errors.dateEnd?.message}
-          placeholder="Facoltativa"
+          placeholder={t("events.optional")}
+          clearable
         />
       </div>
 
-      <fieldset>
-        <legend className="mb-1.5 block text-[13px] font-medium text-primary">
-          Orario
-        </legend>
-        <div className="flex items-center gap-2">
-          <TimePicker
-            value={form.watch("timeStart") || "18:00"}
-            onChange={(v) => form.setValue("timeStart", v, { shouldDirty: true })}
-          />
-          <span className="text-muted" aria-hidden="true">&ndash;</span>
-          <TimePicker
-            value={form.watch("timeEnd") || "23:00"}
-            onChange={(v) => form.setValue("timeEnd", v, { shouldDirty: true })}
-          />
-        </div>
-      </fieldset>
+      <div className="space-y-2">
+        <p className="text-[13px] font-medium text-primary">{t("events.time")}</p>
+        <OptionalTimePicker
+          label={t("events.timeStart")}
+          value={form.watch("timeStart")}
+          onChange={(v) => form.setValue("timeStart", v, { shouldDirty: true })}
+        />
+        <OptionalTimePicker
+          label={t("events.timeEnd")}
+          value={form.watch("timeEnd")}
+          onChange={(v) => form.setValue("timeEnd", v, { shouldDirty: true })}
+        />
+      </div>
 
       <LocationPickerField
-        label="Luogo"
-        placeholder="Cerca luogo..."
+        label={t("events.location")}
+        placeholder={t("events.searchLocation")}
         initialAddress={initialData?.address ?? undefined}
         initialLatitude={initialData?.latitude ?? undefined}
         initialLongitude={initialData?.longitude ?? undefined}
@@ -148,25 +147,25 @@ export function EventForm({ eventId, initialData, onSuccess, onDirtyChange }: Ev
       />
 
       <Input
-        label="Telefono"
+        label={t("common.phone")}
         type="tel"
-        placeholder="Es: +39 085 906 1234"
+        placeholder={t("common.phonePlaceholder")}
         error={form.formState.errors.phone?.message}
         {...form.register("phone")}
       />
 
       <Input
-        label="Prezzo (EUR)"
+        label={t("events.priceEur")}
         type="number"
         step="0.01"
         min="0"
-        placeholder="Lascia vuoto se gratuito"
+        placeholder={t("events.priceHint")}
         error={form.formState.errors.price?.message}
         {...form.register("price", { valueAsNumber: true })}
       />
 
       <Input
-        label="Link"
+        label={t("common.link")}
         type="url"
         placeholder="https://..."
         {...form.register("link")}
@@ -193,7 +192,7 @@ export function EventForm({ eventId, initialData, onSuccess, onDirtyChange }: Ev
       {errorMessage && <SummaryFormError message={errorMessage} />}
 
       {form.formState.isSubmitted && Object.keys(form.formState.errors).length > 0 && (
-        <SummaryFormError message="Compila tutti i campi obbligatori prima di procedere" />
+        <SummaryFormError message={t("validation.requiredFields")} />
       )}
 
       <Button
@@ -203,10 +202,10 @@ export function EventForm({ eventId, initialData, onSuccess, onDirtyChange }: Ev
         aria-busy={submitState === "submitting"}
       >
         {submitState === "submitting"
-          ? "Salvataggio..."
+          ? t("common.saving")
           : isEdit
-            ? "Salva modifiche"
-            : "Pubblica evento"}
+            ? t("common.saveChanges")
+            : t("events.publishEvent")}
       </Button>
     </form>
   );

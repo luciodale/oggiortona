@@ -1,37 +1,43 @@
 import { z } from "zod";
+import type { TFn } from "../i18n/t";
 
-const timeString = z.string().regex(/^\d{2}:\d{2}$/, "Formato orario non valido");
-
-const dayFormSchema = z.object({
-  closed: z.boolean(),
-  open: timeString,
-  close: timeString,
-  hasSecondShift: z.boolean(),
-  open2: timeString,
-  close2: timeString,
-});
-
-export type DayFormValues = z.infer<typeof dayFormSchema>;
-
-export const restaurantFormSchema = z
-  .object({
-    name: z.string().trim().min(1, "Nome obbligatorio").max(100, "Max 100 caratteri"),
-    description: z.string().max(300, "Max 300 caratteri"),
-    type: z.string().trim().min(1, "Inserisci almeno un tipo"),
-    priceRange: z.number().int().min(1).max(3),
-    phone: z.string(),
-    address: z.string().trim().min(1, "Indirizzo obbligatorio"),
-    latitude: z.number().nullable(),
-    longitude: z.number().nullable(),
-    menuUrl: z.string(),
-    hours: z.record(z.string(), dayFormSchema),
-  })
-  .refine((data) => data.latitude != null && data.longitude != null, {
-    message: "Seleziona una posizione sulla mappa",
-    path: ["latitude"],
+function createDayFormSchema(t: TFn) {
+  const timeString = z.string().regex(/^\d{2}:\d{2}$/, t("validation.invalidTime"));
+  return z.object({
+    closed: z.boolean(),
+    open: timeString,
+    close: timeString,
+    hasSecondShift: z.boolean(),
+    open2: timeString,
+    close2: timeString,
   });
+}
 
-export type RestaurantFormValues = z.infer<typeof restaurantFormSchema>;
+export type DayFormValues = z.infer<ReturnType<typeof createDayFormSchema>>;
+
+export function createRestaurantFormSchema(t: TFn) {
+  const dayFormSchema = createDayFormSchema(t);
+
+  return z
+    .object({
+      name: z.string().trim().min(1, t("validation.nameRequired")).max(100, t("validation.maxChars", { max: 100 })),
+      description: z.string().max(300, t("validation.maxChars", { max: 300 })),
+      type: z.string().trim().min(1, t("validation.typeRequired")),
+      priceRange: z.number().int().min(1).max(3),
+      phone: z.string(),
+      address: z.string().trim().min(1, t("validation.addressRequired")),
+      latitude: z.number().nullable(),
+      longitude: z.number().nullable(),
+      menuUrl: z.string(),
+      hours: z.record(z.string(), dayFormSchema),
+    })
+    .refine((data) => data.latitude != null && data.longitude != null, {
+      message: t("validation.selectMapPosition"),
+      path: ["latitude"],
+    });
+}
+
+export type RestaurantFormValues = z.infer<ReturnType<typeof createRestaurantFormSchema>>;
 
 export const createRestaurantApiSchema = z.object({
   name: z.string().trim().min(1, "Nome obbligatorio").max(100),

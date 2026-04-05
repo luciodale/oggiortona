@@ -3,6 +3,7 @@ import { en } from "./en";
 import type { Locale } from "../types/domain";
 
 export type TranslationKey = keyof typeof it;
+export type TFn = (key: TranslationKey, params?: Record<string, string | number>) => string;
 
 const translations: Record<Locale, Record<TranslationKey, string>> = { it, en };
 

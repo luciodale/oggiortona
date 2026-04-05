@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useLocale } from "../i18n/useLocale";
 import type { OpeningHours, DaySchedule, ItalianDay } from "../types/database";
 import {
-  restaurantFormSchema,
+  createRestaurantFormSchema,
   type RestaurantFormValues,
   type DayFormValues,
 } from "../schemas/restaurant";
@@ -91,9 +92,11 @@ export type RestaurantFormInitialData = {
 export function useRestaurantForm(initial?: RestaurantFormInitialData, onSuccess?: () => void) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { locale, t } = useLocale();
+  const resolver = useMemo(() => zodResolver(createRestaurantFormSchema(t)), [locale]);
 
   const form = useForm<RestaurantFormValues>({
-    resolver: zodResolver(restaurantFormSchema),
+    resolver,
     defaultValues: {
       name: initial?.name ?? "",
       description: initial?.description ?? "",
@@ -162,7 +165,7 @@ export function useRestaurantForm(initial?: RestaurantFormInitialData, onSuccess
       );
 
       if (res.ok) {
-        toast.success(isEdit ? "Locale aggiornato!" : "Locale inviato per approvazione!");
+        toast.success(t(isEdit ? "restaurants.updated" : "restaurants.submitted"));
         queryClient.invalidateQueries({ queryKey: ["my-restaurants"] });
         queryClient.invalidateQueries({ queryKey: ["admin-restaurants"] });
         queryClient.invalidateQueries({ queryKey: ["home"] });
@@ -180,7 +183,7 @@ export function useRestaurantForm(initial?: RestaurantFormInitialData, onSuccess
         setSubmitState("error");
       }
     } catch {
-      setErrorMessage("Errore di connessione");
+      setErrorMessage(t("validation.connectionError"));
       setSubmitState("error");
     }
   }
@@ -191,5 +194,6 @@ export function useRestaurantForm(initial?: RestaurantFormInitialData, onSuccess
     onSubmit,
     submitState,
     errorMessage,
+    t,
   };
 }

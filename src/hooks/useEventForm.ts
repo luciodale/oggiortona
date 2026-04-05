@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useLocale } from "../i18n/useLocale";
 import {
-  eventFormSchema,
+  createEventFormSchema,
   FORM_CATEGORIES,
   type EventFormValues,
 } from "../schemas/event";
@@ -42,9 +43,11 @@ export function useEventForm(initial?: EventFormInitialData, onSuccess?: () => v
   const initialSplit = initial ? splitCategories(initial.category) : null;
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { locale, t } = useLocale();
+  const resolver = useMemo(() => zodResolver(createEventFormSchema(t)), [locale]);
 
   const form = useForm<EventFormValues>({
-    resolver: zodResolver(eventFormSchema),
+    resolver,
     defaultValues: {
       title: initial?.title ?? "",
       description: initial?.description ?? "",
@@ -117,7 +120,7 @@ export function useEventForm(initial?: EventFormInitialData, onSuccess?: () => v
       );
 
       if (res.ok) {
-        toast.success(isEdit ? "Evento aggiornato!" : "Evento pubblicato!");
+        toast.success(t(isEdit ? "events.updated" : "events.published"));
         queryClient.invalidateQueries({ queryKey: ["home"] });
         queryClient.invalidateQueries({ queryKey: ["my-events"] });
         queryClient.invalidateQueries({ queryKey: ["admin-events"] });
@@ -135,7 +138,7 @@ export function useEventForm(initial?: EventFormInitialData, onSuccess?: () => v
         setSubmitState("error");
       }
     } catch {
-      setErrorMessage("Errore di connessione");
+      setErrorMessage(t("validation.connectionError"));
       setSubmitState("error");
     }
   }
@@ -146,5 +149,6 @@ export function useEventForm(initial?: EventFormInitialData, onSuccess?: () => v
     onSubmit,
     submitState,
     errorMessage,
+    t,
   };
 }

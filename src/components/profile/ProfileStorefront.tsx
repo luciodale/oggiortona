@@ -22,7 +22,7 @@ export function ProfileStorefront({ restaurantId }: ProfileStorefrontProps) {
   const { t } = useLocale();
   const { restaurantName, activeCount, loading } = usePromotionsQuery(restaurantId);
   const { createPromotion, submitting } = usePromotionMutations(restaurantId);
-  const { form, setForm, setType, errorMessage, buildCreateBody, resetForm } = usePromotionForm();
+  const { form, setForm, setType, errorMessage, titleError, validateTitle, buildCreateBody, resetForm } = usePromotionForm();
   const { openPromotionsList } = useFormSheet();
 
   const limitReached = activeCount >= MAX_ACTIVE;
@@ -38,13 +38,13 @@ export function ProfileStorefront({ restaurantId }: ProfileStorefrontProps) {
     id: 0,
     restaurantId: Number(restaurantId),
     type: form.type,
-    title: form.title || "(titolo)",
+    title: form.title || t("storefront.titleFallback"),
     description: null,
     price: form.price ? Number(form.price) : null,
     dateStart: today,
     dateEnd: computeDateEnd(today, Number(form.durationDays)),
-    timeStart: form.hasTime ? form.timeStart : null,
-    timeEnd: form.hasTime ? form.timeEnd : null,
+    timeStart: form.timeStart || null,
+    timeEnd: form.timeEnd || null,
     createdAt: today,
   };
 
@@ -75,6 +75,8 @@ export function ProfileStorefront({ restaurantId }: ProfileStorefrontProps) {
           form={form}
           onChange={setForm}
           onTypeChange={setType}
+          titleError={titleError}
+          onValidateTitle={validateTitle}
         />
 
         {errorMessage && (
@@ -106,7 +108,7 @@ export function ProfileStorefront({ restaurantId }: ProfileStorefrontProps) {
         className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-border py-3 text-[13px] font-semibold text-muted transition-colors hover:text-primary"
       >
         <ListIcon className="h-4 w-4" />
-        Gestisci pubblicazioni
+        {t("storefront.managePublications")}
       </button>
     </div>
   );
