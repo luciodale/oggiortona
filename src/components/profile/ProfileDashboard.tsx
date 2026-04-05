@@ -63,81 +63,83 @@ export function ProfileDashboard() {
   }, [events]);
 
   return (
-    <div>
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h1 className="font-family-display text-2xl font-medium tracking-tight text-primary">
-            {t("profile.hello")}{user?.name ? `, ${user.name}` : ""}!
-          </h1>
-          {user?.email && <p className="mt-1 text-sm text-muted">{user.email}</p>}
-        </div>
-        <LogoutButton />
-      </div>
-
-      <div className="mt-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <select
-              id="locale-select"
-              value={locale}
-              onChange={(e) => {
-                const newLocale = e.target.value as Locale;
-                document.cookie = `locale=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
-                setLocale(newLocale);
-              }}
-              className="appearance-none rounded-lg border border-border bg-card py-1.5 pl-3 pr-8 text-sm text-primary"
-            >
-              <option value="it">{t("lang.italian")}</option>
-              <option value="en">{t("lang.english")}</option>
-            </select>
-            <ChevronDownIcon className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted" strokeWidth={2.5} />
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-4">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h1 className="font-family-display text-2xl font-medium tracking-tight text-primary">
+              {t("profile.hello")}{user?.name ? `, ${user.name}` : ""}!
+            </h1>
+            {user?.email && <p className="mt-1 text-sm text-muted">{user.email}</p>}
           </div>
-          <div className="relative">
-            <select
-              id="theme-select"
-              value={theme}
-              onChange={(e) => {
-                const pref = e.target.value as ThemePreference;
-                setTheme(pref);
-                applyTheme(pref);
-              }}
-              className="appearance-none rounded-lg border border-border bg-card py-1.5 pl-3 pr-8 text-sm text-primary"
-            >
-              <option value="system">{t("theme.system")}</option>
-              <option value="light">{t("theme.light")}</option>
-              <option value="dark">{t("theme.dark")}</option>
-            </select>
-            <ChevronDownIcon className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted" strokeWidth={2.5} />
-          </div>
+          <LogoutButton />
         </div>
-        <PushToggle />
-      </div>
 
-      <div className="mt-6 flex gap-3">
-        <button
-          type="button"
-          onClick={() => openRestaurantForm()}
-          className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-mangiare py-3 text-[13px] font-semibold text-white transition-all hover:bg-mangiare/90 active:scale-[0.98]"
-        >
-          <CupIcon className="h-4 w-4" />
-          {t("profile.addVenue")}
-        </button>
-        <button
-          type="button"
-          onClick={() => openEventForm()}
-          className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-fare py-3 text-[13px] font-semibold text-white transition-all hover:bg-fare/90 active:scale-[0.98]"
-        >
-          <CalendarIcon className="h-4 w-4" />
-          {t("profile.addEvent")}
-        </button>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <select
+                id="locale-select"
+                value={locale}
+                onChange={(e) => {
+                  const newLocale = e.target.value as Locale;
+                  document.cookie = `locale=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
+                  setLocale(newLocale);
+                }}
+                className="appearance-none rounded-lg border border-border bg-card py-1.5 pl-3 pr-8 text-sm text-primary"
+              >
+                <option value="it">{t("lang.italian")}</option>
+                <option value="en">{t("lang.english")}</option>
+              </select>
+              <ChevronDownIcon className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted" strokeWidth={2.5} />
+            </div>
+            <div className="relative">
+              <select
+                id="theme-select"
+                value={theme}
+                onChange={(e) => {
+                  const pref = e.target.value as ThemePreference;
+                  setTheme(pref);
+                  applyTheme(pref);
+                }}
+                className="appearance-none rounded-lg border border-border bg-card py-1.5 pl-3 pr-8 text-sm text-primary"
+              >
+                <option value="system">{t("theme.system")}</option>
+                <option value="light">{t("theme.light")}</option>
+                <option value="dark">{t("theme.dark")}</option>
+              </select>
+              <ChevronDownIcon className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted" strokeWidth={2.5} />
+            </div>
+          </div>
+          <PushToggle />
+        </div>
+
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={() => openRestaurantForm()}
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-mangiare py-3 text-[13px] font-semibold text-white transition-all hover:bg-mangiare/90 active:scale-[0.98]"
+          >
+            <CupIcon className="h-4 w-4" />
+            {t("profile.addVenue")}
+          </button>
+          <button
+            type="button"
+            onClick={() => openEventForm()}
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-fare py-3 text-[13px] font-semibold text-white transition-all hover:bg-fare/90 active:scale-[0.98]"
+          >
+            <CalendarIcon className="h-4 w-4" />
+            {t("profile.addEvent")}
+          </button>
+        </div>
       </div>
 
       {loading ? (
-        <ContentLoader className="mt-8" />
+        <ContentLoader />
       ) : (
         <>
           {restaurants.length > 0 && (
-            <div className="mt-8">
+            <section>
               <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-muted">
                 {t("profile.yourVenues")}
               </h2>
@@ -146,11 +148,11 @@ export function ProfileDashboard() {
                   <RestaurantListCard key={r.id} restaurant={r} />
                 ))}
               </div>
-            </div>
+            </section>
           )}
 
           {activeEvents.length > 0 && (
-            <div className="mt-8">
+            <section>
               <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-muted">
                 {t("profile.yourEvents")}
               </h2>
@@ -159,14 +161,14 @@ export function ProfileDashboard() {
                   <EventListCard key={e.id} event={e} />
                 ))}
               </div>
-            </div>
+            </section>
           )}
 
           <PastEventsList events={pastEvents} />
         </>
       )}
 
-      <div className="mt-12 border-t border-border-light pt-4 text-center">
+      <div className="border-t border-border-light pt-4 text-center">
         <a href="/terms" className="text-[11px] text-muted hover:text-primary transition-colors">
           {t("auth.terms")}
         </a>

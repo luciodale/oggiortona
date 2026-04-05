@@ -15,7 +15,7 @@ export function PastEventsList({ events }: PastEventsListProps) {
   if (events.length === 0) return null;
 
   return (
-    <div className="mt-8">
+    <div>
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
