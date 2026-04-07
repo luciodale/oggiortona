@@ -5,13 +5,14 @@ import { useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useLocale } from "../i18n/useLocale";
-import type { OpeningHours, DaySchedule, ItalianDay } from "../types/database";
+import type { OpeningHours, ItalianDay } from "../types/database";
 import {
   createRestaurantFormSchema,
   type RestaurantFormValues,
   type DayFormValues,
 } from "../schemas/restaurant";
 import { getOrderedDays } from "../utils/time";
+import { buildRestaurantPayload } from "../utils/formData";
 
 type SubmitState = "idle" | "submitting" | "error";
 
@@ -33,25 +34,6 @@ function buildInitialHours(): Record<ItalianDay, DayFormValues> {
     result[day] = emptyDayState();
   }
   return result;
-}
-
-function hoursToOpeningHours(
-  hours: Record<string, DayFormValues>,
-): OpeningHours {
-  const result = {} as Record<string, DaySchedule | null>;
-  for (const [day, state] of Object.entries(hours)) {
-    if (state.closed) {
-      result[day] = null;
-    } else {
-      result[day] = {
-        open: state.open,
-        close: state.close,
-        open2: state.hasSecondShift ? state.open2 : null,
-        close2: state.hasSecondShift ? state.close2 : null,
-      };
-    }
-  }
-  return result as OpeningHours;
 }
 
 function openingHoursToForm(
@@ -133,24 +115,16 @@ export function useRestaurantForm(initial?: RestaurantFormInitialData, onSuccess
     setSubmitState("submitting");
     setErrorMessage("");
 
-    const type = data.type
-      .split(",")
-      .map((s) => s.trim().toLowerCase())
-      .filter(Boolean)
-      .join(",");
+    // Defensive: the form refine should already prevent this, but if onSubmit
+    // is ever invoked outside the resolver path, fail locally with a clear
+    // message instead of letting the API reject `null` lat/lng with a 400.
+    if (data.latitude == null || data.longitude == null) {
+      setErrorMessage(t("validation.selectMapPosition"));
+      setSubmitState("error");
+      return;
+    }
 
-    const payload = {
-      name: data.name,
-      description: data.description || undefined,
-      type,
-      price_range: data.priceRange,
-      phone: data.phone || undefined,
-      address: data.address,
-      latitude: data.latitude ?? undefined,
-      longitude: data.longitude ?? undefined,
-      opening_hours: JSON.stringify(hoursToOpeningHours(data.hours)),
-      menu_url: data.menuUrl || undefined,
-    };
+    const payload = buildRestaurantPayload(data);
 
     const isEdit = restaurantId != null;
 

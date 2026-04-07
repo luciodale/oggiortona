@@ -11,6 +11,7 @@ import {
   type EventFormValues,
 } from "../schemas/event";
 import { getTodayISO } from "../utils/date";
+import { buildEventPayload } from "../utils/formData";
 
 type SubmitState = "idle" | "submitting" | "error";
 
@@ -82,30 +83,16 @@ export function useEventForm(initial?: EventFormInitialData, onSuccess?: () => v
     setSubmitState("submitting");
     setErrorMessage("");
 
-    const allCategories = [
-      ...data.categories,
-      ...data.customCategory
-        .split(",")
-        .map((s) => s.trim().toLowerCase())
-        .filter(Boolean),
-    ];
+    // Defensive: the form refine should already prevent this, but if onSubmit
+    // is ever invoked outside the resolver path, fail locally with a clear
+    // message instead of letting the API reject `null` lat/lng with a 400.
+    if (data.latitude == null || data.longitude == null) {
+      setErrorMessage(t("validation.selectMapPosition"));
+      setSubmitState("error");
+      return;
+    }
 
-    const payload = {
-      title: data.title,
-      description: data.description || undefined,
-      category: allCategories.join(","),
-      date_start: data.dateStart,
-      date_end: data.dateEnd || undefined,
-      time_start: data.timeStart || undefined,
-      time_end: data.timeEnd || undefined,
-      address: data.address,
-      phone: data.phone || undefined,
-      latitude: data.latitude ?? undefined,
-      longitude: data.longitude ?? undefined,
-      price: data.price != null && !Number.isNaN(data.price) ? data.price : undefined,
-      link: data.link || undefined,
-      restaurant_id: data.restaurantId ?? undefined,
-    };
+    const payload = buildEventPayload(data);
 
     const isEdit = eventId != null;
 
