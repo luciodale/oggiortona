@@ -6,6 +6,7 @@ export function EventsRoute() {
   const { data, isLoading } = useQuery<{ events: Array<EventWithRestaurant> }>({
     queryKey: ["events"],
     queryFn: () => fetch("/api/events").then((r) => r.json()),
+    staleTime: 0,
   });
 
   return (

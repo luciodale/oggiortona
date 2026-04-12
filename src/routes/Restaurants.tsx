@@ -9,6 +9,7 @@ export function RestaurantsRoute() {
   const { data: restaurantData, isLoading } = useQuery<{ restaurants: Array<RestaurantWithStatus> }>({
     queryKey: ["restaurants"],
     queryFn: () => fetch("/api/restaurants").then((r) => r.json()),
+    staleTime: 0,
   });
 
   const { data: pinsData } = useQuery<{ restaurantIds: Array<number> }>({
