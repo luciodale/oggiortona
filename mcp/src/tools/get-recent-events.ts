@@ -23,7 +23,7 @@ export async function getRecentEvents(args: {
   const daysAhead = args.days_ahead ?? 60;
   const target = args.target ?? "remote";
 
-  const sql = `SELECT id, title, date_start, date_end, time_start, time_end, address, category, link, active, approved FROM events WHERE deleted = 0 AND date_start >= date('now', '-7 days') AND date_start <= date('now', '+${daysAhead} days') ORDER BY date_start ASC`;
+  const sql = `SELECT id, title, date_start, date_end, time_start, time_end, address, category, link, active, approved FROM events WHERE deleted = 0 AND date_start >= date('now') AND date_start <= date('now', '+${daysAhead} days') ORDER BY date_start ASC`;
 
   const results = await executeD1(sql, target);
 

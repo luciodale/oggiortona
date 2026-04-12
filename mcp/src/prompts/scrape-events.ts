@@ -49,7 +49,7 @@ You MUST insert at least 10 new events per session. This is non-negotiable. If a
    - Must be in or very near Ortona, Italy
    - Must be a real, upcoming event (not past, not generic info)
    - Must have a verifiable source link
-4. **Deduplicate:** Skip events that match an existing one by title + date, or by source link.
+4. **Deduplicate (critical):** Compare every scraped event against the existing events from step 1. Two events are the same if they refer to the same real-world happening, even when titles differ across sources (e.g. "Sagra del Pesce" vs "Grande Sagra del Pesce al Porto"). Consider dates, venue, and description to judge semantic equivalence. Skip any event that already exists. When in doubt, skip it.
 5. **Balance:** Aim for a balanced mix of categories. Do not let one category dominate. Prioritize city-wide events, traditional festivals, and folklore above all others.
 6. **Insert:** Call insert_event for each new, qualifying event. **Minimum 10, maximum 20 new events per session.**
 7. **Fallback if under 10:** If you still have fewer than 10 after all the above, try these additional searches:
