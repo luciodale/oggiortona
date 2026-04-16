@@ -73,7 +73,7 @@ export function RestaurantCard({ restaurant, isPinned, onTogglePin, zipperCard =
                 <span aria-hidden="true">&middot;</span>
                 <span aria-label={t("aria.priceRange", { range: restaurant.priceRange })}>
                   {Array.from({ length: 3 }, (_, i) => (
-                    <span key={i} className={i < restaurant.priceRange ? "text-primary" : "text-border"}>
+                    <span key={i} className={i < restaurant.priceRange ? "text-primary" : "text-price-dim"}>
                       &euro;
                     </span>
                   ))}

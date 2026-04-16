@@ -21,6 +21,7 @@
   --color-border: #e0d5c5;
   --color-border-light: #ece5da;
   --color-muted: #6d6155;
+  --color-price-dim: #e0d5c5;
   --color-success: #4a7c59;
   --color-danger: #b84233;
 
@@ -186,6 +187,7 @@ html.dark {
   --color-border: #3a322b;
   --color-border-light: #2e2820;
   --color-muted: #9a8d80;
+  --color-price-dim: #6a5d52;
   --color-success: #5a9a6e;
   --color-danger: #d45a4a;
 

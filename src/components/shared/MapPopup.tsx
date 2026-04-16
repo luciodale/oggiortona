@@ -24,7 +24,7 @@ function PriceRange({ range }: { range: number }) {
   return (
     <span className="ml-1.5 text-xs">
       {[1, 2, 3].map((i) => (
-        <span key={i} className={i <= range ? "text-primary" : "text-border"}>
+        <span key={i} className={i <= range ? "text-primary" : "text-price-dim"}>
           &euro;
         </span>
       ))}

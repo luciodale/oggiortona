@@ -33,7 +33,7 @@ export function RestaurantDetailBody({ restaurant }: RestaurantDetailBodyProps) 
             <span aria-hidden="true">&middot;</span>
             <span aria-label={t("aria.priceRange", { range: restaurant.priceRange })}>
               {[1, 2, 3].map((i) => (
-                <span key={i} aria-hidden="true" className={i <= restaurant.priceRange ? "text-primary" : "text-border"}>&euro;</span>
+                <span key={i} aria-hidden="true" className={i <= restaurant.priceRange ? "text-primary" : "text-price-dim"}>&euro;</span>
               ))}
             </span>
           </div>
