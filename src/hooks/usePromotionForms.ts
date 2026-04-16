@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useLocale } from "../i18n/useLocale";
+import type { PromotionRow } from "../types/database";
+import { durationFromRange } from "../utils/promotions";
 
 export type PromotionType = "generale" | "special" | "deal" | "news";
 
@@ -21,9 +23,25 @@ const INITIAL: PromotionFormState = {
   timeEnd: "",
 };
 
-export function usePromotionForm() {
+function isPromotionType(value: string): value is PromotionType {
+  return value === "generale" || value === "special" || value === "deal" || value === "news";
+}
+
+export function promotionToFormState(promotion: PromotionRow): PromotionFormState {
+  const duration = durationFromRange(promotion.dateStart, promotion.dateEnd);
+  return {
+    type: isPromotionType(promotion.type) ? promotion.type : "generale",
+    title: promotion.title,
+    price: promotion.price != null ? String(promotion.price) : "",
+    durationDays: String(duration),
+    timeStart: promotion.timeStart ?? "",
+    timeEnd: promotion.timeEnd ?? "",
+  };
+}
+
+export function usePromotionForm(initial?: PromotionFormState) {
   const { t } = useLocale();
-  const [form, setForm] = useState<PromotionFormState>(INITIAL);
+  const [form, setForm] = useState<PromotionFormState>(initial ?? INITIAL);
   const [errorMessage, setErrorMessage] = useState("");
   const [titleError, setTitleError] = useState("");
 
@@ -45,7 +63,7 @@ export function usePromotionForm() {
     return true;
   }
 
-  function buildCreateBody(): Record<string, unknown> | null {
+  function buildBody(): Record<string, unknown> | null {
     setErrorMessage("");
 
     if (!validateTitle(form.title)) return null;
@@ -61,7 +79,7 @@ export function usePromotionForm() {
   }
 
   function resetForm() {
-    setForm(INITIAL);
+    setForm(initial ?? INITIAL);
     setErrorMessage("");
     setTitleError("");
   }
@@ -73,7 +91,8 @@ export function usePromotionForm() {
     errorMessage,
     titleError,
     validateTitle,
-    buildCreateBody,
+    buildCreateBody: buildBody,
+    buildEditBody: buildBody,
     resetForm,
   };
 }

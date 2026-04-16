@@ -47,10 +47,18 @@ export type DashboardResponse = {
 
 // -- Promotions --
 
+export type CooldownSnapshot = {
+  max: number;
+  windowHours: number;
+  used: number;
+  nextSlotAt: string | null;
+  remainingMs: number | null;
+};
+
 export type PromotionsResponse = {
   restaurantName: string;
   items: Array<PromotionRow>;
-  activeCount: number;
+  cooldown: CooldownSnapshot;
 };
 
 // -- Admin --

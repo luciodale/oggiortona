@@ -62,24 +62,14 @@ describe("groupPromotionsByRestaurant", () => {
     expect(result.get(20)).toHaveLength(1);
   });
 
-  it("limits promotions per restaurant to default of 6", () => {
+  it("keeps all promotions per restaurant without capping", () => {
     const promos = Array.from({ length: 10 }, (_, i) =>
       makePromotion({ id: i + 1, restaurantId: 1 }),
     );
 
     const result = groupPromotionsByRestaurant(promos);
 
-    expect(result.get(1)).toHaveLength(6);
-  });
-
-  it("respects custom limit", () => {
-    const promos = Array.from({ length: 5 }, (_, i) =>
-      makePromotion({ id: i + 1, restaurantId: 1 }),
-    );
-
-    const result = groupPromotionsByRestaurant(promos, 3);
-
-    expect(result.get(1)).toHaveLength(3);
+    expect(result.get(1)).toHaveLength(10);
   });
 
   it("returns empty map for empty input", () => {

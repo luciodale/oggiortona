@@ -6,11 +6,12 @@ import { PromotionCard } from "./PromotionCard";
 
 type PromotionsListProps = {
   items: Array<PromotionRow>;
+  onEdit: (item: PromotionRow) => void;
   onRenew: (id: number) => void;
   onDelete: (id: number) => void;
 };
 
-export function PromotionsList({ items, onRenew, onDelete }: PromotionsListProps) {
+export function PromotionsList({ items, onEdit, onRenew, onDelete }: PromotionsListProps) {
   const { locale, t } = useLocale();
   const sorted = [...items].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 
@@ -32,6 +33,7 @@ export function PromotionsList({ items, onRenew, onDelete }: PromotionsListProps
                 {badge.label}
               </span>
             }
+            onEdit={() => onEdit(item)}
             onRenew={() => onRenew(item.id)}
             onDelete={() => onDelete(item.id)}
           >

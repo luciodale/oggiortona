@@ -1,5 +1,7 @@
 import { usePromotionsQuery } from "../../hooks/usePromotionsQuery";
 import { usePromotionMutations } from "../../hooks/usePromotionMutations";
+import { useFormSheet } from "../../hooks/useFormSheet";
+import type { PromotionRow } from "../../types/database";
 import { PromotionsList } from "./storefront/PromotionsList";
 
 type ProfilePromotionsListProps = {
@@ -9,6 +11,11 @@ type ProfilePromotionsListProps = {
 export function ProfilePromotionsList({ restaurantId }: ProfilePromotionsListProps) {
   const { items, restaurantName, loading } = usePromotionsQuery(restaurantId);
   const { deletePromotion, renewPromotion } = usePromotionMutations(restaurantId);
+  const { openPromotionEdit } = useFormSheet();
+
+  function handleEdit(promotion: PromotionRow) {
+    openPromotionEdit(Number(restaurantId), promotion);
+  }
 
   if (loading) {
     return (
@@ -28,6 +35,7 @@ export function ProfilePromotionsList({ restaurantId }: ProfilePromotionsListPro
       ) : (
         <PromotionsList
           items={items}
+          onEdit={handleEdit}
           onRenew={renewPromotion}
           onDelete={deletePromotion}
         />

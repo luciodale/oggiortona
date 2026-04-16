@@ -40,10 +40,15 @@ export type FormSheetMeta =
   | { kind: "restaurant-form"; restaurantId?: number; initialData?: RestaurantFormInitialData }
   | { kind: "event-form"; eventId?: number; initialData?: EventFormInitialData }
   | { kind: "storefront"; restaurantId: number }
-  | { kind: "promotions-list"; restaurantId: number };
+  | { kind: "promotions-list"; restaurantId: number }
+  | { kind: "promotion-edit"; restaurantId: number; promotion: PromotionRow };
 
 export function isFormSheetMeta(value: unknown): value is FormSheetMeta {
   if (typeof value !== "object" || value === null) return false;
   const v = value as Record<string, unknown>;
-  return v.kind === "restaurant-form" || v.kind === "event-form" || v.kind === "storefront" || v.kind === "promotions-list";
+  return v.kind === "restaurant-form"
+    || v.kind === "event-form"
+    || v.kind === "storefront"
+    || v.kind === "promotions-list"
+    || v.kind === "promotion-edit";
 }

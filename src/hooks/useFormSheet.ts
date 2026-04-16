@@ -1,5 +1,5 @@
 import { useSwipeBarContext } from "@luciodale/swipe-bar";
-import type { RestaurantRow, EventRow } from "../types/database";
+import type { RestaurantRow, EventRow, PromotionRow } from "../types/database";
 import type { FormSheetMeta } from "../types/domain";
 import { restaurantToFormData, eventToFormData } from "../utils/formData";
 
@@ -34,9 +34,14 @@ export function useFormSheet() {
     openSidebarFully("bottom", { id: "form", meta });
   }
 
+  function openPromotionEdit(restaurantId: number, promotion: PromotionRow) {
+    const meta: FormSheetMeta = { kind: "promotion-edit", restaurantId, promotion };
+    openSidebarFully("bottom", { id: "form", meta });
+  }
+
   function closeForm() {
     closeSidebar("bottom", { id: "form" });
   }
 
-  return { openRestaurantForm, openEventForm, openStorefront, openPromotionsList, closeForm };
+  return { openRestaurantForm, openEventForm, openStorefront, openPromotionsList, openPromotionEdit, closeForm };
 }

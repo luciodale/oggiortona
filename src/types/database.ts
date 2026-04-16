@@ -5,6 +5,7 @@ import type {
   users,
   restaurants,
   promotions,
+  promotionBumps,
   events,
   pushSubscriptions,
   pinnedRestaurants,
@@ -13,6 +14,7 @@ import type {
 export type UserRow = InferSelectModel<typeof users>;
 export type RestaurantRow = InferSelectModel<typeof restaurants>;
 export type PromotionRow = InferSelectModel<typeof promotions>;
+export type PromotionBumpRow = InferSelectModel<typeof promotionBumps>;
 export type EventRow = InferSelectModel<typeof events>;
 export type PushSubscriptionRow = InferSelectModel<typeof pushSubscriptions>;
 export type PinnedRestaurantRow = InferSelectModel<typeof pinnedRestaurants>;

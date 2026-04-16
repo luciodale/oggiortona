@@ -3,14 +3,11 @@ import type { RestaurantWithStatus } from "../types/domain";
 import { isOpenNow, parseOpeningHours } from "./time";
 import { parseTypes } from "./restaurant";
 
-export function groupPromotionsByRestaurant(
-  allPromotions: Array<PromotionRow>,
-  limit = 6,
-) {
+export function groupPromotionsByRestaurant(allPromotions: Array<PromotionRow>) {
   const map = new Map<number, Array<PromotionRow>>();
   for (const p of allPromotions) {
     const list = map.get(p.restaurantId) ?? [];
-    if (list.length < limit) list.push(p);
+    list.push(p);
     map.set(p.restaurantId, list);
   }
   return map;

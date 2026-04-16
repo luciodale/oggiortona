@@ -56,6 +56,17 @@ export const promotions = sqliteTable("promotions", {
   index("idx_promotions_dates").on(table.dateStart, table.dateEnd),
 ]);
 
+// -- Promotion Bumps (append-only audit: create | renew, drives 12h cooldown) --
+
+export const promotionBumps = sqliteTable("promotion_bumps", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  restaurantId: integer("restaurant_id").notNull().references(() => restaurants.id, { onDelete: "cascade" }),
+  action: text("action").notNull(), // 'create' | 'renew'
+  createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
+}, (table) => [
+  index("idx_promotion_bumps_restaurant_created").on(table.restaurantId, table.createdAt),
+]);
+
 // -- Push Subscriptions (Web Push: admin | owner | general) --
 
 export const pushSubscriptions = sqliteTable("push_subscriptions", {

@@ -7,12 +7,14 @@ import { RestaurantForm } from "../restaurants/RestaurantForm";
 import { EventForm } from "../events/EventForm";
 import { ProfileStorefront } from "../profile/ProfileStorefront";
 import { ProfilePromotionsList } from "../profile/ProfilePromotionsList";
+import { ProfilePromotionEdit } from "../profile/ProfilePromotionEdit";
 
 function getTitle(meta: ReturnType<typeof useSwipeBarContext>["bottomSidebars"]["form"]["meta"]) {
   if (!isFormSheetMeta(meta)) return "";
   if (meta.kind === "restaurant-form") return meta.restaurantId ? "Modifica locale" : "Aggiungi locale";
   if (meta.kind === "event-form") return meta.eventId ? "Modifica evento" : "Aggiungi evento";
   if (meta.kind === "promotions-list") return "Pubblicazioni";
+  if (meta.kind === "promotion-edit") return "Modifica pubblicazione";
   return "Pubblica";
 }
 
@@ -91,6 +93,13 @@ export function FormBottomSheet() {
               )}
               {validMeta.kind === "promotions-list" && (
                 <ProfilePromotionsList restaurantId={String(validMeta.restaurantId)} />
+              )}
+              {validMeta.kind === "promotion-edit" && (
+                <ProfilePromotionEdit
+                  restaurantId={String(validMeta.restaurantId)}
+                  promotion={validMeta.promotion}
+                  onSuccess={closeForm}
+                />
               )}
               <button
                 type="button"

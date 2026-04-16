@@ -5,6 +5,7 @@ import { useFormSheet } from "../../hooks/useFormSheet";
 import { useLocale } from "../../i18n/useLocale";
 import { getTodayISO } from "../../utils/date";
 import { computeDateEnd } from "../../utils/promotions";
+import { formatRemainingMs } from "../../utils/cooldownFormat";
 import type { PromotionRow } from "../../types/database";
 import { Button } from "../ui/Button";
 import { SummaryFormError } from "../ui/FormError";
@@ -12,20 +13,19 @@ import { PromotionForm } from "./storefront/PromotionForm";
 import { PromotionCardPublic } from "../PromotionCardPublic";
 import { ListIcon } from "../../icons/ListIcon";
 
-const MAX_ACTIVE = 3;
-
 type ProfileStorefrontProps = {
   restaurantId: string;
 };
 
 export function ProfileStorefront({ restaurantId }: ProfileStorefrontProps) {
   const { t } = useLocale();
-  const { restaurantName, activeCount, loading } = usePromotionsQuery(restaurantId);
+  const { restaurantName, cooldown, loading } = usePromotionsQuery(restaurantId);
   const { createPromotion, submitting } = usePromotionMutations(restaurantId);
   const { form, setForm, setType, errorMessage, titleError, validateTitle, buildCreateBody, resetForm } = usePromotionForm();
   const { openPromotionsList } = useFormSheet();
 
-  const limitReached = activeCount >= MAX_ACTIVE;
+  const limitReached = cooldown.used >= cooldown.max;
+  const remaining = formatRemainingMs(cooldown.remainingMs);
 
   function handleCreate() {
     const body = buildCreateBody();
@@ -62,11 +62,16 @@ export function ProfileStorefront({ restaurantId }: ProfileStorefrontProps) {
         <p className="mb-3 text-[11px] text-muted">{restaurantName}</p>
       )}
 
-      <div className="mb-3 flex items-center justify-between rounded-xl bg-surface-warm px-3 py-2">
-        <span className={`text-[12px] font-medium ${limitReached ? "text-danger" : "text-muted"}`}>
-          {limitReached
-            ? t("storefront.limitReached", { max: MAX_ACTIVE })
-            : t("storefront.activeCount", { current: activeCount, max: MAX_ACTIVE })}
+      <div className="mb-3 flex flex-col gap-1 rounded-xl bg-surface-warm px-3 py-2">
+        <span className="text-[12px] font-medium text-primary">
+          {t("storefront.cooldownInfo", { max: cooldown.max, hours: cooldown.windowHours })}
+        </span>
+        <span className={`text-[11px] ${limitReached ? "text-danger" : "text-muted"}`}>
+          {t("storefront.cooldownUsed", { used: cooldown.used, max: cooldown.max })}
+          {" · "}
+          {limitReached && remaining
+            ? t("storefront.cooldownRemaining", { time: remaining })
+            : t("storefront.cooldownAvailable")}
         </span>
       </div>
 
@@ -93,6 +98,10 @@ export function ProfileStorefront({ restaurantId }: ProfileStorefrontProps) {
         >
           {submitting ? t("common.saving") : t("common.publish")}
         </Button>
+
+        <p className="mt-2 text-[11px] text-muted">
+          {t("storefront.bumpNotice")}
+        </p>
       </div>
 
       <div className="mt-4">

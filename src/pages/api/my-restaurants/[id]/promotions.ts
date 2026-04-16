@@ -1,27 +1,14 @@
 import type { APIContext } from "astro";
 import { restaurants, promotions } from "../../../../db/schema";
-import { eq, desc, and as dbAnd, lte, gte, count } from "drizzle-orm";
-import type { Db } from "../../../../db/client";
+import { eq, desc } from "drizzle-orm";
 import { getTodayISO } from "../../../../utils/date";
 import { computeDateEnd } from "../../../../utils/promotions";
+import { buildCooldownSnapshot, insertBump, isCooldownActive } from "../../../../utils/promotionCooldown";
 
 const VALID_TYPES = ["generale", "special", "deal", "news"] as const;
-const MAX_ACTIVE = 3;
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === "object" && v !== null && !Array.isArray(v);
-}
-
-async function countActive(db: Db, restaurantId: number, today: string) {
-  const [row] = await db
-    .select({ count: count() })
-    .from(promotions)
-    .where(dbAnd(
-      eq(promotions.restaurantId, restaurantId),
-      lte(promotions.dateStart, today),
-      gte(promotions.dateEnd, today),
-    ));
-  return row?.count ?? 0;
 }
 
 export async function GET({ params, locals }: APIContext) {
@@ -41,20 +28,17 @@ export async function GET({ params, locals }: APIContext) {
     return Response.json({ error: "Non autorizzato" }, { status: 403 });
   }
 
-  const today = getTodayISO();
-
-  const [items, activeCount] = await Promise.all([
+  const [items, cooldown] = await Promise.all([
     db.select().from(promotions)
       .where(eq(promotions.restaurantId, restaurantId))
-      .orderBy(desc(promotions.createdAt))
-      .limit(60),
-    countActive(db, restaurantId, today),
+      .orderBy(desc(promotions.createdAt)),
+    buildCooldownSnapshot(db, restaurantId),
   ]);
 
   return Response.json({
     restaurantName: restaurant.name,
     items,
-    activeCount,
+    cooldown,
   });
 }
 
@@ -87,16 +71,20 @@ export async function POST({ params, locals, request }: APIContext) {
   }
 
   const type = typeof raw.type === "string" ? raw.type : "";
-  const today = getTodayISO();
 
   if (!VALID_TYPES.includes(type as typeof VALID_TYPES[number])) {
     return Response.json({ error: "Tipo non valido" }, { status: 400 });
   }
 
-  const activeCount = await countActive(db, restaurantId, today);
-  if (activeCount >= MAX_ACTIVE) {
+  if (await isCooldownActive(db, restaurantId)) {
+    const cooldown = await buildCooldownSnapshot(db, restaurantId);
     return Response.json(
-      { error: "Limite raggiunto: massimo 3 pubblicazioni attive", code: "LIMIT_REACHED" },
+      {
+        error: "Limite raggiunto",
+        code: "COOLDOWN_ACTIVE",
+        nextSlotAt: cooldown.nextSlotAt,
+        remainingMs: cooldown.remainingMs,
+      },
       { status: 409 },
     );
   }
@@ -116,6 +104,7 @@ export async function POST({ params, locals, request }: APIContext) {
     ? Math.min(Math.max(Math.round(raw.durationDays), 1), 7)
     : 1;
 
+  const today = getTodayISO();
   const dateEnd = computeDateEnd(today, durationDays);
 
   const [created] = await db.insert(promotions).values({
@@ -129,6 +118,8 @@ export async function POST({ params, locals, request }: APIContext) {
     timeStart,
     timeEnd,
   }).returning();
+
+  await insertBump(db, restaurantId, "create");
 
   return Response.json(created, { status: 201 });
 }

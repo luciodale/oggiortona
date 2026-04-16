@@ -1,7 +1,8 @@
 -- Oggi a Ortona: Promotion domain
--- Covers promotion lifecycle: creation, expiry, renewal, deletion.
+-- Covers promotion lifecycle: creation, expiry, renewal, edit, deletion.
 -- Four types: generale (catch-all), special (piatto del giorno), deal (offerta), news (novita).
 -- Unified form: single form with type selector, title only (no description), live preview.
+-- 12h rolling cooldown on publish/renewal to prevent ranking abuse; edits do not bump.
 
 use "./restaurants.allium" as rest
 
@@ -10,6 +11,8 @@ use "./restaurants.allium" as rest
 -- ---------------------------------------------------------------
 
 enum PromotionType { generale, special, deal, news }
+
+enum BumpAction { create, renew }
 
 -- ---------------------------------------------------------------
 -- Entities
@@ -25,12 +28,18 @@ entity Promotion {
     date_end: String,               -- ISO date YYYY-MM-DD
     time_start: String?,            -- HH:MM
     time_end: String?,              -- HH:MM
-    created_at: Timestamp,
+    created_at: Timestamp,          -- drives ranking; updated on renewal, never on edit
 
     -- Derived (all use getTodayISO() — Europe/Rome timezone)
     is_active: date_start <= today and date_end >= today,
     is_expired: date_end < today,
     duration_days: day_diff(date_end, date_start) + 1
+}
+
+entity PromotionBump {
+    restaurant: rest/Restaurant,
+    action: BumpAction,
+    created_at: Timestamp           -- server datetime('now'); drives 12h cooldown window
 }
 
 -- ---------------------------------------------------------------
@@ -40,9 +49,8 @@ entity Promotion {
 config {
     min_duration_days: Integer = 1,
     max_duration_days: Integer = 7,
-    max_active_per_restaurant: Integer = 3,
-    max_promotions_in_admin: Integer = 60,
-    max_expired_notifications: Integer = 10,
+    cooldown_max_bumps: Integer = 3,
+    cooldown_window_hours: Integer = 12,
     timezone: String = "Europe/Rome"
 }
 
@@ -58,11 +66,25 @@ invariant TimezoneAwareDates {
     "Same utils (getTodayISO, isToday, isThisWeek) used across public and owner surfaces."
 }
 
-invariant MaxActivePromotions {
-    "Each restaurant may have at most config.max_active_per_restaurant active promotions at any time."
-    "Enforced server-side on both creation (POST) and renewal (PUT)."
-    "Active = date_start <= today AND date_end >= today."
-    "Returns HTTP 409 with code LIMIT_REACHED when exceeded."
+invariant ServerTimeAuthority {
+    "Cooldown window math is computed server-side using D1 datetime('now') (UTC)."
+    "Client clocks are never trusted for cooldown decisions."
+    "Responses include nextSlotAt (ISO) and remainingMs (server-computed snapshot)."
+    "Clients render the snapshot without live tickers, so clock skew is irrelevant."
+}
+
+invariant CooldownWindow {
+    "Each restaurant may insert at most cooldown_max_bumps PromotionBump rows"
+    "within the last cooldown_window_hours. Both CreatePromotion and RenewPromotion"
+    "insert a bump row. DeletePromotion does not remove bump rows — this prevents"
+    "delete-then-recreate from bypassing the cooldown."
+    "When exceeded, returns HTTP 409 with code COOLDOWN_ACTIVE and remainingMs."
+}
+
+invariant EditPreservesRanking {
+    "EditPromotion never updates created_at, date_start, or restaurant."
+    "Ranking (newest created_at in 'has promotion' tier) stays stable across edits."
+    "Edits do not insert a PromotionBump and do not count against the cooldown."
 }
 
 -- ---------------------------------------------------------------
@@ -75,7 +97,7 @@ rule CreatePromotion {
     requires: restaurant.active
     requires: data.type in PromotionType
     requires: data.title != null and data.title != "" and len(data.title) <= 150
-    requires: count(Promotions where restaurant = restaurant and is_active) < config.max_active_per_restaurant
+    requires: count(PromotionBumps where restaurant = restaurant and created_at > now() - cooldown_window_hours) < cooldown_max_bumps
     let clamped_days = clamp(data.duration_days, config.min_duration_days, config.max_duration_days)
     let start = today_iso()
     let end = compute_date_end(start, clamped_days)
@@ -90,6 +112,7 @@ rule CreatePromotion {
         time_start: data.time_start,
         time_end: data.time_end
     )
+    ensures: PromotionBump.created(restaurant: restaurant, action: create)
 }
 
 -- ---------------------------------------------------------------
@@ -99,13 +122,35 @@ rule CreatePromotion {
 rule RenewPromotion {
     when: OwnerRenewsPromotion(owner, promotion)
     requires: promotion.restaurant.owner = owner
-    requires: promotion.is_expired
-    requires: count(Promotions where restaurant = promotion.restaurant and is_active) < config.max_active_per_restaurant
+    requires: count(PromotionBumps where restaurant = promotion.restaurant and created_at > now() - cooldown_window_hours) < cooldown_max_bumps
     let original_duration = promotion.duration_days
     let new_start = today_iso()
     let new_end = compute_date_end(new_start, original_duration)
     ensures: promotion.date_start = new_start
     ensures: promotion.date_end = new_end
+    ensures: promotion.created_at = now()
+    ensures: PromotionBump.created(restaurant: promotion.restaurant, action: renew)
+}
+
+-- ---------------------------------------------------------------
+-- Rules: Edit
+-- ---------------------------------------------------------------
+
+rule EditPromotion {
+    when: OwnerEditsPromotion(owner, promotion, data)
+    requires: promotion.restaurant.owner = owner
+    requires: data.type in PromotionType
+    requires: data.title != null and data.title != "" and len(data.title) <= 150
+    let clamped_days = clamp(data.duration_days, config.min_duration_days, config.max_duration_days)
+    let new_end = compute_date_end(promotion.date_start, clamped_days)
+    ensures: promotion.type = data.type
+    ensures: promotion.title = data.title
+    ensures: promotion.price = data.price
+    ensures: promotion.date_end = new_end
+    ensures: promotion.time_start = data.time_start
+    ensures: promotion.time_end = data.time_end
+    ensures: promotion.date_start unchanged
+    ensures: promotion.created_at unchanged
 }
 
 -- ---------------------------------------------------------------
@@ -116,6 +161,7 @@ rule DeletePromotion {
     when: OwnerDeletesPromotion(owner, promotion)
     requires: promotion.restaurant.owner = owner
     ensures: not exists promotion
+    ensures: PromotionBumps for promotion.restaurant are unchanged
 }
 
 -- ---------------------------------------------------------------
@@ -129,7 +175,13 @@ surface OwnerStorefront {
 
     exposes:
         restaurant.name
-        active_count: count(Promotions where restaurant = restaurant and is_active)
+        cooldown: {
+            max: cooldown_max_bumps,
+            window_hours: cooldown_window_hours,
+            used: count(PromotionBumps where restaurant = restaurant and created_at > now() - cooldown_window_hours),
+            next_slot_at: oldest(PromotionBumps where restaurant = restaurant and created_at > now() - cooldown_window_hours).created_at + cooldown_window_hours,
+            remaining_ms: max(0, next_slot_at - now())
+        }
         for p in Promotions where restaurant = restaurant:
             p.type
             p.title
@@ -145,6 +197,8 @@ surface OwnerStorefront {
 
     provides:
         OwnerCreatesPromotion(owner, restaurant, data)
+        OwnerEditsPromotion(owner, promotion, data)
+            when promotion.restaurant = restaurant
         OwnerDeletesPromotion(owner, promotion)
             when promotion.restaurant = restaurant
         OwnerRenewsPromotion(owner, promotion)
@@ -155,10 +209,12 @@ surface OwnerStorefront {
         "Type defaults to 'generale'; owner can switch without losing form data"
         "Title only (max 150 chars), no description field"
         "Live preview using PromotionCardPublic below the form"
-        "Active count banner: '{current} di {max} pubblicazioni attive'"
-        "Publish button disabled when at limit"
+        "Cooldown banner: line 1 '{max} pubblicazioni ogni {hours}h', line 2 '{used} di {max} usate · {state}'"
+        "Bump notice under publish button: 'Pubblicando, il tuo locale salira in cima alla lista durante gli orari di apertura'"
+        "Publish button disabled when cooldown.used >= cooldown.max"
         "Promotions sorted by created_at DESC"
         "Expired promotions shown with dashed border and renew action"
+        "Edit button on every promotion (active and expired); edit does not bump"
 }
 
 surface DailySpecials {
