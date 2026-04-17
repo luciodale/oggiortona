@@ -1,6 +1,5 @@
-import { Component } from "react";
+import { Component, useEffect } from "react";
 import type { ReactNode } from "react";
-import { SpilledDrinkIllustration } from "../../icons/SpilledDrinkIllustration";
 
 type ErrorBoundaryProps = {
   children: ReactNode;
@@ -25,6 +24,13 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 }
 
 function ErrorFallback({ onReset }: { onReset: () => void }) {
+  useEffect(function dismissAppLoader() {
+    const loader = document.getElementById("app-loader");
+    if (!loader) return;
+    loader.style.opacity = "0";
+    setTimeout(() => loader.remove(), 200);
+  }, []);
+
   const isIt = document.documentElement.lang === "it";
 
   const title = isIt ? "Ops, qualcosa è caduto" : "Oops, a little spill";
@@ -46,7 +52,8 @@ function ErrorFallback({ onReset }: { onReset: () => void }) {
 
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center px-6 text-center">
-      <SpilledDrinkIllustration className="mb-6 h-40 w-40 text-accent" />
+      <img src="/spilled-drink-light.svg" alt="" width={160} height={96} className="mb-6 dark:hidden" />
+      <img src="/spilled-drink-dark.svg" alt="" width={160} height={96} className="mb-6 hidden dark:block" />
       <h1 className="font-family-display text-2xl font-medium tracking-tight text-primary">
         {title}
       </h1>

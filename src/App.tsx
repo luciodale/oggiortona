@@ -101,7 +101,14 @@ const routeTree = rootRoute.addChildren([
   adminRoute.addChildren([adminIndexRoute]),
 ]);
 
-const router = createRouter({ routeTree });
+function RethrowToBoundary({ error }: { error: Error }) {
+  throw error;
+}
+
+const router = createRouter({
+  routeTree,
+  defaultErrorComponent: RethrowToBoundary,
+});
 
 type SpaAppProps = {
   locale: Locale;
@@ -109,17 +116,30 @@ type SpaAppProps = {
   isAdmin: boolean;
 };
 
+function DevErrorThrow(): never {
+  throw new Error("Dev preview: forced render error");
+}
+
 export function SpaApp({ locale, user, isAdmin }: SpaAppProps) {
   useHydrateAtoms([
     [localeAtom, locale],
     [authAtom, { user, isAdmin }],
   ]);
 
+  const isDevErrorPreview =
+    import.meta.env.DEV &&
+    typeof window !== "undefined" &&
+    window.location.pathname === "/dev/error";
+
   return (
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-      </QueryClientProvider>
+      {isDevErrorPreview ? (
+        <DevErrorThrow />
+      ) : (
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+        </QueryClientProvider>
+      )}
     </ErrorBoundary>
   );
 }
