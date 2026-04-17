@@ -1,5 +1,7 @@
 import { getTodayISO } from "./date";
 
+export const PROMOTION_DURATION_DAYS = 7;
+
 export function computeDateEnd(dateStart: string, durationDays: number): string {
   const start = new Date(dateStart + "T00:00:00Z");
   start.setUTCDate(start.getUTCDate() + durationDays - 1);
@@ -17,10 +19,4 @@ export function daysRemaining(dateEnd: string, today?: string): number {
   const now = new Date(t + "T00:00:00Z");
   const diff = Math.floor((expires.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
   return Math.max(0, diff + 1);
-}
-
-export function durationFromRange(dateStart: string, dateEnd: string): number {
-  const start = new Date(dateStart + "T00:00:00Z");
-  const end = new Date(dateEnd + "T00:00:00Z");
-  return Math.max(1, Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1);
 }

@@ -2,7 +2,7 @@ import type { APIContext } from "astro";
 import { stores, storePromotions } from "../../../../db/schema";
 import { eq, desc } from "drizzle-orm";
 import { getTodayISO } from "../../../../utils/date";
-import { computeDateEnd } from "../../../../utils/promotions";
+import { PROMOTION_DURATION_DAYS, computeDateEnd } from "../../../../utils/promotions";
 import { buildStoreCooldownSnapshot, insertStoreBump, isStoreCooldownActive } from "../../../../utils/storePromotionCooldown";
 
 const VALID_TYPES = ["generale", "saldi", "deal", "news"] as const;
@@ -100,12 +100,9 @@ export async function POST({ params, locals, request }: APIContext) {
   const price = typeof raw.price === "number" ? raw.price : null;
   const timeStart = typeof raw.timeStart === "string" && raw.timeStart.length <= 5 ? raw.timeStart : null;
   const timeEnd = typeof raw.timeEnd === "string" && raw.timeEnd.length <= 5 ? raw.timeEnd : null;
-  const durationDays = typeof raw.durationDays === "number"
-    ? Math.min(Math.max(Math.round(raw.durationDays), 1), 7)
-    : 1;
 
   const today = getTodayISO();
-  const dateEnd = computeDateEnd(today, durationDays);
+  const dateEnd = computeDateEnd(today, PROMOTION_DURATION_DAYS);
 
   const [created] = await db.insert(storePromotions).values({
     storeId,

@@ -4,7 +4,7 @@ import { usePromotionForm } from "../../hooks/usePromotionForms";
 import { useFormSheet } from "../../hooks/useFormSheet";
 import { useLocale } from "../../i18n/useLocale";
 import { getTodayISO } from "../../utils/date";
-import { computeDateEnd } from "../../utils/promotions";
+import { PROMOTION_DURATION_DAYS, computeDateEnd } from "../../utils/promotions";
 import { formatRemainingMs } from "../../utils/cooldownFormat";
 import type { PromotionRow } from "../../types/database";
 import { Button } from "../ui/Button";
@@ -42,7 +42,7 @@ export function ProfileStorefront({ restaurantId }: ProfileStorefrontProps) {
     description: null,
     price: form.price ? Number(form.price) : null,
     dateStart: today,
-    dateEnd: computeDateEnd(today, Number(form.durationDays)),
+    dateEnd: computeDateEnd(today, PROMOTION_DURATION_DAYS),
     timeStart: form.timeStart || null,
     timeEnd: form.timeEnd || null,
     createdAt: today,

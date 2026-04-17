@@ -237,6 +237,7 @@ export const it = {
   "storefront.bumpNotice": "Pubblicando, il tuo locale salira in cima alla lista durante gli orari di apertura",
   "storefront.bumpNoticeStore": "Pubblicando, il tuo negozio salira in cima alla lista durante gli orari di apertura",
   "storefront.renewBumpHint": "Anche rinnovare conta come una pubblicazione",
+  "storefront.durationNotice": "Rimane attiva 7 giorni. Poi potrai rinnovarla.",
   "storefront.editPublication": "Modifica",
   "storefront.editTitle": "Modifica pubblicazione",
   "storefront.editSaved": "Modifiche salvate",
@@ -290,9 +291,6 @@ export const it = {
   "ui.hours": "Ore",
   "ui.minutes": "Minuti",
   "ui.selectTime": "Seleziona orario",
-  "ui.duration": "Durata",
-  "ui.dayOne": "giorno",
-  "ui.dayMany": "giorni",
   "ui.removeDate": "Rimuovi data",
   "ui.removeTime": "Rimuovi orario",
 

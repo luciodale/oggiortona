@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useLocale } from "../i18n/useLocale";
 import type { PromotionRow } from "../types/database";
-import { durationFromRange } from "../utils/promotions";
 
 export type PromotionType = "generale" | "special" | "deal" | "news";
 
@@ -9,7 +8,6 @@ export type PromotionFormState = {
   type: PromotionType;
   title: string;
   price: string;
-  durationDays: string;
   timeStart: string;
   timeEnd: string;
 };
@@ -18,7 +16,6 @@ const INITIAL: PromotionFormState = {
   type: "generale",
   title: "",
   price: "",
-  durationDays: "1",
   timeStart: "",
   timeEnd: "",
 };
@@ -28,12 +25,10 @@ function isPromotionType(value: string): value is PromotionType {
 }
 
 export function promotionToFormState(promotion: PromotionRow): PromotionFormState {
-  const duration = durationFromRange(promotion.dateStart, promotion.dateEnd);
   return {
     type: isPromotionType(promotion.type) ? promotion.type : "generale",
     title: promotion.title,
     price: promotion.price != null ? String(promotion.price) : "",
-    durationDays: String(duration),
     timeStart: promotion.timeStart ?? "",
     timeEnd: promotion.timeEnd ?? "",
   };
@@ -71,7 +66,6 @@ export function usePromotionForm(initial?: PromotionFormState) {
     return {
       type: form.type,
       title: form.title.trim(),
-      durationDays: Number(form.durationDays),
       ...(form.price ? { price: Number(form.price) } : {}),
       ...(form.timeStart ? { timeStart: form.timeStart } : {}),
       ...(form.timeEnd ? { timeEnd: form.timeEnd } : {}),

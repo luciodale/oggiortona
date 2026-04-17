@@ -3,7 +3,6 @@ import type { StorePromotionFormState, StorePromotionType } from "../../../hooks
 import type { TranslationKey } from "../../../i18n/t";
 import { Input } from "../../ui/Input";
 import { OptionalTimePicker } from "../../ui/OptionalTimePicker";
-import { DurationSelect } from "../../ui/DurationSelect";
 
 const TYPE_OPTIONS: Array<{ value: StorePromotionType; labelKey: TranslationKey }> = [
   { value: "generale", labelKey: "storefront.generale" },
@@ -86,10 +85,9 @@ export function StorePromotionForm({ form, onChange, onTypeChange, titleError, o
         placeholder={t("storefront.pricePlaceholder")}
       />
 
-      <DurationSelect
-        value={form.durationDays}
-        onChange={(v) => onChange({ ...form, durationDays: v })}
-      />
+      <p className="rounded-xl bg-surface-warm px-3 py-2 text-[12px] text-muted">
+        {t("storefront.durationNotice")}
+      </p>
 
       <div className="space-y-2">
         <p className="text-[13px] font-medium text-primary">{t("events.time")}</p>

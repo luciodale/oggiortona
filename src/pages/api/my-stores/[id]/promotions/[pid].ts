@@ -2,7 +2,7 @@ import type { APIContext } from "astro";
 import { stores, storePromotions } from "../../../../../db/schema";
 import { eq, sql } from "drizzle-orm";
 import { getTodayISO } from "../../../../../utils/date";
-import { computeDateEnd, durationFromRange } from "../../../../../utils/promotions";
+import { PROMOTION_DURATION_DAYS, computeDateEnd } from "../../../../../utils/promotions";
 import { buildStoreCooldownSnapshot, insertStoreBump, isStoreCooldownActive } from "../../../../../utils/storePromotionCooldown";
 
 const VALID_TYPES = ["generale", "saldi", "deal", "news"] as const;
@@ -69,8 +69,7 @@ export async function PUT({ params, locals }: APIContext) {
   }
 
   const today = getTodayISO();
-  const duration = durationFromRange(existing.dateStart, existing.dateEnd);
-  const dateEnd = computeDateEnd(today, duration);
+  const dateEnd = computeDateEnd(today, PROMOTION_DURATION_DAYS);
 
   await db.update(storePromotions)
     .set({ dateStart: today, dateEnd, createdAt: sql`(datetime('now'))` })
@@ -132,14 +131,9 @@ export async function PATCH({ params, locals, request }: APIContext) {
   const price = typeof raw.price === "number" ? raw.price : null;
   const timeStart = typeof raw.timeStart === "string" && raw.timeStart.length <= 5 ? raw.timeStart : null;
   const timeEnd = typeof raw.timeEnd === "string" && raw.timeEnd.length <= 5 ? raw.timeEnd : null;
-  const durationDays = typeof raw.durationDays === "number"
-    ? Math.min(Math.max(Math.round(raw.durationDays), 1), 7)
-    : durationFromRange(existing.dateStart, existing.dateEnd);
-
-  const dateEnd = computeDateEnd(existing.dateStart, durationDays);
 
   await db.update(storePromotions)
-    .set({ type, title, price, dateEnd, timeStart, timeEnd })
+    .set({ type, title, price, timeStart, timeEnd })
     .where(eq(storePromotions.id, pid));
 
   const [updated] = await db.select().from(storePromotions).where(eq(storePromotions.id, pid)).limit(1);

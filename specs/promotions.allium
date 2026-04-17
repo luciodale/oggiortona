@@ -47,8 +47,7 @@ entity PromotionBump {
 -- ---------------------------------------------------------------
 
 config {
-    min_duration_days: Integer = 1,
-    max_duration_days: Integer = 7,
+    promotion_duration_days: Integer = 7,
     cooldown_max_bumps: Integer = 3,
     cooldown_window_hours: Integer = 12,
     timezone: String = "Europe/Rome"
@@ -98,9 +97,8 @@ rule CreatePromotion {
     requires: data.type in PromotionType
     requires: data.title != null and data.title != "" and len(data.title) <= 150
     requires: count(PromotionBumps where restaurant = restaurant and created_at > now() - cooldown_window_hours) < cooldown_max_bumps
-    let clamped_days = clamp(data.duration_days, config.min_duration_days, config.max_duration_days)
     let start = today_iso()
-    let end = compute_date_end(start, clamped_days)
+    let end = compute_date_end(start, config.promotion_duration_days)
     ensures: Promotion.created(
         restaurant: restaurant,
         type: data.type,
@@ -123,9 +121,8 @@ rule RenewPromotion {
     when: OwnerRenewsPromotion(owner, promotion)
     requires: promotion.restaurant.owner = owner
     requires: count(PromotionBumps where restaurant = promotion.restaurant and created_at > now() - cooldown_window_hours) < cooldown_max_bumps
-    let original_duration = promotion.duration_days
     let new_start = today_iso()
-    let new_end = compute_date_end(new_start, original_duration)
+    let new_end = compute_date_end(new_start, config.promotion_duration_days)
     ensures: promotion.date_start = new_start
     ensures: promotion.date_end = new_end
     ensures: promotion.created_at = now()
@@ -141,15 +138,13 @@ rule EditPromotion {
     requires: promotion.restaurant.owner = owner
     requires: data.type in PromotionType
     requires: data.title != null and data.title != "" and len(data.title) <= 150
-    let clamped_days = clamp(data.duration_days, config.min_duration_days, config.max_duration_days)
-    let new_end = compute_date_end(promotion.date_start, clamped_days)
     ensures: promotion.type = data.type
     ensures: promotion.title = data.title
     ensures: promotion.price = data.price
-    ensures: promotion.date_end = new_end
     ensures: promotion.time_start = data.time_start
     ensures: promotion.time_end = data.time_end
     ensures: promotion.date_start unchanged
+    ensures: promotion.date_end unchanged
     ensures: promotion.created_at unchanged
 }
 
@@ -210,6 +205,8 @@ surface OwnerStorefront {
         "Title only (max 150 chars), no description field"
         "Live preview using PromotionCardPublic below the form"
         "Cooldown banner: line 1 '{max} pubblicazioni ogni {hours}h', line 2 '{used} di {max} usate · {state}'"
+        "Duration is fixed server-side to config.promotion_duration_days (no user input)"
+        "Form surfaces static copy: 'Rimane attiva 7 giorni. Poi potrai rinnovarla.'"
         "Bump notice under publish button: 'Pubblicando, il tuo locale salira in cima alla lista durante gli orari di apertura'"
         "Publish button disabled when cooldown.used >= cooldown.max"
         "Promotions sorted by created_at DESC"

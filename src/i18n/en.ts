@@ -241,6 +241,7 @@ export const en: Translations = {
   "storefront.bumpNotice": "Publishing moves your venue to the top of the list during open hours",
   "storefront.bumpNoticeStore": "Publishing moves your shop to the top of the list during open hours",
   "storefront.renewBumpHint": "Renewing also counts as a publication",
+  "storefront.durationNotice": "Stays active for 7 days. Then you can renew it.",
   "storefront.editPublication": "Edit",
   "storefront.editTitle": "Edit publication",
   "storefront.editSaved": "Changes saved",
@@ -294,9 +295,6 @@ export const en: Translations = {
   "ui.hours": "Hours",
   "ui.minutes": "Minutes",
   "ui.selectTime": "Select time",
-  "ui.duration": "Duration",
-  "ui.dayOne": "day",
-  "ui.dayMany": "days",
   "ui.removeDate": "Remove date",
   "ui.removeTime": "Remove time",
 
