@@ -30,6 +30,17 @@ export function AdminTabs({ tab, onTabChange }: AdminTabsProps) {
       >
         Eventi
       </button>
+      <button
+        type="button"
+        role="tab"
+        aria-selected={tab === "stores"}
+        onClick={() => onTabChange("stores")}
+        className={`flex flex-1 items-center justify-center rounded-lg py-2 text-[11px] font-semibold uppercase tracking-[0.06em] transition-all ${
+          tab === "stores" ? "bg-card text-primary shadow-sm" : "text-muted"
+        }`}
+      >
+        Negozi
+      </button>
     </div>
   );
 }

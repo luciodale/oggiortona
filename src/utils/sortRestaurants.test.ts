@@ -24,6 +24,7 @@ function makeRestaurant(overrides: Partial<RestaurantWithStatus> & { id: number;
   return {
     description: null,
     type: "bar",
+    cuisines: null,
     priceRange: 2,
     phone: null,
     address: "Via Roma 1",
@@ -38,6 +39,7 @@ function makeRestaurant(overrides: Partial<RestaurantWithStatus> & { id: number;
     createdAt: "2026-01-01T00:00:00",
     updatedAt: "2026-01-01T00:00:00",
     types: ["bar"],
+    cuisineList: [],
     isOpen: false,
     promotions: [],
     parsedHours: {

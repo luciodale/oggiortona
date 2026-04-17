@@ -23,6 +23,7 @@ function makeRestaurant(overrides: Partial<RestaurantRow> = {}): RestaurantRow {
     name: "Test",
     description: null,
     type: "bar,ristorante",
+    cuisines: null,
     priceRange: 2,
     phone: null,
     address: "Via Roma 1",

@@ -1,10 +1,10 @@
 import { ZapIcon } from "../../icons/ZapIcon";
-import type { PromotionRow } from "../../types/database";
+import type { PromotionRow, StorePromotionRow } from "../../types/database";
 import { DateRange } from "./DateRange";
 import { TimeRange } from "./TimeRange";
 
 type DealEntryProps = {
-  deal: PromotionRow;
+  deal: PromotionRow | StorePromotionRow;
 };
 
 export function DealEntry({ deal }: DealEntryProps) {

@@ -9,6 +9,7 @@ import { ClockIcon } from "../icons/ClockIcon";
 import { CupIcon } from "../icons/CupIcon";
 import { DiningIllustration } from "../icons/DiningIllustration";
 import { MessageIcon } from "../icons/MessageIcon";
+import { ShopIcon } from "../icons/ShopIcon";
 import { SparkleIllustration } from "../icons/SparkleIllustration";
 import { StarIcon } from "../icons/StarIcon";
 import { TagIcon } from "../icons/TagIcon";
@@ -24,7 +25,7 @@ export function HomeRoute() {
     return <ContentLoader />;
   }
 
-  const { restaurantCount, generaleCount, specials, deals, newsCount, todayEvents, upcomingEvents } = data;
+  const { restaurantCount, generaleCount, specials, deals, newsCount, todayEvents, upcomingEvents, storeCount, storeGeneraleCount, saldiCount, storeDealsCount, storeNewsCount } = data;
 
   return (
     <div className="flex flex-col pt-6">
@@ -125,6 +126,54 @@ export function HomeRoute() {
 
           <div className="mt-6 flex items-center gap-1.5 text-sm font-semibold text-fare">
             {t("common.discover")}
+            <ChevronRightIcon className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" strokeWidth={2.5} />
+          </div>
+        </Link>
+
+        <Link to="/stores" className="group relative overflow-hidden rounded-3xl bg-linear-to-br from-stores-light via-stores-mid to-stores-deep px-6 pb-6 pt-7 no-underline shadow-[0_2px_20px_rgba(142,61,107,0.07)] transition-all hover:shadow-[0_4px_28px_rgba(142,61,107,0.13)] active:scale-[0.98]">
+          <div className="relative flex items-start justify-between">
+            <div>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-stores">{t("home.whereToShop")}</span>
+              <h2 className="mt-2 font-family-display text-[2.25rem] font-semibold leading-none text-primary">{t("nav.stores")}</h2>
+            </div>
+            <div className="shrink-0 rounded-2xl bg-stores/8 p-3.5">
+              <ShopIcon className="h-7 w-7 text-stores" strokeWidth={1.5} />
+            </div>
+          </div>
+
+          <p className="mt-4 text-[15px] leading-relaxed text-muted">{t("home.storesInOrtona", { count: storeCount })}</p>
+
+          {(saldiCount > 0 || storeDealsCount > 0 || storeNewsCount > 0 || storeGeneraleCount > 0) && (
+            <div className="mt-5 flex flex-wrap gap-2">
+              {saldiCount > 0 && (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-card/60 px-3 py-1.5 text-xs font-medium text-promo-saldi shadow-[0_1px_4px_rgba(0,0,0,0.05)]">
+                  <TagIcon className="h-3 w-3" strokeWidth={2.5} />
+                  {saldiCount === 1 ? t("home.saldiOne", { count: saldiCount }) : t("home.saldiMany", { count: saldiCount })}
+                </span>
+              )}
+              {storeDealsCount > 0 && (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-card/60 px-3 py-1.5 text-xs font-medium text-promo-deal shadow-[0_1px_4px_rgba(0,0,0,0.05)]">
+                  <TagIcon className="h-3 w-3" strokeWidth={2.5} />
+                  {storeDealsCount === 1 ? t("home.dealOne", { count: storeDealsCount }) : t("home.dealMany", { count: storeDealsCount })}
+                </span>
+              )}
+              {storeNewsCount > 0 && (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-card/60 px-3 py-1.5 text-xs font-medium text-promo-news shadow-[0_1px_4px_rgba(0,0,0,0.05)]">
+                  <StarIcon className="h-3 w-3" strokeWidth={2.5} />
+                  {t("home.newsCount", { count: storeNewsCount })}
+                </span>
+              )}
+              {storeGeneraleCount > 0 && (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-card/60 px-3 py-1.5 text-xs font-medium text-promo-generale shadow-[0_1px_4px_rgba(0,0,0,0.05)]">
+                  <MessageIcon className="h-3 w-3" strokeWidth={2.5} />
+                  {storeGeneraleCount === 1 ? t("home.generaleOne", { count: storeGeneraleCount }) : t("home.generaleMany", { count: storeGeneraleCount })}
+                </span>
+              )}
+            </div>
+          )}
+
+          <div className="mt-6 flex items-center gap-1.5 text-sm font-semibold text-stores">
+            {t("common.explore")}
             <ChevronRightIcon className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" strokeWidth={2.5} />
           </div>
         </Link>

@@ -1,5 +1,5 @@
 import type { APIContext } from "astro";
-import { events, restaurants } from "../../../db/schema";
+import { events, restaurants, stores } from "../../../db/schema";
 import { eq, and as dbAnd } from "drizzle-orm";
 import { updateEventApiSchema } from "../../../schemas/event";
 import { nowItalyFormatted } from "../../../utils/sqlite";
@@ -9,9 +9,10 @@ export async function GET({ locals, params }: APIContext): Promise<Response> {
   const id = Number(params.id);
 
   let [row] = await db
-    .select({ event: events, restaurantName: restaurants.name })
+    .select({ event: events, restaurantName: restaurants.name, storeName: stores.name })
     .from(events)
     .leftJoin(restaurants, eq(events.restaurantId, restaurants.id))
+    .leftJoin(stores, eq(events.storeId, stores.id))
     .where(dbAnd(eq(events.id, id), eq(events.active, 1), eq(events.deleted, 0)))
     .limit(1);
 
@@ -20,9 +21,10 @@ export async function GET({ locals, params }: APIContext): Promise<Response> {
       ? eq(events.deleted, 0)
       : dbAnd(eq(events.ownerId, locals.user.id), eq(events.deleted, 0));
     [row] = await db
-      .select({ event: events, restaurantName: restaurants.name })
+      .select({ event: events, restaurantName: restaurants.name, storeName: stores.name })
       .from(events)
       .leftJoin(restaurants, eq(events.restaurantId, restaurants.id))
+      .leftJoin(stores, eq(events.storeId, stores.id))
       .where(dbAnd(eq(events.id, id), ownerOrAdmin))
       .limit(1);
   }
@@ -31,7 +33,7 @@ export async function GET({ locals, params }: APIContext): Promise<Response> {
 
   const { ownerId: _, ...publicEvent } = row.event;
 
-  return Response.json({ event: { ...publicEvent, restaurantName: row.restaurantName ?? null } });
+  return Response.json({ event: { ...publicEvent, restaurantName: row.restaurantName ?? null, storeName: row.storeName ?? null } });
 }
 
 export async function PUT({ locals, params, request }: APIContext): Promise<Response> {
@@ -76,6 +78,7 @@ export async function PUT({ locals, params, request }: APIContext): Promise<Resp
   if (body.price !== undefined) updates.price = body.price ?? null;
   if (body.link !== undefined) updates.link = body.link?.trim() || null;
   if (body.restaurant_id !== undefined) updates.restaurantId = body.restaurant_id ?? null;
+  if (body.store_id !== undefined) updates.storeId = body.store_id ?? null;
 
   if (Object.keys(updates).length === 0) {
     return Response.json({ error: "Nessun campo da aggiornare" }, { status: 400 });

@@ -1,5 +1,5 @@
 import type { APIContext } from "astro";
-import { pushSubscriptions, restaurants } from "../../../db/schema";
+import { pushSubscriptions, restaurants, stores } from "../../../db/schema";
 import { eq, and } from "drizzle-orm";
 import { scopesForUser } from "../../../utils/pushScope";
 import type { PushScope } from "../../../types/domain";
@@ -37,14 +37,14 @@ export async function POST({ locals, request }: APIContext): Promise<Response> {
 
   const db = locals.db;
 
-  const owned = await db.select({ id: restaurants.id })
-    .from(restaurants)
-    .where(eq(restaurants.ownerId, user.id))
-    .limit(1);
+  const [ownedRestaurants, ownedStores] = await Promise.all([
+    db.select({ id: restaurants.id }).from(restaurants).where(eq(restaurants.ownerId, user.id)).limit(1),
+    db.select({ id: stores.id }).from(stores).where(eq(stores.ownerId, user.id)).limit(1),
+  ]);
 
   const scopes = scopesForUser({
     isAdmin: locals.isAdmin,
-    ownsRestaurants: owned.length > 0,
+    ownsVenue: ownedRestaurants.length > 0 || ownedStores.length > 0,
   });
 
   const enrolled: Array<PushScope> = [];

@@ -1,10 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocale } from "../i18n/useLocale";
 
-type EntityType = "restaurant" | "event";
+type EntityType = "restaurant" | "store" | "event";
 
-const ENTITY_CONFIG: Record<EntityType, { endpoint: string; confirmKey: "profile.confirmDeleteVenue" | "profile.confirmDeleteEvent"; queryKeys: Array<ReadonlyArray<string>> }> = {
+const ENTITY_CONFIG: Record<EntityType, { endpoint: string; confirmKey: "profile.confirmDeleteVenue" | "profile.confirmDeleteStore" | "profile.confirmDeleteEvent"; queryKeys: Array<ReadonlyArray<string>> }> = {
   restaurant: { endpoint: "/api/restaurants", confirmKey: "profile.confirmDeleteVenue", queryKeys: [["my-restaurants"], ["home"]] },
+  store: { endpoint: "/api/stores", confirmKey: "profile.confirmDeleteStore", queryKeys: [["my-stores"], ["home"]] },
   event: { endpoint: "/api/events", confirmKey: "profile.confirmDeleteEvent", queryKeys: [["my-events"], ["home"]] },
 };
 

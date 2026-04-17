@@ -1,7 +1,7 @@
 import { useSwipeBarContext } from "@luciodale/swipe-bar";
-import type { RestaurantRow, EventRow, PromotionRow } from "../types/database";
+import type { RestaurantRow, StoreRow, EventRow, PromotionRow, StorePromotionRow } from "../types/database";
 import type { FormSheetMeta } from "../types/domain";
-import { restaurantToFormData, eventToFormData } from "../utils/formData";
+import { restaurantToFormData, storeToFormData, eventToFormData } from "../utils/formData";
 
 export function useFormSheet() {
   const { openSidebarFully, closeSidebar } = useSwipeBarContext();
@@ -11,6 +11,15 @@ export function useFormSheet() {
       kind: "restaurant-form",
       restaurantId: restaurant?.id,
       initialData: restaurant ? restaurantToFormData(restaurant) : undefined,
+    };
+    openSidebarFully("bottom", { id: "form", meta });
+  }
+
+  function openStoreForm(store?: StoreRow) {
+    const meta: FormSheetMeta = {
+      kind: "store-form",
+      storeId: store?.id,
+      initialData: store ? storeToFormData(store) : undefined,
     };
     openSidebarFully("bottom", { id: "form", meta });
   }
@@ -29,8 +38,18 @@ export function useFormSheet() {
     openSidebarFully("bottom", { id: "form", meta });
   }
 
+  function openStoreStorefront(storeId: number) {
+    const meta: FormSheetMeta = { kind: "store-storefront", storeId };
+    openSidebarFully("bottom", { id: "form", meta });
+  }
+
   function openPromotionsList(restaurantId: number) {
     const meta: FormSheetMeta = { kind: "promotions-list", restaurantId };
+    openSidebarFully("bottom", { id: "form", meta });
+  }
+
+  function openStorePromotionsList(storeId: number) {
+    const meta: FormSheetMeta = { kind: "store-promotions-list", storeId };
     openSidebarFully("bottom", { id: "form", meta });
   }
 
@@ -39,9 +58,25 @@ export function useFormSheet() {
     openSidebarFully("bottom", { id: "form", meta });
   }
 
+  function openStorePromotionEdit(storeId: number, promotion: StorePromotionRow) {
+    const meta: FormSheetMeta = { kind: "store-promotion-edit", storeId, promotion };
+    openSidebarFully("bottom", { id: "form", meta });
+  }
+
   function closeForm() {
     closeSidebar("bottom", { id: "form" });
   }
 
-  return { openRestaurantForm, openEventForm, openStorefront, openPromotionsList, openPromotionEdit, closeForm };
+  return {
+    openRestaurantForm,
+    openStoreForm,
+    openEventForm,
+    openStorefront,
+    openStoreStorefront,
+    openPromotionsList,
+    openStorePromotionsList,
+    openPromotionEdit,
+    openStorePromotionEdit,
+    closeForm,
+  };
 }

@@ -1,10 +1,10 @@
 import { StarIcon } from "../../icons/StarIcon";
-import type { PromotionRow } from "../../types/database";
+import type { PromotionRow, StorePromotionRow } from "../../types/database";
 import { DateRange } from "./DateRange";
 import { TimeRange } from "./TimeRange";
 
 type NewsEntryProps = {
-  news: PromotionRow;
+  news: PromotionRow | StorePromotionRow;
 };
 
 export function NewsEntry({ news }: NewsEntryProps) {

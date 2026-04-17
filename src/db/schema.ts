@@ -21,6 +21,7 @@ export const restaurants = sqliteTable("restaurants", {
   name: text("name").notNull(),
   description: text("description"),
   type: text("type").notNull(), // comma-separated: e.g. 'bar,gelateria'
+  cuisines: text("cuisines"), // comma-separated fixed list: e.g. 'pesce,pasta'
   priceRange: integer("price_range").notNull(),
   phone: text("phone"),
   address: text("address").notNull(),
@@ -95,6 +96,70 @@ export const pinnedRestaurants = sqliteTable("pinned_restaurants", {
   index("idx_pinned_user").on(table.userId),
 ]);
 
+// -- Stores (parallel to restaurants; no priceRange; storeUrl) --
+
+export const stores = sqliteTable("stores", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),
+  description: text("description"),
+  type: text("type").notNull(), // comma-separated: e.g. 'abbigliamento,elettronica'
+  phone: text("phone"),
+  address: text("address").notNull(),
+  latitude: real("latitude"),
+  longitude: real("longitude"),
+  openingHours: text("opening_hours").notNull(), // JSON
+  storeUrl: text("store_url"),
+  ownerId: text("owner_id").notNull().references(() => users.id),
+  active: integer("active").notNull().default(1),
+  deleted: integer("deleted").notNull().default(0),
+  approved: integer("approved").notNull().default(1),
+  createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
+  updatedAt: text("updated_at").notNull().default(sql`(datetime('now'))`),
+});
+
+// -- Store Promotions (generale | saldi | deal | news) --
+
+export const storePromotions = sqliteTable("store_promotions", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  storeId: integer("store_id").notNull().references(() => stores.id, { onDelete: "cascade" }),
+  type: text("type").notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  price: real("price"),
+  dateStart: text("date_start").notNull(),
+  dateEnd: text("date_end").notNull(),
+  timeStart: text("time_start"),
+  timeEnd: text("time_end"),
+  createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
+}, (table) => [
+  index("idx_store_promotions_store").on(table.storeId),
+  index("idx_store_promotions_type").on(table.type),
+  index("idx_store_promotions_dates").on(table.dateStart, table.dateEnd),
+]);
+
+// -- Store Promotion Bumps (12h cooldown audit) --
+
+export const storePromotionBumps = sqliteTable("store_promotion_bumps", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  storeId: integer("store_id").notNull().references(() => stores.id, { onDelete: "cascade" }),
+  action: text("action").notNull(),
+  createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
+}, (table) => [
+  index("idx_store_promotion_bumps_store_created").on(table.storeId, table.createdAt),
+]);
+
+// -- Pinned Stores --
+
+export const pinnedStores = sqliteTable("pinned_stores", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  storeId: integer("store_id").notNull().references(() => stores.id, { onDelete: "cascade" }),
+  createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
+}, (table) => [
+  unique("uq_pinned_user_store").on(table.userId, table.storeId),
+  index("idx_pinned_stores_user").on(table.userId),
+]);
+
 // -- Events --
 
 export const events = sqliteTable("events", {
@@ -113,6 +178,7 @@ export const events = sqliteTable("events", {
   price: real("price"),
   link: text("link"),
   restaurantId: integer("restaurant_id").references(() => restaurants.id, { onDelete: "set null" }),
+  storeId: integer("store_id").references(() => stores.id, { onDelete: "set null" }),
   ownerId: text("owner_id").notNull().references(() => users.id),
   active: integer("active").notNull().default(1),
   deleted: integer("deleted").notNull().default(0),
@@ -124,4 +190,5 @@ export const events = sqliteTable("events", {
   index("idx_events_date_start").on(table.dateStart),
   index("idx_events_category").on(table.category),
   index("idx_events_restaurant_id").on(table.restaurantId),
+  index("idx_events_store_id").on(table.storeId),
 ]);

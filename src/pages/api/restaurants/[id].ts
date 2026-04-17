@@ -68,6 +68,7 @@ export async function PUT({ locals, params, request }: APIContext): Promise<Resp
   if (body.name !== undefined) updates.name = body.name.trim();
   if (body.description !== undefined) updates.description = body.description?.trim() || null;
   if (body.type !== undefined) updates.type = body.type.trim();
+  if (body.cuisines !== undefined) updates.cuisines = body.cuisines?.trim() || null;
   if (body.price_range !== undefined) updates.priceRange = body.price_range;
   if (body.phone !== undefined) updates.phone = body.phone?.trim() || null;
   if (body.address !== undefined) updates.address = body.address.trim();

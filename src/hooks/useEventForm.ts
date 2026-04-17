@@ -30,6 +30,7 @@ export type EventFormInitialData = {
   price: number | null;
   link: string | null;
   restaurantId: number | null;
+  storeId: number | null;
 };
 
 function splitCategories(category: string) {
@@ -65,6 +66,7 @@ export function useEventForm(initial?: EventFormInitialData, onSuccess?: () => v
       price: initial?.price ?? null,
       link: initial?.link ?? "",
       restaurantId: initial?.restaurantId ?? null,
+      storeId: initial?.storeId ?? null,
     },
     mode: "onBlur",
   });

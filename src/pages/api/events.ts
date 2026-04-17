@@ -1,5 +1,5 @@
 import type { APIContext } from "astro";
-import { events, restaurants } from "../../db/schema";
+import { events, restaurants, stores } from "../../db/schema";
 import { gte, asc, eq, and as dbAnd, or } from "drizzle-orm";
 import { createEventApiSchema } from "../../schemas/event";
 import { notifyAdmins } from "../../utils/adminNotify";
@@ -10,9 +10,10 @@ export async function GET({ locals }: APIContext): Promise<Response> {
   const today = getTodayISO();
 
   const rows = await db
-    .select({ event: events, restaurantName: restaurants.name })
+    .select({ event: events, restaurantName: restaurants.name, storeName: stores.name })
     .from(events)
     .leftJoin(restaurants, eq(events.restaurantId, restaurants.id))
+    .leftJoin(stores, eq(events.storeId, stores.id))
     .where(
       dbAnd(
         eq(events.active, 1),
@@ -22,9 +23,10 @@ export async function GET({ locals }: APIContext): Promise<Response> {
     )
     .orderBy(asc(events.dateStart), asc(events.timeStart));
 
-  const allEvents = rows.map(({ event, restaurantName }) => ({
+  const allEvents = rows.map(({ event, restaurantName, storeName }) => ({
     ...event,
     restaurantName: restaurantName ?? null,
+    storeName: storeName ?? null,
   }));
 
   return Response.json({ events: allEvents });
@@ -66,6 +68,7 @@ export async function POST({ locals, request }: APIContext): Promise<Response> {
     price: body.price ?? null,
     link: body.link?.trim() || null,
     restaurantId: body.restaurant_id ?? null,
+    storeId: body.store_id ?? null,
     ownerId: user.id,
     active: 1,
   }).returning();

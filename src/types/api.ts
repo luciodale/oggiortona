@@ -4,13 +4,19 @@ import type {
   EventRow,
   PromotionRow,
   RestaurantRow,
+  StorePromotionRow,
+  StoreRow,
   UserRow,
 } from "./database";
-import type { RestaurantWithStatus } from "./domain";
+import type { RestaurantWithStatus, StoreWithStatus } from "./domain";
 import type {
   CreateRestaurantApiPayload,
   UpdateRestaurantApiPayload,
 } from "../schemas/restaurant";
+import type {
+  CreateStoreApiPayload,
+  UpdateStoreApiPayload,
+} from "../schemas/store";
 
 // -- Restaurants --
 
@@ -34,15 +40,42 @@ export type CreateRestaurantRequest = CreateRestaurantApiPayload;
 
 export type UpdateRestaurantRequest = UpdateRestaurantApiPayload;
 
+// -- Stores --
+
+export type StoreListParams = {
+  type?: string;
+  open_now?: boolean;
+  has_special?: boolean;
+  sort?: "name";
+};
+
+export type StoreListResponse = {
+  stores: Array<StoreWithStatus>;
+  count: number;
+};
+
+export type StoreDetailResponse = {
+  store: StoreWithStatus;
+};
+
+export type CreateStoreRequest = CreateStoreApiPayload;
+
+export type UpdateStoreRequest = UpdateStoreApiPayload;
+
 // -- Dashboard --
 
 export type DashboardRestaurant = RestaurantRow & {
   promotions: Array<PromotionRow>;
 };
 
+export type DashboardStore = StoreRow & {
+  promotions: Array<StorePromotionRow>;
+};
+
 export type DashboardResponse = {
   user: UserRow;
   restaurants: Array<DashboardRestaurant>;
+  stores: Array<DashboardStore>;
 };
 
 // -- Promotions --
@@ -61,10 +94,20 @@ export type PromotionsResponse = {
   cooldown: CooldownSnapshot;
 };
 
+export type StorePromotionsResponse = {
+  storeName: string;
+  items: Array<StorePromotionRow>;
+  cooldown: CooldownSnapshot;
+};
+
 // -- Admin --
 
 export type AdminRestaurantsResponse = {
   restaurants: Array<DashboardRestaurant>;
+};
+
+export type AdminStoresResponse = {
+  stores: Array<DashboardStore>;
 };
 
 export type AdminEventsResponse = {

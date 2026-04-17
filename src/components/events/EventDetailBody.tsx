@@ -5,9 +5,10 @@ import { formatDateLong } from "../../utils/date";
 import { CalendarIcon } from "../../icons/CalendarIcon";
 import { ClockIcon } from "../../icons/ClockIcon";
 import { CupIcon } from "../../icons/CupIcon";
+import { ShopIcon } from "../../icons/ShopIcon";
 import { TagIcon } from "../../icons/TagIcon";
 import { EventLink } from "./EventLink";
-import type { EventWithRestaurant, SheetMeta, RestaurantWithStatus } from "../../types/domain";
+import type { EventWithRestaurant, SheetMeta, RestaurantWithStatus, StoreWithStatus } from "../../types/domain";
 
 type ActionLinkProps = {
   href: string;
@@ -42,6 +43,15 @@ export function EventDetailBody({ event }: EventDetailBodyProps) {
       .then((r) => r.json())
       .then((data: { restaurant: RestaurantWithStatus }) => {
         const meta: SheetMeta = { kind: "restaurant", data: data.restaurant };
+        openSidebar("bottom", { id: "linked", meta });
+      });
+  }
+
+  function handleStoreClick() {
+    fetch(`/api/stores/${event.storeId}`)
+      .then((r) => r.json())
+      .then((data: { store: StoreWithStatus }) => {
+        const meta: SheetMeta = { kind: "store", data: data.store };
         openSidebar("bottom", { id: "linked", meta });
       });
   }
@@ -134,10 +144,28 @@ export function EventDetailBody({ event }: EventDetailBodyProps) {
         </button>
       )}
 
+      {event.storeName && event.storeId && (
+        <button
+          type="button"
+          onClick={handleStoreClick}
+          className="mt-3 flex w-full items-center gap-3 rounded-2xl bg-card p-4 text-left shadow-card"
+        >
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-mangiare-light">
+            <ShopIcon className="h-4 w-4 text-mangiare" />
+          </div>
+          <div>
+            <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted">
+              {t("events.linkedStore")}
+            </span>
+            <p className="text-[13px] font-medium text-primary">{event.storeName}</p>
+          </div>
+        </button>
+      )}
+
       {event.description && (
         <div className="mt-6">
           <h2 className="mb-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-muted">{t("common.details")}</h2>
-          <p className="text-[13px] leading-relaxed text-muted">{event.description}</p>
+          <p className="whitespace-pre-line text-[13px] leading-relaxed text-muted">{event.description}</p>
         </div>
       )}
 

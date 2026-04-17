@@ -11,6 +11,7 @@ import { useRestaurantFilters } from "../../hooks/useRestaurantFilters";
 import { usePinnedRestaurants } from "../../hooks/usePinnedRestaurants";
 import { ContentLoader } from "../shared/ContentLoader";
 import { useLocale } from "../../i18n/useLocale";
+import { restaurantCuisines, restaurantCuisineLabels } from "../../config/cuisines";
 
 const MapView = lazy(() => import("../shared/MapView").then((m) => ({ default: m.MapView })));
 
@@ -22,13 +23,14 @@ type RestaurantsViewProps = {
 };
 
 export function RestaurantsView({ restaurants, isLoading, isLoggedIn, initialPinnedIds }: RestaurantsViewProps) {
-  const { t } = useLocale();
+  const { locale, t } = useLocale();
   const { mode, handleToggle } = useViewMode();
   const { isRefreshing, handleRefresh } = useRefresh([["restaurants"], ["pins"]]);
   const { pinnedIds, togglePin } = usePinnedRestaurants(initialPinnedIds);
-  const { filters, filtered, hasActiveFilter, clearFilters, toggleOpenNow, toggleHasPromo } =
+  const { filters, cuisine, setCuisine, filtered, hasActiveFilter, clearFilters, toggleOpenNow, toggleHasPromo } =
     useRestaurantFilters(restaurants, pinnedIds);
   const pins = useMapPins(filtered);
+  const cuisineLabels = restaurantCuisineLabels(locale);
 
   const { openSidebar } = useSwipeBarContext();
 
@@ -51,16 +53,41 @@ export function RestaurantsView({ restaurants, isLoading, isLoggedIn, initialPin
         isRefreshing={isRefreshing}
         onRefresh={handleRefresh}
       >
-        <div className="flex flex-wrap gap-2" role="toolbar" aria-label={t("restaurants.filters")}>
-          <Pill active={!hasActiveFilter} onClick={clearFilters}>
-            {t("events.all")}
-          </Pill>
-          <Pill active={filters.openNow} onClick={toggleOpenNow}>
-            {t("restaurants.openNow")}
-          </Pill>
-          <Pill active={filters.hasPromo} onClick={toggleHasPromo}>
-            {promoCount > 0 ? t("restaurants.promotionsWithCount", { count: promoCount }) : t("restaurants.promotions")}
-          </Pill>
+        <div className="space-y-2">
+          <div className="flex flex-wrap gap-2" role="toolbar" aria-label={t("restaurants.filters")}>
+            <Pill active={!hasActiveFilter} onClick={clearFilters}>
+              {t("events.all")}
+            </Pill>
+            <Pill active={filters.openNow} onClick={toggleOpenNow}>
+              {t("restaurants.openNow")}
+            </Pill>
+            <Pill active={filters.hasPromo} onClick={toggleHasPromo}>
+              {promoCount > 0 ? t("restaurants.promotionsWithCount", { count: promoCount }) : t("restaurants.promotions")}
+            </Pill>
+          </div>
+
+          <div
+            className="flex flex-nowrap gap-2 overflow-x-auto scroll-hide pr-20"
+            role="toolbar"
+            aria-label={t("restaurants.cuisineFilter")}
+            style={{
+              maskImage: "linear-gradient(to right, black 0, black calc(100% - 80px), transparent 100%)",
+              WebkitMaskImage: "linear-gradient(to right, black 0, black calc(100% - 80px), transparent 100%)",
+            }}
+          >
+            <Pill active={cuisine === "all"} onClick={() => setCuisine("all")}>
+              {t("restaurants.allCuisines")}
+            </Pill>
+            {restaurantCuisines.map((c) => (
+              <Pill
+                key={c}
+                active={cuisine === c}
+                onClick={() => setCuisine(c)}
+              >
+                {cuisineLabels[c] ?? c}
+              </Pill>
+            ))}
+          </div>
         </div>
       </ListHeader>
 

@@ -1,5 +1,5 @@
 import { getTodayISO } from "./date";
-import type { PromotionRow } from "../types/database";
+import type { PromotionRow, StorePromotionRow } from "../types/database";
 import type { Locale } from "../types/domain";
 import { t } from "../i18n/t";
 
@@ -8,18 +8,20 @@ export type BadgeStyle = { label: string; cls: string };
 const BADGE_CLS: Record<string, string> = {
   generale: "bg-promo-generale-bg text-promo-generale",
   special: "bg-mangiare-light text-mangiare",
+  saldi: "bg-promo-saldi-bg text-promo-saldi",
   deal: "bg-promo-deal-bg text-promo-deal",
   news: "bg-promo-news-bg text-promo-news",
 };
 
-const BADGE_KEYS: Record<string, "promo.generale" | "promo.dailySpecial" | "promo.deal" | "promo.news"> = {
+const BADGE_KEYS: Record<string, "promo.generale" | "promo.dailySpecial" | "promo.saldi" | "promo.deal" | "promo.news"> = {
   generale: "promo.generale",
   special: "promo.dailySpecial",
+  saldi: "promo.saldi",
   deal: "promo.deal",
   news: "promo.news",
 };
 
-export function isPromotionExpired(item: PromotionRow) {
+export function isPromotionExpired(item: PromotionRow | StorePromotionRow) {
   return item.dateEnd < getTodayISO();
 }
 

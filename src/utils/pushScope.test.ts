@@ -24,21 +24,21 @@ describe("isValidScope", () => {
 
 describe("canSubscribeToScope", () => {
   it("allows anyone to subscribe to general", () => {
-    expect(canSubscribeToScope("general", { isAdmin: false, ownsRestaurants: false })).toBe(true);
+    expect(canSubscribeToScope("general", { isAdmin: false, ownsVenue: false })).toBe(true);
   });
 
   it("allows only admins to subscribe to admin", () => {
-    expect(canSubscribeToScope("admin", { isAdmin: true, ownsRestaurants: false })).toBe(true);
-    expect(canSubscribeToScope("admin", { isAdmin: false, ownsRestaurants: false })).toBe(false);
+    expect(canSubscribeToScope("admin", { isAdmin: true, ownsVenue: false })).toBe(true);
+    expect(canSubscribeToScope("admin", { isAdmin: false, ownsVenue: false })).toBe(false);
   });
 
   it("allows only restaurant owners to subscribe to owner", () => {
-    expect(canSubscribeToScope("owner", { isAdmin: false, ownsRestaurants: true })).toBe(true);
-    expect(canSubscribeToScope("owner", { isAdmin: false, ownsRestaurants: false })).toBe(false);
+    expect(canSubscribeToScope("owner", { isAdmin: false, ownsVenue: true })).toBe(true);
+    expect(canSubscribeToScope("owner", { isAdmin: false, ownsVenue: false })).toBe(false);
   });
 
   it("admin who owns restaurants can subscribe to all scopes", () => {
-    const user = { isAdmin: true, ownsRestaurants: true };
+    const user = { isAdmin: true, ownsVenue: true };
     expect(canSubscribeToScope("admin", user)).toBe(true);
     expect(canSubscribeToScope("owner", user)).toBe(true);
     expect(canSubscribeToScope("general", user)).toBe(true);
@@ -47,18 +47,18 @@ describe("canSubscribeToScope", () => {
 
 describe("scopesForUser", () => {
   it("returns only general for regular user", () => {
-    expect(scopesForUser({ isAdmin: false, ownsRestaurants: false })).toEqual(["general"]);
+    expect(scopesForUser({ isAdmin: false, ownsVenue: false })).toEqual(["general"]);
   });
 
   it("returns general + owner for restaurant owner", () => {
-    expect(scopesForUser({ isAdmin: false, ownsRestaurants: true })).toEqual(["general", "owner"]);
+    expect(scopesForUser({ isAdmin: false, ownsVenue: true })).toEqual(["general", "owner"]);
   });
 
   it("returns general + admin for admin without restaurants", () => {
-    expect(scopesForUser({ isAdmin: true, ownsRestaurants: false })).toEqual(["general", "admin"]);
+    expect(scopesForUser({ isAdmin: true, ownsVenue: false })).toEqual(["general", "admin"]);
   });
 
   it("returns all scopes for admin who owns restaurants", () => {
-    expect(scopesForUser({ isAdmin: true, ownsRestaurants: true })).toEqual(["general", "owner", "admin"]);
+    expect(scopesForUser({ isAdmin: true, ownsVenue: true })).toEqual(["general", "owner", "admin"]);
   });
 });

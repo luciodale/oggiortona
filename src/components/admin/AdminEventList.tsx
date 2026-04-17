@@ -2,7 +2,7 @@ import type { EventRow } from "../../types/database";
 import { AdminEventCard } from "./AdminEventCard";
 
 type AdminEventListProps = {
-  events: Array<EventRow & { ownerEmail: string | null; ownerName: string | null; restaurantName: string | null }>;
+  events: Array<EventRow & { ownerEmail: string | null; ownerName: string | null; restaurantName: string | null; storeName: string | null }>;
   loading: boolean;
   onToggle: (id: number) => void;
   onDelete?: (id: number) => void;

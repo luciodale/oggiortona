@@ -1,5 +1,8 @@
 import { useEffect } from "react";
+import { useWatch } from "react-hook-form";
 import { useRestaurantForm } from "../../hooks/useRestaurantForm";
+import { useLocale } from "../../i18n/useLocale";
+import { restaurantCuisines, restaurantCuisineLabels } from "../../config/cuisines";
 import { getOrderedDays } from "../../utils/time";
 import { Input } from "../ui/Input";
 import { Textarea } from "../ui/Textarea";
@@ -19,12 +22,17 @@ type RestaurantFormProps = {
 export function RestaurantForm({ restaurantId, initialData, onSuccess, onDirtyChange }: RestaurantFormProps) {
   const {
     form,
+    toggleCuisine,
     copyFromPrevious,
     onSubmit,
     submitState,
     errorMessage,
     t,
   } = useRestaurantForm(initialData, onSuccess);
+
+  const { locale } = useLocale();
+  const cuisineLabels = restaurantCuisineLabels(locale);
+  const selectedCuisines = useWatch({ control: form.control, name: "cuisines" });
 
   const isEdit = restaurantId != null;
   const orderedDays = getOrderedDays();
@@ -64,6 +72,30 @@ export function RestaurantForm({ restaurantId, initialData, onSuccess, onDirtyCh
         error={form.formState.errors.type?.message}
         {...form.register("type")}
       />
+
+      <fieldset>
+        <legend className="mb-1.5 block text-[13px] font-medium text-primary">
+          {t("restaurants.cuisines")}
+        </legend>
+        <div className="flex flex-wrap gap-2" role="group" aria-label={t("restaurants.cuisines")}>
+          {restaurantCuisines.map((cuisine) => {
+            const active = selectedCuisines?.includes(cuisine) ?? false;
+            return (
+              <button
+                key={cuisine}
+                type="button"
+                aria-pressed={active}
+                onClick={() => toggleCuisine(cuisine)}
+                className={`rounded-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.05em] transition-all ${
+                  active ? "bg-muted text-card" : "bg-surface-warm text-muted hover:text-primary"
+                }`}
+              >
+                {cuisineLabels[cuisine] ?? cuisine}
+              </button>
+            );
+          })}
+        </div>
+      </fieldset>
 
       <fieldset>
         <legend className="mb-1.5 block text-[13px] font-medium text-primary">

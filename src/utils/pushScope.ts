@@ -8,21 +8,21 @@ export function isValidScope(value: unknown): value is PushScope {
 
 export function canSubscribeToScope(
   scope: PushScope,
-  user: { isAdmin: boolean; ownsRestaurants: boolean },
+  user: { isAdmin: boolean; ownsVenue: boolean },
 ): boolean {
   switch (scope) {
     case "admin":
       return user.isAdmin;
     case "owner":
-      return user.ownsRestaurants;
+      return user.ownsVenue;
     case "general":
       return true;
   }
 }
 
-export function scopesForUser(user: { isAdmin: boolean; ownsRestaurants: boolean }): Array<PushScope> {
+export function scopesForUser(user: { isAdmin: boolean; ownsVenue: boolean }): Array<PushScope> {
   const scopes: Array<PushScope> = ["general"];
-  if (user.ownsRestaurants) scopes.push("owner");
+  if (user.ownsVenue) scopes.push("owner");
   if (user.isAdmin) scopes.push("admin");
   return scopes;
 }

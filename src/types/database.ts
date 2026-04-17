@@ -9,6 +9,10 @@ import type {
   events,
   pushSubscriptions,
   pinnedRestaurants,
+  stores,
+  storePromotions,
+  storePromotionBumps,
+  pinnedStores,
 } from "../db/schema";
 
 export type UserRow = InferSelectModel<typeof users>;
@@ -18,6 +22,10 @@ export type PromotionBumpRow = InferSelectModel<typeof promotionBumps>;
 export type EventRow = InferSelectModel<typeof events>;
 export type PushSubscriptionRow = InferSelectModel<typeof pushSubscriptions>;
 export type PinnedRestaurantRow = InferSelectModel<typeof pinnedRestaurants>;
+export type StoreRow = InferSelectModel<typeof stores>;
+export type StorePromotionRow = InferSelectModel<typeof storePromotions>;
+export type StorePromotionBumpRow = InferSelectModel<typeof storePromotionBumps>;
+export type PinnedStoreRow = InferSelectModel<typeof pinnedStores>;
 
 export type DaySchedule = {
   open: string;

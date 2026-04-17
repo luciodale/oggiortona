@@ -3,6 +3,7 @@ import { XIcon } from "../../icons/XIcon";
 import { isSheetMeta } from "../../types/domain";
 import { EventDetailBody } from "../events/EventDetailBody";
 import { RestaurantDetailBody } from "../restaurants/RestaurantDetailBody";
+import { StoreDetailBody } from "../stores/StoreDetailBody";
 
 function SheetBody({ sheetId }: { sheetId?: string }) {
   const { bottomSidebars } = useSwipeBarContext();
@@ -13,11 +14,9 @@ function SheetBody({ sheetId }: { sheetId?: string }) {
 
   return (
     <div className="mx-auto max-w-lg pt-4 px-5 pb-12">
-      {meta.kind === "restaurant" ? (
-        <RestaurantDetailBody restaurant={meta.data} />
-      ) : (
-        <EventDetailBody event={meta.data} />
-      )}
+      {meta.kind === "restaurant" && <RestaurantDetailBody restaurant={meta.data} />}
+      {meta.kind === "store" && <StoreDetailBody store={meta.data} />}
+      {meta.kind === "event" && <EventDetailBody event={meta.data} />}
     </div>
   );
 }

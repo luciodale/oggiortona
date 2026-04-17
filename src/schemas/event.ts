@@ -27,6 +27,7 @@ export function createEventFormSchema(t: TFn) {
       price: z.union([z.number().min(0, t("validation.invalidPrice")), z.nan()]).nullable(),
       link: z.string().trim(),
       restaurantId: z.number().nullable(),
+      storeId: z.number().nullable(),
     })
     .refine(
       (data) => data.categories.length > 0 || data.customCategory.trim().length > 0,
@@ -58,6 +59,7 @@ export const createEventApiSchema = z.object({
   price: z.number().min(0).nullish(),
   link: z.string().trim().nullish(),
   restaurant_id: z.number().int().positive().nullish(),
+  store_id: z.number().int().positive().nullish(),
 });
 
 export type CreateEventApiPayload = z.infer<typeof createEventApiSchema>;

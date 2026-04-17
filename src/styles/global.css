@@ -36,6 +36,11 @@
   --color-fare-mid: #e2ecf4;
   --color-fare-deep: #d4e3f0;
   --color-fare-muted: #8bb3cc;
+  --color-stores: #8e3d6b;
+  --color-stores-light: #f7ecf2;
+  --color-stores-mid: #eedae5;
+  --color-stores-deep: #e3c5d4;
+  --color-stores-muted: #b87c9c;
 
   /* Promotion types */
   --color-promo-deal: #7a4068;
@@ -44,6 +49,8 @@
   --color-promo-news-bg: #eef5f3;
   --color-promo-generale: #6b7a45;
   --color-promo-generale-bg: #f2f4ed;
+  --color-promo-saldi: #a84a2c;
+  --color-promo-saldi-bg: #fdeee6;
 
   /* Event categories */
   --color-cat-sagra: #8a6d20;
@@ -60,6 +67,24 @@
   --color-cat-sport-bg: #fdf0ee;
   --color-cat-altro: #6d6155;
   --color-cat-altro-bg: #f5f0ea;
+
+  /* Restaurant cuisines */
+  --color-cuisine-meat: #a04030;
+  --color-cuisine-meat-bg: #fdf0ee;
+  --color-cuisine-fish: #2c6e7d;
+  --color-cuisine-fish-bg: #e6f1f3;
+  --color-cuisine-pizza: #c4512a;
+  --color-cuisine-pizza-bg: #fdf2ed;
+  --color-cuisine-pasta: #a57c1a;
+  --color-cuisine-pasta-bg: #fdf6e8;
+  --color-cuisine-veg: #4a7c3a;
+  --color-cuisine-veg-bg: #eef5ea;
+  --color-cuisine-sweet: #a04a6c;
+  --color-cuisine-sweet-bg: #fdeef3;
+  --color-cuisine-drink: #6b4a9a;
+  --color-cuisine-drink-bg: #f0ebf8;
+  --color-cuisine-coffee: #6b4e2d;
+  --color-cuisine-coffee-bg: #f5ede0;
 
   /* Status */
   --color-status-pending: #8a6d20;
@@ -128,6 +153,12 @@ body {
 .page-fare {
   background-color: var(--color-fare-light);
   background-image: var(--noise-texture), linear-gradient(180deg, var(--color-fare-light) 0%, var(--color-surface) 280px);
+  background-size: 256px 256px, 100% 100%;
+}
+
+.page-stores {
+  background-color: var(--color-stores-light);
+  background-image: var(--noise-texture), linear-gradient(180deg, var(--color-stores-light) 0%, var(--color-surface) 280px);
   background-size: 256px 256px, 100% 100%;
 }
 
@@ -202,6 +233,11 @@ html.dark {
   --color-fare-mid: #171d24;
   --color-fare-deep: #1a2028;
   --color-fare-muted: #6a97b5;
+  --color-stores: #c48ab0;
+  --color-stores-light: #1c1218;
+  --color-stores-mid: #24171e;
+  --color-stores-deep: #2a1c24;
+  --color-stores-muted: #8a5a78;
 
   /* Promotion types */
   --color-promo-deal: #c48ab0;
@@ -210,6 +246,8 @@ html.dark {
   --color-promo-news-bg: #182420;
   --color-promo-generale: #a0b870;
   --color-promo-generale-bg: #1a1e14;
+  --color-promo-saldi: #e08860;
+  --color-promo-saldi-bg: #241812;
 
   /* Event categories */
   --color-cat-sagra: #d4b060;
@@ -226,6 +264,24 @@ html.dark {
   --color-cat-sport-bg: #201614;
   --color-cat-altro: #9a8d80;
   --color-cat-altro-bg: #1a1816;
+
+  /* Restaurant cuisines */
+  --color-cuisine-meat: #d47060;
+  --color-cuisine-meat-bg: #201614;
+  --color-cuisine-fish: #68a8b8;
+  --color-cuisine-fish-bg: #14191c;
+  --color-cuisine-pizza: #d86840;
+  --color-cuisine-pizza-bg: #1e1612;
+  --color-cuisine-pasta: #d4b060;
+  --color-cuisine-pasta-bg: #201c14;
+  --color-cuisine-veg: #8ab878;
+  --color-cuisine-veg-bg: #162014;
+  --color-cuisine-sweet: #d08aa8;
+  --color-cuisine-sweet-bg: #201820;
+  --color-cuisine-drink: #a088c8;
+  --color-cuisine-drink-bg: #1a1820;
+  --color-cuisine-coffee: #a08468;
+  --color-cuisine-coffee-bg: #1c1814;
 
   /* Status */
   --color-status-pending: #d4b060;

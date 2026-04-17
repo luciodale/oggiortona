@@ -1,10 +1,10 @@
 import { MessageIcon } from "../../icons/MessageIcon";
-import type { PromotionRow } from "../../types/database";
+import type { PromotionRow, StorePromotionRow } from "../../types/database";
 import { DateRange } from "./DateRange";
 import { TimeRange } from "./TimeRange";
 
 type GeneraleEntryProps = {
-  item: PromotionRow;
+  item: PromotionRow | StorePromotionRow;
 };
 
 export function GeneraleEntry({ item }: GeneraleEntryProps) {

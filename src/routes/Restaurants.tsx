@@ -13,8 +13,8 @@ export function RestaurantsRoute() {
   });
 
   const { data: pinsData } = useQuery<{ restaurantIds: Array<number> }>({
-    queryKey: ["pins"],
-    queryFn: () => fetch("/api/pins").then((r) => r.json()),
+    queryKey: ["restaurant-pins"],
+    queryFn: () => fetch("/api/restaurant-pins").then((r) => r.json()),
     enabled: !!user,
   });
 

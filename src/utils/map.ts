@@ -1,9 +1,9 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { MapPopup } from "../components/shared/MapPopup";
-import type { PromotionRow } from "../types/database";
+import type { PromotionRow, StorePromotionRow } from "../types/database";
 
-export type PinVariant = "restaurant" | "event" | "default";
+export type PinVariant = "restaurant" | "store" | "event" | "default";
 
 export type MapPin = {
   id: number;
@@ -16,7 +16,7 @@ export type MapPin = {
   variant?: PinVariant;
   isOpen?: boolean;
   priceRange?: number;
-  promotions?: Array<PromotionRow>;
+  promotions?: Array<PromotionRow | StorePromotionRow>;
   labels?: {
     open?: string;
     closed?: string;
@@ -77,6 +77,10 @@ export const MAP_CSS = `
     border: 1px solid var(--color-border);
     border-top: none;
     border-right: none;
+  }
+  .retro-popup .map-popup-directions,
+  .retro-popup .map-popup-directions * {
+    color: #ffffff !important;
   }
   .map-fullscreen .leaflet-top.leaflet-right {
     top: calc(env(safe-area-inset-top, 0px) + 140px) !important;

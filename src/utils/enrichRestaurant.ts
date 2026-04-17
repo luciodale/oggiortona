@@ -23,6 +23,7 @@ export function enrichRestaurant(
   return {
     ...row,
     types: parseTypes(row.type),
+    cuisineList: row.cuisines ? parseTypes(row.cuisines) : [],
     isOpen: isOpenNow(parsedHours),
     promotions,
     parsedHours,

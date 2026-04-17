@@ -1,16 +1,19 @@
 import type {
   RestaurantRow,
+  StoreRow,
   EventRow,
   OpeningHours,
   DaySchedule,
 } from "../types/database";
 import type { RestaurantFormInitialData } from "../hooks/useRestaurantForm";
+import type { StoreFormInitialData } from "../hooks/useStoreForm";
 import type { EventFormInitialData } from "../hooks/useEventForm";
 import type { EventFormValues } from "../schemas/event";
 import type {
   RestaurantFormValues,
   DayFormValues,
 } from "../schemas/restaurant";
+import type { StoreFormValues } from "../schemas/store";
 import { parseTypes } from "./restaurant";
 import { parseOpeningHours } from "./time";
 
@@ -19,6 +22,7 @@ export function restaurantToFormData(r: RestaurantRow): RestaurantFormInitialDat
     name: r.name,
     description: r.description,
     types: parseTypes(r.type),
+    cuisines: r.cuisines ? parseTypes(r.cuisines) : [],
     priceRange: r.priceRange,
     phone: r.phone,
     address: r.address,
@@ -26,6 +30,20 @@ export function restaurantToFormData(r: RestaurantRow): RestaurantFormInitialDat
     longitude: r.longitude,
     menuUrl: r.menuUrl,
     parsedHours: parseOpeningHours(r.openingHours),
+  };
+}
+
+export function storeToFormData(s: StoreRow): StoreFormInitialData {
+  return {
+    name: s.name,
+    description: s.description,
+    types: parseTypes(s.type),
+    phone: s.phone,
+    address: s.address,
+    latitude: s.latitude,
+    longitude: s.longitude,
+    storeUrl: s.storeUrl,
+    parsedHours: parseOpeningHours(s.openingHours),
   };
 }
 
@@ -45,6 +63,7 @@ export function eventToFormData(e: EventRow): EventFormInitialData {
     price: e.price,
     link: e.link,
     restaurantId: e.restaurantId,
+    storeId: e.storeId,
   };
 }
 
@@ -77,6 +96,7 @@ export function buildEventPayload(data: EventFormValues) {
       data.price != null && !Number.isNaN(data.price) ? data.price : null,
     link: data.link || null,
     restaurant_id: data.restaurantId,
+    store_id: data.storeId,
   };
 }
 
@@ -111,10 +131,13 @@ export function buildRestaurantPayload(data: RestaurantFormValues) {
     .filter(Boolean)
     .join(",");
 
+  const cuisines = data.cuisines.length > 0 ? data.cuisines.join(",") : null;
+
   return {
     name: data.name,
     description: data.description || null,
     type,
+    cuisines,
     price_range: data.priceRange,
     phone: data.phone || null,
     address: data.address,
@@ -122,5 +145,25 @@ export function buildRestaurantPayload(data: RestaurantFormValues) {
     longitude: data.longitude,
     opening_hours: JSON.stringify(hoursToOpeningHours(data.hours)),
     menu_url: data.menuUrl || null,
+  };
+}
+
+export function buildStorePayload(data: StoreFormValues) {
+  const type = data.type
+    .split(",")
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean)
+    .join(",");
+
+  return {
+    name: data.name,
+    description: data.description || null,
+    type,
+    phone: data.phone || null,
+    address: data.address,
+    latitude: data.latitude,
+    longitude: data.longitude,
+    opening_hours: JSON.stringify(hoursToOpeningHours(data.hours)),
+    store_url: data.storeUrl || null,
   };
 }

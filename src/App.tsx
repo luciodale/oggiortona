@@ -54,6 +54,11 @@ const eventsRoute = createRoute({
   path: "/events",
   component: lazyWithReload(() => import("./routes/Events"), "EventsRoute"),
 });
+const storesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/stores",
+  component: lazyWithReload(() => import("./routes/Stores"), "StoresRoute"),
+});
 const signInRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/sign-in",
@@ -89,6 +94,7 @@ const routeTree = rootRoute.addChildren([
   indexRoute,
   restaurantsRoute,
   eventsRoute,
+  storesRoute,
   signInRoute,
   ssoCallbackRoute,
   profileRoute.addChildren([profileIndexRoute]),

@@ -2,6 +2,7 @@ import { useSwipeBarContext } from "@luciodale/swipe-bar";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale } from "../../i18n/useLocale";
 import { eventCategoryColors, eventCategoryLabels } from "../../config/categories";
+import { restaurantCuisineColors, restaurantCuisineLabels } from "../../config/cuisines";
 import { PromotionCardPublic } from "../PromotionCardPublic";
 import { formatSchedule, getDayLabel, getOrderedDays } from "../../utils/time";
 import { formatDateShort } from "../../utils/date";
@@ -16,6 +17,7 @@ export function RestaurantDetailBody({ restaurant }: RestaurantDetailBodyProps) 
   const { locale, t } = useLocale();
   const { openSidebar } = useSwipeBarContext();
   const catLabels = eventCategoryLabels(locale);
+  const cuisineLabels = restaurantCuisineLabels(locale);
   const days = getOrderedDays();
   const { data: eventsData } = useQuery<{ events: Array<EventRow> }>({
     queryKey: ["restaurant-events", String(restaurant.id)],
@@ -44,7 +46,20 @@ export function RestaurantDetailBody({ restaurant }: RestaurantDetailBodyProps) 
         </span>
       </div>
 
-      {restaurant.description && <p className="mt-3 text-[13px] leading-relaxed text-muted">{restaurant.description}</p>}
+      {restaurant.description && <p className="mt-3 whitespace-pre-line text-[13px] leading-relaxed text-muted">{restaurant.description}</p>}
+
+      {restaurant.cuisineList.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          {restaurant.cuisineList.map((c) => (
+            <span
+              key={c}
+              className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${restaurantCuisineColors[c] ?? "bg-cat-altro-bg text-cat-altro"}`}
+            >
+              {cuisineLabels[c] ?? c}
+            </span>
+          ))}
+        </div>
+      )}
 
       {linkedEvents.length > 0 && (
         <div className="mt-5">
@@ -53,7 +68,7 @@ export function RestaurantDetailBody({ restaurant }: RestaurantDetailBodyProps) 
             {linkedEvents.map((event) => {
               const cats = event.category.split(",").map((c) => c.trim());
               function handleEventClick() {
-                const enriched: EventWithRestaurant = { ...event, restaurantName: restaurant.name };
+                const enriched: EventWithRestaurant = { ...event, restaurantName: restaurant.name, storeName: null };
                 const meta: SheetMeta = { kind: "event", data: enriched };
                 openSidebar("bottom", { id: "linked", meta });
               }

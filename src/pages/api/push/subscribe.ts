@@ -1,5 +1,5 @@
 import type { APIContext } from "astro";
-import { pushSubscriptions, restaurants } from "../../../db/schema";
+import { pushSubscriptions, restaurants, stores } from "../../../db/schema";
 import { eq, and } from "drizzle-orm";
 import { isValidScope, canSubscribeToScope } from "../../../utils/pushScope";
 
@@ -44,16 +44,16 @@ export async function POST({ locals, request }: APIContext): Promise<Response> {
 
   const db = locals.db;
 
-  let ownsRestaurants = false;
+  let ownsVenue = false;
   if (raw.scope === "owner" && user) {
-    const owned = await db.select({ id: restaurants.id })
-      .from(restaurants)
-      .where(eq(restaurants.ownerId, user.id))
-      .limit(1);
-    ownsRestaurants = owned.length > 0;
+    const [ownedRestaurants, ownedStores] = await Promise.all([
+      db.select({ id: restaurants.id }).from(restaurants).where(eq(restaurants.ownerId, user.id)).limit(1),
+      db.select({ id: stores.id }).from(stores).where(eq(stores.ownerId, user.id)).limit(1),
+    ]);
+    ownsVenue = ownedRestaurants.length > 0 || ownedStores.length > 0;
   }
 
-  if (raw.scope !== "general" && !canSubscribeToScope(raw.scope, { isAdmin: locals.isAdmin, ownsRestaurants })) {
+  if (raw.scope !== "general" && !canSubscribeToScope(raw.scope, { isAdmin: locals.isAdmin, ownsVenue })) {
     return Response.json({ error: "Non autorizzato per questo scope" }, { status: 403 });
   }
 

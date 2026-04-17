@@ -6,6 +6,7 @@ import { CalendarIcon } from "../icons/CalendarIcon";
 import { CupIcon } from "../icons/CupIcon";
 import { HomeIcon } from "../icons/HomeIcon";
 import { ShieldIcon } from "../icons/ShieldIcon";
+import { ShopIcon } from "../icons/ShopIcon";
 import { UserIcon } from "../icons/UserIcon";
 
 type NavItem = {
@@ -18,6 +19,7 @@ type NavItem = {
 function getActiveColor(section: string) {
   if (section === "locali") return "text-mangiare";
   if (section === "fare") return "text-fare";
+  if (section === "stores") return "text-stores";
   return "text-accent";
 }
 
@@ -28,6 +30,7 @@ function isActive(section: string, pathname: string) {
   if (section === "admin") return pathname.startsWith("/admin");
   if (section === "locali") return pathname.startsWith("/restaurants");
   if (section === "fare") return pathname.startsWith("/events");
+  if (section === "stores") return pathname.startsWith("/stores");
   return false;
 }
 
@@ -43,6 +46,7 @@ export function BottomNav() {
     { label: t("nav.today"), to: "/", section: "home", Icon: HomeIcon },
     { label: t("nav.restaurants"), to: "/restaurants", section: "locali", Icon: CupIcon },
     { label: t("nav.events"), to: "/events", section: "fare", Icon: CalendarIcon },
+    { label: t("nav.stores"), to: "/stores", section: "stores", Icon: ShopIcon },
     { label: user ? t("nav.profile") : t("nav.signIn"), to: user ? "/profile" : "/sign-in", section: "profilo", Icon: UserIcon },
     ...(isAdmin ? [{ label: "Admin", to: "/admin", section: "admin", Icon: ShieldIcon }] : []),
   ];

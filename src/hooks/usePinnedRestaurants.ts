@@ -10,7 +10,7 @@ export function usePinnedRestaurants(initialIds: Array<number>) {
       if (wasPinned) next.delete(id);
       else next.add(id);
 
-      fetch("/api/pins", {
+      fetch("/api/restaurant-pins", {
         method: wasPinned ? "DELETE" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ restaurantId: id }),

@@ -14,6 +14,7 @@ export function useRestaurantFilters(restaurants: Array<RestaurantWithStatus>, p
     openNow: false,
     hasPromo: false,
   });
+  const [cuisine, setCuisine] = useState<string>("all");
 
   // Tick every 60s to re-evaluate open status
   const [tick, setTick] = useState(0);
@@ -42,9 +43,12 @@ export function useRestaurantFilters(restaurants: Array<RestaurantWithStatus>, p
     if (filters.hasPromo) {
       result = result.filter((r) => r.promotions.length > 0);
     }
+    if (cuisine !== "all") {
+      result = result.filter((r) => r.cuisineList.includes(cuisine));
+    }
 
     return sortRestaurants(result, pinnedIds);
-  }, [restaurants, filters, tick, pinnedIds, getTodayISO, isOpenNow, sortRestaurants]);
+  }, [restaurants, filters, cuisine, tick, pinnedIds]);
 
   const noFilter: Filters = { openNow: false, hasPromo: false };
 
@@ -58,12 +62,15 @@ export function useRestaurantFilters(restaurants: Array<RestaurantWithStatus>, p
 
   function clearFilters() {
     setFilters(noFilter);
+    setCuisine("all");
   }
 
-  const hasActiveFilter = filters.openNow || filters.hasPromo;
+  const hasActiveFilter = filters.openNow || filters.hasPromo || cuisine !== "all";
 
   return {
     filters,
+    cuisine,
+    setCuisine,
     filtered,
     hasActiveFilter,
     clearFilters,

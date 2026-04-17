@@ -4,17 +4,24 @@ import { XIcon } from "../../icons/XIcon";
 import { isFormSheetMeta } from "../../types/domain";
 import { useFormSheet } from "../../hooks/useFormSheet";
 import { RestaurantForm } from "../restaurants/RestaurantForm";
+import { StoreForm } from "../stores/StoreForm";
 import { EventForm } from "../events/EventForm";
 import { ProfileStorefront } from "../profile/ProfileStorefront";
+import { ProfileStoreStorefront } from "../profile/ProfileStoreStorefront";
 import { ProfilePromotionsList } from "../profile/ProfilePromotionsList";
+import { ProfileStorePromotionsList } from "../profile/ProfileStorePromotionsList";
 import { ProfilePromotionEdit } from "../profile/ProfilePromotionEdit";
+import { ProfileStorePromotionEdit } from "../profile/ProfileStorePromotionEdit";
 
 function getTitle(meta: ReturnType<typeof useSwipeBarContext>["bottomSidebars"]["form"]["meta"]) {
   if (!isFormSheetMeta(meta)) return "";
   if (meta.kind === "restaurant-form") return meta.restaurantId ? "Modifica locale" : "Aggiungi locale";
+  if (meta.kind === "store-form") return meta.storeId ? "Modifica negozio" : "Aggiungi negozio";
   if (meta.kind === "event-form") return meta.eventId ? "Modifica evento" : "Aggiungi evento";
   if (meta.kind === "promotions-list") return "Pubblicazioni";
+  if (meta.kind === "store-promotions-list") return "Pubblicazioni";
   if (meta.kind === "promotion-edit") return "Modifica pubblicazione";
+  if (meta.kind === "store-promotion-edit") return "Modifica pubblicazione";
   return "Pubblica";
 }
 
@@ -26,7 +33,7 @@ export function FormBottomSheet() {
 
   const meta = bottomSidebars.form?.meta;
   const validMeta = isFormSheetMeta(meta) ? meta : null;
-  const isFormKind = validMeta?.kind === "restaurant-form" || validMeta?.kind === "event-form";
+  const isFormKind = validMeta?.kind === "restaurant-form" || validMeta?.kind === "store-form" || validMeta?.kind === "event-form";
 
   function handleClose() {
     if (isFormKind && isDirtyRef.current && !window.confirm("Hai modifiche non salvate. Vuoi chiudere?")) return;
@@ -80,6 +87,14 @@ export function FormBottomSheet() {
                   onDirtyChange={handleDirtyChange}
                 />
               )}
+              {validMeta.kind === "store-form" && (
+                <StoreForm
+                  storeId={validMeta.storeId}
+                  initialData={validMeta.initialData}
+                  onSuccess={closeForm}
+                  onDirtyChange={handleDirtyChange}
+                />
+              )}
               {validMeta.kind === "event-form" && (
                 <EventForm
                   eventId={validMeta.eventId}
@@ -91,12 +106,25 @@ export function FormBottomSheet() {
               {validMeta.kind === "storefront" && (
                 <ProfileStorefront restaurantId={String(validMeta.restaurantId)} />
               )}
+              {validMeta.kind === "store-storefront" && (
+                <ProfileStoreStorefront storeId={String(validMeta.storeId)} />
+              )}
               {validMeta.kind === "promotions-list" && (
                 <ProfilePromotionsList restaurantId={String(validMeta.restaurantId)} />
+              )}
+              {validMeta.kind === "store-promotions-list" && (
+                <ProfileStorePromotionsList storeId={String(validMeta.storeId)} />
               )}
               {validMeta.kind === "promotion-edit" && (
                 <ProfilePromotionEdit
                   restaurantId={String(validMeta.restaurantId)}
+                  promotion={validMeta.promotion}
+                  onSuccess={closeForm}
+                />
+              )}
+              {validMeta.kind === "store-promotion-edit" && (
+                <ProfileStorePromotionEdit
+                  storeId={String(validMeta.storeId)}
                   promotion={validMeta.promotion}
                   onSuccess={closeForm}
                 />

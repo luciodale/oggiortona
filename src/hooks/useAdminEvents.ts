@@ -6,6 +6,7 @@ type AdminEvent = EventRow & {
   ownerEmail: string | null;
   ownerName: string | null;
   restaurantName: string | null;
+  storeName: string | null;
 };
 
 type ToggleVars = { id: number; wasActive: boolean };

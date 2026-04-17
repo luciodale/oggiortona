@@ -62,6 +62,7 @@ export type RestaurantFormInitialData = {
   name: string;
   description: string | null;
   types: Array<string>;
+  cuisines: Array<string>;
   priceRange: number;
   phone: string | null;
   address: string;
@@ -83,6 +84,7 @@ export function useRestaurantForm(initial?: RestaurantFormInitialData, onSuccess
       name: initial?.name ?? "",
       description: initial?.description ?? "",
       type: initial?.types.join(", ") ?? "",
+      cuisines: initial?.cuisines ?? [],
       priceRange: initial?.priceRange ?? 2,
       phone: initial?.phone ?? "",
       address: initial?.address ?? "",
@@ -98,6 +100,14 @@ export function useRestaurantForm(initial?: RestaurantFormInitialData, onSuccess
 
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
+
+  function toggleCuisine(cuisine: string) {
+    const current = form.getValues("cuisines");
+    const next = current.includes(cuisine)
+      ? current.filter((c) => c !== cuisine)
+      : [...current, cuisine];
+    form.setValue("cuisines", next, { shouldDirty: true });
+  }
 
   function copyFromPrevious(day: ItalianDay) {
     const days = getOrderedDays();
@@ -164,6 +174,7 @@ export function useRestaurantForm(initial?: RestaurantFormInitialData, onSuccess
 
   return {
     form,
+    toggleCuisine,
     copyFromPrevious,
     onSubmit,
     submitState,

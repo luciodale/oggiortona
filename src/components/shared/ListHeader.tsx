@@ -4,7 +4,7 @@ import { ViewToggle } from "./ViewToggle";
 
 type ViewMode = "list" | "map";
 
-type Section = "mangiare" | "fare";
+type Section = "mangiare" | "fare" | "stores";
 
 type SectionTheme = {
   hoverBorder: string;
@@ -14,6 +14,7 @@ type SectionTheme = {
 const sectionThemes: Record<Section, SectionTheme> = {
   mangiare: { hoverBorder: "hover:border-mangiare-muted", hoverText: "hover:text-mangiare" },
   fare: { hoverBorder: "hover:border-fare-muted", hoverText: "hover:text-fare" },
+  stores: { hoverBorder: "hover:border-stores-muted", hoverText: "hover:text-stores" },
 };
 
 type ListHeaderProps = {

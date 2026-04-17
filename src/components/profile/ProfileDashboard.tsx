@@ -1,21 +1,24 @@
-import { useMemo, useState, useEffect } from "react";
 import { useSetAtom } from "jotai";
+import { useEffect, useMemo, useState } from "react";
+import { useFormSheet } from "../../hooks/useFormSheet";
+import { useSpaAuth } from "../../hooks/useSpaAuth";
 import { useUserEvents } from "../../hooks/useUserEvents";
 import { useUserRestaurants } from "../../hooks/useUserRestaurants";
-import { useFormSheet } from "../../hooks/useFormSheet";
-import { useLocale, localeAtom } from "../../i18n/useLocale";
-import { getTodayISO } from "../../utils/date";
+import { useUserStores } from "../../hooks/useUserStores";
+import { localeAtom, useLocale } from "../../i18n/useLocale";
 import { CalendarIcon } from "../../icons/CalendarIcon";
 import { ChevronDownIcon } from "../../icons/ChevronDownIcon";
 import { CupIcon } from "../../icons/CupIcon";
+import { ShopIcon } from "../../icons/ShopIcon";
+import type { Locale } from "../../types/domain";
+import { getTodayISO } from "../../utils/date";
 import { LogoutButton } from "../auth/LogoutButton";
 import { ContentLoader } from "../shared/ContentLoader";
 import { PushToggle } from "../shared/PushToggle";
 import { EventListCard } from "./EventListCard";
 import { PastEventsList } from "./PastEventsList";
-import { useSpaAuth } from "../../hooks/useSpaAuth";
 import { RestaurantListCard } from "./RestaurantListCard";
-import type { Locale } from "../../types/domain";
+import { StoreListCard } from "./StoreListCard";
 
 type ThemePreference = "system" | "light" | "dark";
 
@@ -37,6 +40,7 @@ export function ProfileDashboard() {
   const setLocale = useSetAtom(localeAtom);
   const { user } = useSpaAuth();
   const { restaurants, loading: loadingRestaurants } = useUserRestaurants();
+  const { stores, loading: loadingStores } = useUserStores();
   const { events, loading: loadingEvents } = useUserEvents();
   const [theme, setTheme] = useState<ThemePreference>(getStoredTheme);
 
@@ -52,8 +56,8 @@ export function ProfileDashboard() {
     return () => mql.removeEventListener("change", onSystemChange);
   }, []);
 
-  const { openRestaurantForm, openEventForm } = useFormSheet();
-  const loading = loadingRestaurants || loadingEvents;
+  const { openRestaurantForm, openStoreForm, openEventForm } = useFormSheet();
+  const loading = loadingRestaurants || loadingStores || loadingEvents;
 
   const { activeEvents, pastEvents } = useMemo(() => {
     const today = getTodayISO();
@@ -114,23 +118,32 @@ export function ProfileDashboard() {
           <PushToggle />
         </div>
 
-        <div className="flex gap-3">
+        <div className="grid grid-cols-2 gap-3">
           <button
             type="button"
             onClick={() => openRestaurantForm()}
-            className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-mangiare py-3 text-[13px] font-semibold text-white transition-all hover:bg-mangiare/90 active:scale-[0.98]"
+            className="flex items-center justify-center gap-2 rounded-xl bg-mangiare py-3 text-[13px] font-semibold text-white transition-all hover:bg-mangiare/90 active:scale-[0.98]"
           >
             <CupIcon className="h-4 w-4" />
             {t("profile.addVenue")}
           </button>
           <button
             type="button"
+            onClick={() => openStoreForm()}
+            className="flex items-center justify-center gap-2 rounded-xl bg-stores py-3 text-[13px] font-semibold text-white transition-all hover:bg-stores/90 active:scale-[0.98]"
+          >
+            <ShopIcon className="h-4 w-4" />
+            {t("profile.addStore")}
+          </button>
+          <button
+            type="button"
             onClick={() => openEventForm()}
-            className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-fare py-3 text-[13px] font-semibold text-white transition-all hover:bg-fare/90 active:scale-[0.98]"
+            className="col-span-2 flex items-center justify-center gap-2 rounded-xl bg-fare py-3 text-[13px] font-semibold text-white transition-all hover:bg-fare/90 active:scale-[0.98]"
           >
             <CalendarIcon className="h-4 w-4" />
             {t("profile.addEvent")}
           </button>
+         
         </div>
       </div>
 
@@ -146,6 +159,19 @@ export function ProfileDashboard() {
               <div className="flex flex-col gap-3">
                 {restaurants.map((r) => (
                   <RestaurantListCard key={r.id} restaurant={r} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {stores.length > 0 && (
+            <section>
+              <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-muted">
+                {t("profile.yourStores")}
+              </h2>
+              <div className="flex flex-col gap-3">
+                {stores.map((s) => (
+                  <StoreListCard key={s.id} store={s} />
                 ))}
               </div>
             </section>

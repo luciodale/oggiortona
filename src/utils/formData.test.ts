@@ -1,11 +1,12 @@
 import { describe, it, expect } from "vitest";
 import {
   restaurantToFormData,
+  storeToFormData,
   eventToFormData,
   buildEventPayload,
   buildRestaurantPayload,
 } from "./formData";
-import type { RestaurantRow, EventRow } from "../types/database";
+import type { RestaurantRow, StoreRow, EventRow } from "../types/database";
 import type { EventFormValues } from "../schemas/event";
 import type {
   RestaurantFormValues,
@@ -18,6 +19,7 @@ function makeRestaurantRow(overrides: Partial<RestaurantRow> = {}): RestaurantRo
     name: "Test Restaurant",
     description: "A test place",
     type: "ristorante,pizzeria",
+    cuisines: null,
     priceRange: 2,
     phone: "+39 085 906 1234",
     address: "Via Roma 1, 66026 Ortona CH",
@@ -25,6 +27,28 @@ function makeRestaurantRow(overrides: Partial<RestaurantRow> = {}): RestaurantRo
     longitude: 14.40,
     openingHours: '{"lunedi":{"open":"12:00","close":"14:30","open2":"19:00","close2":"22:30"},"martedi":null,"mercoledi":null,"giovedi":null,"venerdi":null,"sabato":null,"domenica":null}',
     menuUrl: "https://example.com/menu",
+    ownerId: "user_1",
+    active: 1,
+    deleted: 0,
+    approved: 1,
+    createdAt: "2026-03-28",
+    updatedAt: "2026-03-28",
+    ...overrides,
+  };
+}
+
+function makeStoreRow(overrides: Partial<StoreRow> = {}): StoreRow {
+  return {
+    id: 1,
+    name: "Test Store",
+    description: "A test shop",
+    type: "abbigliamento,accessori",
+    phone: "+39 085 906 1234",
+    address: "Via Roma 1, 66026 Ortona CH",
+    latitude: 42.35,
+    longitude: 14.40,
+    openingHours: '{"lunedi":{"open":"09:00","close":"13:00","open2":"16:00","close2":"19:30"},"martedi":null,"mercoledi":null,"giovedi":null,"venerdi":null,"sabato":null,"domenica":null}',
+    storeUrl: "https://example.com/shop",
     ownerId: "user_1",
     active: 1,
     deleted: 0,
@@ -57,6 +81,7 @@ function makeEventRow(overrides: Partial<EventRow> = {}): EventRow {
     approved: 1,
     highlighted: 0,
     restaurantId: null,
+    storeId: null,
     createdAt: "2026-03-28",
     updatedAt: "2026-03-28",
     ...overrides,
@@ -71,12 +96,27 @@ describe("restaurantToFormData", () => {
     expect(result.name).toBe("Test Restaurant");
     expect(result.description).toBe("A test place");
     expect(result.types).toEqual(["ristorante", "pizzeria"]);
+    expect(result.cuisines).toEqual([]);
     expect(result.priceRange).toBe(2);
     expect(result.phone).toBe("+39 085 906 1234");
     expect(result.address).toBe("Via Roma 1, 66026 Ortona CH");
     expect(result.latitude).toBe(42.35);
     expect(result.longitude).toBe(14.40);
     expect(result.menuUrl).toBe("https://example.com/menu");
+  });
+
+  it("parses cuisines string into array", () => {
+    const row = makeRestaurantRow({ cuisines: "pesce,pasta,vegetariano" });
+    const result = restaurantToFormData(row);
+
+    expect(result.cuisines).toEqual(["pesce", "pasta", "vegetariano"]);
+  });
+
+  it("returns empty cuisines array when column is null", () => {
+    const row = makeRestaurantRow({ cuisines: null });
+    const result = restaurantToFormData(row);
+
+    expect(result.cuisines).toEqual([]);
   });
 
   it("parses opening hours JSON into structured object", () => {
@@ -110,6 +150,52 @@ describe("restaurantToFormData", () => {
   });
 });
 
+describe("storeToFormData", () => {
+  it("maps all fields from StoreRow", () => {
+    const row = makeStoreRow();
+    const result = storeToFormData(row);
+
+    expect(result.name).toBe("Test Store");
+    expect(result.description).toBe("A test shop");
+    expect(result.types).toEqual(["abbigliamento", "accessori"]);
+    expect(result.phone).toBe("+39 085 906 1234");
+    expect(result.address).toBe("Via Roma 1, 66026 Ortona CH");
+    expect(result.latitude).toBe(42.35);
+    expect(result.longitude).toBe(14.40);
+    expect(result.storeUrl).toBe("https://example.com/shop");
+  });
+
+  it("parses opening hours JSON into structured object", () => {
+    const row = makeStoreRow();
+    const result = storeToFormData(row);
+
+    expect(result.parsedHours.lunedi).toEqual({
+      open: "09:00",
+      close: "13:00",
+      open2: "16:00",
+      close2: "19:30",
+    });
+    expect(result.parsedHours.martedi).toBeNull();
+  });
+
+  it("handles null fields", () => {
+    const row = makeStoreRow({
+      description: null,
+      phone: null,
+      latitude: null,
+      longitude: null,
+      storeUrl: null,
+    });
+    const result = storeToFormData(row);
+
+    expect(result.description).toBeNull();
+    expect(result.phone).toBeNull();
+    expect(result.latitude).toBeNull();
+    expect(result.longitude).toBeNull();
+    expect(result.storeUrl).toBeNull();
+  });
+});
+
 function makeEventFormValues(
   overrides: Partial<EventFormValues> = {},
 ): EventFormValues {
@@ -129,6 +215,7 @@ function makeEventFormValues(
     price: 10,
     link: "https://example.com/event",
     restaurantId: 7,
+    storeId: null,
     ...overrides,
   };
 }
@@ -162,6 +249,7 @@ function makeRestaurantFormValues(
     name: "Test Restaurant",
     description: "A test place",
     type: "ristorante, pizzeria",
+    cuisines: [],
     priceRange: 2,
     phone: "+39 085 906 1234",
     address: "Via Roma 1, 66026 Ortona CH",
@@ -200,6 +288,14 @@ describe("eventToFormData", () => {
     expect(result.price).toBe(10);
     expect(result.link).toBe("https://example.com/event");
     expect(result.restaurantId).toBeNull();
+    expect(result.storeId).toBeNull();
+  });
+
+  it("preserves storeId when present", () => {
+    const row = makeEventRow({ storeId: 42 });
+    const result = eventToFormData(row);
+
+    expect(result.storeId).toBe(42);
   });
 
   it("handles null optional fields", () => {
@@ -247,6 +343,7 @@ describe("buildEventPayload", () => {
       price: 10,
       link: "https://example.com/event",
       restaurant_id: 7,
+      store_id: null,
     });
   });
 

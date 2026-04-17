@@ -3,6 +3,7 @@ import { CalendarIcon } from "../../icons/CalendarIcon";
 import { ChevronRightIcon } from "../../icons/ChevronRightIcon";
 import { PinIcon } from "../../icons/PinIcon";
 import type { RestaurantWithStatus } from "../../types/domain";
+import { restaurantCuisineColors, restaurantCuisineLabels } from "../../config/cuisines";
 import { CardContactButtons } from "../shared/CardContactButtons";
 import { DealEntry } from "./DealEntry";
 import { GeneraleEntry } from "./GeneraleEntry";
@@ -18,7 +19,8 @@ type RestaurantCardProps = {
 };
 
 export function RestaurantCard({ restaurant, isPinned, onTogglePin, zipperCard = true, onCardClick }: RestaurantCardProps) {
-  const { t } = useLocale();
+  const { locale, t } = useLocale();
+  const cuisineLabels = restaurantCuisineLabels(locale);
 
   function handlePinClick(e: React.MouseEvent) {
     e.preventDefault();
@@ -103,6 +105,19 @@ export function RestaurantCard({ restaurant, isPinned, onTogglePin, zipperCard =
           <p className="mt-2 line-clamp-2 text-[13px] leading-relaxed text-muted">
             {restaurant.description}
           </p>
+        )}
+
+        {restaurant.cuisineList.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1">
+            {restaurant.cuisineList.map((c) => (
+              <span
+                key={c}
+                className={`inline-block rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide ${restaurantCuisineColors[c] ?? "bg-cat-altro-bg text-cat-altro"}`}
+              >
+                {cuisineLabels[c] ?? c}
+              </span>
+            ))}
+          </div>
         )}
 
         {restaurant.linkedEventCount > 0 && (

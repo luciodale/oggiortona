@@ -1,9 +1,11 @@
 import { MapPinIcon } from "../../icons/MapPinIcon";
 import type { MapPin } from "../../utils/map";
+import type { PromotionRow, StorePromotionRow } from "../../types/database";
 import { DealEntry } from "../restaurants/DealEntry";
 import { GeneraleEntry } from "../restaurants/GeneraleEntry";
 import { NewsEntry } from "../restaurants/NewsEntry";
 import { SpecialEntry } from "../restaurants/SpecialEntry";
+import { SaldiEntry } from "../stores/SaldiEntry";
 
 function StatusBadge({ isOpen, openLabel, closedLabel }: { isOpen: boolean; openLabel: string; closedLabel: string }) {
   return (
@@ -48,7 +50,8 @@ export function MapPopup({ pin }: { pin: MapPin }) {
         <span className="mt-0.5 block text-xs text-center text-muted">{pin.subtitle}</span>
       )}
       {pin.promotions?.map((p) => {
-        if (p.type === "special") return <SpecialEntry key={p.id} special={p} />;
+        if (p.type === "special") return <SpecialEntry key={p.id} special={p as PromotionRow} />;
+        if (p.type === "saldi") return <SaldiEntry key={p.id} saldi={p as StorePromotionRow} />;
         if (p.type === "deal") return <DealEntry key={p.id} deal={p} />;
         if (p.type === "news") return <NewsEntry key={p.id} news={p} />;
         if (p.type === "generale") return <GeneraleEntry key={p.id} item={p} />;
@@ -68,7 +71,7 @@ export function MapPopup({ pin }: { pin: MapPin }) {
             href={pin.directionsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold tracking-[0.02em] text-card no-underline"
+            className="map-popup-directions flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-accent px-4 py-2 text-xs font-semibold tracking-[0.02em] no-underline"
           >
             <MapPinIcon className="h-[13px] w-[13px]" strokeWidth={2.5} />
             {pin.labels?.directions ?? "Indicazioni"}

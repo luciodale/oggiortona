@@ -26,29 +26,17 @@ export function DayRow({ day, dayIndex, form, onCopyPrevious }: DayRowProps) {
 
   return (
     <div className="flex flex-col gap-2.5 border-b border-border-light py-4 last:border-0">
-      <button
-        type="button"
-        className="flex w-full items-center justify-between bg-transparent p-0"
-        onClick={() => patch({ closed: !state.closed })}
-        aria-pressed={!state.closed}
-        aria-label={t("aria.dayState", { day: getDayLabel(day, locale) ?? "", state: state.closed ? t("common.closedLower") : t("common.openLower") })}
-      >
-        <span className="text-[13px] font-medium text-primary">
-          {getDayLabel(day, locale)}
-        </span>
-        <div className="flex items-center gap-2">
-          {prevDay && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onCopyPrevious();
-              }}
-              className="rounded-full bg-surface-warm px-2.5 py-1 text-[10px] font-semibold text-muted transition-colors hover:bg-primary/10 hover:text-primary"
-            >
-              {t("dayRow.copyFrom", { day: (getDayLabel(prevDay, locale) ?? "").toLowerCase() })}
-            </button>
-          )}
+      <div className="flex w-full items-center justify-between gap-2">
+        <button
+          type="button"
+          className="flex flex-1 items-center justify-between bg-transparent p-0 text-left"
+          onClick={() => patch({ closed: !state.closed })}
+          aria-pressed={!state.closed}
+          aria-label={t("aria.dayState", { day: getDayLabel(day, locale) ?? "", state: state.closed ? t("common.closedLower") : t("common.openLower") })}
+        >
+          <span className="text-[13px] font-medium text-primary">
+            {getDayLabel(day, locale)}
+          </span>
           <span
             className={`rounded-full px-3 py-1 text-[11px] font-semibold transition-all ${
               state.closed
@@ -58,8 +46,17 @@ export function DayRow({ day, dayIndex, form, onCopyPrevious }: DayRowProps) {
           >
             {state.closed ? t("common.closed") : t("common.open")}
           </span>
-        </div>
-      </button>
+        </button>
+        {prevDay && (
+          <button
+            type="button"
+            onClick={onCopyPrevious}
+            className="rounded-full bg-surface-warm px-2.5 py-1 text-[10px] font-semibold text-muted transition-colors hover:bg-primary/10 hover:text-primary"
+          >
+            {t("dayRow.copyFrom", { day: (getDayLabel(prevDay, locale) ?? "").toLowerCase() })}
+          </button>
+        )}
+      </div>
 
       {!state.closed && (
         <div className="space-y-2.5">

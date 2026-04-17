@@ -3,10 +3,11 @@ import { useWatch } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { useEventForm } from "../../hooks/useEventForm";
 import { useUserRestaurants } from "../../hooks/useUserRestaurants";
+import { useUserStores } from "../../hooks/useUserStores";
 import { useSpaAuth } from "../../hooks/useSpaAuth";
 import { eventFormCategories, eventCategoryLabels } from "../../config/categories";
 import { useLocale } from "../../i18n/useLocale";
-import type { RestaurantWithStatus } from "../../types/domain";
+import type { RestaurantWithStatus, StoreWithStatus } from "../../types/domain";
 import { Input } from "../ui/Input";
 import { Textarea } from "../ui/Textarea";
 import { Pill } from "../ui/Pill";
@@ -38,12 +39,19 @@ export function EventForm({ eventId, initialData, onSuccess, onDirtyChange }: Ev
   const isEdit = eventId != null;
   const { isAdmin } = useSpaAuth();
   const { restaurants: userRestaurants } = useUserRestaurants();
+  const { stores: userStores } = useUserStores();
   const { data: allRestaurantsData } = useQuery<{ restaurants: Array<RestaurantWithStatus> }>({
     queryKey: ["restaurants"],
     queryFn: () => fetch("/api/restaurants").then((r) => r.json()),
     enabled: isAdmin,
   });
+  const { data: allStoresData } = useQuery<{ stores: Array<StoreWithStatus> }>({
+    queryKey: ["stores"],
+    queryFn: () => fetch("/api/stores").then((r) => r.json()),
+    enabled: isAdmin,
+  });
   const restaurantOptions = isAdmin ? (allRestaurantsData?.restaurants ?? []) : userRestaurants;
+  const storeOptions = isAdmin ? (allStoresData?.stores ?? []) : userStores;
   const selectedCategories = useWatch({ control: form.control, name: "categories" });
   const categoriesError = form.formState.errors.categories;
   const { isDirty } = form.formState;
@@ -184,6 +192,24 @@ export function EventForm({ eventId, initialData, onSuccess, onDirtyChange }: Ev
             <option value="">{t("events.noLinkedVenue")}</option>
             {restaurantOptions.map((r) => (
               <option key={r.id} value={r.id}>{r.name}</option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {storeOptions.length > 0 && (
+        <div>
+          <label className="mb-1.5 block text-[13px] font-medium text-primary">
+            {t("events.linkedStore")}
+          </label>
+          <select
+            value={form.watch("storeId") ?? ""}
+            onChange={(e) => form.setValue("storeId", e.target.value ? Number(e.target.value) : null, { shouldDirty: true })}
+            className="w-full rounded-xl border border-border bg-card px-3 py-2.5 text-[13px] text-primary outline-none transition-colors focus:border-accent"
+          >
+            <option value="">{t("events.noLinkedStore")}</option>
+            {storeOptions.map((s) => (
+              <option key={s.id} value={s.id}>{s.name}</option>
             ))}
           </select>
         </div>

@@ -3,6 +3,7 @@ import { restaurants, events } from "../../../../db/schema";
 import { eq, and as dbAnd } from "drizzle-orm";
 import { requireAdmin } from "../../../../utils/adminGuard";
 import { nowItalyFormatted } from "../../../../utils/sqlite";
+import { notifyOwner } from "../../../../utils/notifyOwner";
 
 export async function PUT({ locals, params }: APIContext): Promise<Response> {
   const denied = requireAdmin(locals);
@@ -15,6 +16,7 @@ export async function PUT({ locals, params }: APIContext): Promise<Response> {
   if (!restaurant) return Response.json({ error: "Non trovato" }, { status: 404 });
   if (restaurant.deleted === 1) return Response.json({ error: "Locale eliminato" }, { status: 404 });
 
+  const wasPending = restaurant.approved === 0;
   const newActive = restaurant.active === 1 ? 0 : 1;
   const now = nowItalyFormatted();
 
@@ -28,6 +30,16 @@ export async function PUT({ locals, params }: APIContext): Promise<Response> {
     await db.update(events).set({ active: 0, updatedAt: now }).where(eq(events.restaurantId, id));
   } else {
     await db.update(events).set({ active: 1, updatedAt: now }).where(dbAnd(eq(events.restaurantId, id), eq(events.deleted, 0)));
+  }
+
+  if (wasPending && newActive === 1) {
+    locals.runtime.ctx.waitUntil(
+      notifyOwner(db, locals.runtime.env, restaurant.ownerId, {
+        title: "Locale approvato",
+        body: `Il tuo locale "${restaurant.name}" è stato approvato ed è ora visibile.`,
+        url: "/profile",
+      }).catch((err) => console.error("[push] notifyOwner error:", err)),
+    );
   }
 
   return Response.json({ restaurant: updated });

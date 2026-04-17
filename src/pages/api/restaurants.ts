@@ -56,6 +56,7 @@ export async function POST({ locals, request }: APIContext): Promise<Response> {
     name: body.name.trim(),
     description: body.description?.trim() || null,
     type: body.type.trim(),
+    cuisines: body.cuisines?.trim() || null,
     priceRange: body.price_range,
     phone: body.phone?.trim() || null,
     address: body.address.trim(),
