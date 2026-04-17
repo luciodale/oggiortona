@@ -10,6 +10,7 @@ import { CupIcon } from "../icons/CupIcon";
 import { DiningIllustration } from "../icons/DiningIllustration";
 import { MessageIcon } from "../icons/MessageIcon";
 import { ShopIcon } from "../icons/ShopIcon";
+import { ShoppingBagIllustration } from "../icons/ShoppingBagIllustration";
 import { SparkleIllustration } from "../icons/SparkleIllustration";
 import { StarIcon } from "../icons/StarIcon";
 import { TagIcon } from "../icons/TagIcon";
@@ -131,6 +132,7 @@ export function HomeRoute() {
         </Link>
 
         <Link to="/stores" className="group relative overflow-hidden rounded-3xl bg-linear-to-br from-stores-light via-stores-mid to-stores-deep px-6 pb-6 pt-7 no-underline shadow-[0_2px_20px_rgba(142,61,107,0.07)] transition-all hover:shadow-[0_4px_28px_rgba(142,61,107,0.13)] active:scale-[0.98]">
+          <ShoppingBagIllustration className="absolute -right-4 bottom-0 h-28 w-56 text-stores/22" />
           <div className="relative flex items-start justify-between">
             <div>
               <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-stores">{t("home.whereToShop")}</span>
