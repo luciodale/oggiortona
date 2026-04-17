@@ -15,6 +15,7 @@ function makePromotion(dateEnd: string): PromotionRow {
     timeStart: null,
     timeEnd: null,
     createdAt: "2026-03-01",
+    renewedAt: null,
   };
 }
 

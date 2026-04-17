@@ -7,10 +7,6 @@ import { COOLDOWN_MAX, COOLDOWN_WINDOW_HOURS } from "./promotionCooldown";
 const WINDOW_MS = COOLDOWN_WINDOW_HOURS * 60 * 60 * 1000;
 const CUTOFF_EXPR = sql<string>`datetime('now', '-' || ${COOLDOWN_WINDOW_HOURS} || ' hours')`;
 
-export async function insertStoreBump(db: Db, storeId: number, action: "create" | "renew") {
-  await db.insert(storePromotionBumps).values({ storeId, action });
-}
-
 async function countInWindow(db: Db, storeId: number) {
   const [row] = await db
     .select({ count: count() })

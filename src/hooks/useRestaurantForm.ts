@@ -109,13 +109,10 @@ export function useRestaurantForm(initial?: RestaurantFormInitialData, onSuccess
     form.setValue("cuisines", next, { shouldDirty: true });
   }
 
-  function copyFromPrevious(day: ItalianDay) {
-    const days = getOrderedDays();
-    const idx = days.indexOf(day);
-    if (idx <= 0) return;
-    const prevDay = days[idx - 1]!;
-    const prevValues = form.getValues(`hours.${prevDay}`);
-    form.setValue(`hours.${day}`, { ...prevValues }, { shouldDirty: true });
+  function copyFrom(target: ItalianDay, source: ItalianDay) {
+    if (source === target) return;
+    const sourceValues = form.getValues(`hours.${source}`);
+    form.setValue(`hours.${target}`, { ...sourceValues }, { shouldDirty: true });
   }
 
   async function onSubmit(
@@ -175,7 +172,7 @@ export function useRestaurantForm(initial?: RestaurantFormInitialData, onSuccess
   return {
     form,
     toggleCuisine,
-    copyFromPrevious,
+    copyFrom,
     onSubmit,
     submitState,
     errorMessage,

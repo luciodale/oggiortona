@@ -57,3 +57,24 @@ export const DAY_LABELS: Record<Locale, Record<string, string>> = {
     domenica: "Sunday",
   },
 };
+
+export const DAY_LABELS_SHORT: Record<Locale, Record<string, string>> = {
+  it: {
+    lunedi: "Lun",
+    martedi: "Mar",
+    mercoledi: "Mer",
+    giovedi: "Gio",
+    venerdi: "Ven",
+    sabato: "Sab",
+    domenica: "Dom",
+  },
+  en: {
+    lunedi: "Mon",
+    martedi: "Tue",
+    mercoledi: "Wed",
+    giovedi: "Thu",
+    venerdi: "Fri",
+    sabato: "Sat",
+    domenica: "Sun",
+  },
+};

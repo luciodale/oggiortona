@@ -19,7 +19,7 @@ type StoreFormProps = {
 export function StoreForm({ storeId, initialData, onSuccess, onDirtyChange }: StoreFormProps) {
   const {
     form,
-    copyFromPrevious,
+    copyFrom,
     onSubmit,
     submitState,
     errorMessage,
@@ -100,13 +100,12 @@ export function StoreForm({ storeId, initialData, onSuccess, onDirtyChange }: St
           {t("stores.openingHours")}<span className="ml-0.5 text-danger" aria-hidden="true">*</span>
         </legend>
         <div className="rounded-xl border border-border bg-card px-3">
-          {orderedDays.map((day, i) => (
+          {orderedDays.map((day) => (
             <DayRow
               key={day}
               day={day}
-              dayIndex={i}
               form={form}
-              onCopyPrevious={() => copyFromPrevious(day)}
+              onCopyFrom={(source) => copyFrom(day, source)}
             />
           ))}
         </div>

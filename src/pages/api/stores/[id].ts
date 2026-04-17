@@ -82,8 +82,11 @@ export async function PUT({ locals, params, request }: APIContext): Promise<Resp
   updates.updatedAt = nowItalyFormatted();
 
   const [updated] = await db.update(stores).set(updates).where(eq(stores.id, id)).returning();
+  if (!updated) return Response.json({ error: "Non trovato" }, { status: 404 });
 
-  return Response.json({ store: updated });
+  const { ownerId: _, ...publicStore } = updated;
+
+  return Response.json({ store: publicStore });
 }
 
 export async function DELETE({ locals, params }: APIContext): Promise<Response> {
@@ -98,9 +101,10 @@ export async function DELETE({ locals, params }: APIContext): Promise<Response> 
   if (store.ownerId !== user.id) return Response.json({ error: "Non autorizzato" }, { status: 403 });
 
   const now = nowItalyFormatted();
-  await db.update(stores).set({ deleted: 1, updatedAt: now }).where(eq(stores.id, id));
-
-  await db.update(events).set({ active: 0, updatedAt: now }).where(eq(events.storeId, id));
+  await db.batch([
+    db.update(stores).set({ deleted: 1, updatedAt: now }).where(eq(stores.id, id)),
+    db.update(events).set({ active: 0, updatedAt: now }).where(eq(events.storeId, id)),
+  ]);
 
   return Response.json({ message: "Negozio rimosso" });
 }

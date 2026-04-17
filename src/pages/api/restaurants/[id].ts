@@ -84,8 +84,11 @@ export async function PUT({ locals, params, request }: APIContext): Promise<Resp
   updates.updatedAt = nowItalyFormatted();
 
   const [updated] = await db.update(restaurants).set(updates).where(eq(restaurants.id, id)).returning();
+  if (!updated) return Response.json({ error: "Non trovato" }, { status: 404 });
 
-  return Response.json({ restaurant: updated });
+  const { ownerId: _, ...publicRestaurant } = updated;
+
+  return Response.json({ restaurant: publicRestaurant });
 }
 
 export async function DELETE({ locals, params }: APIContext): Promise<Response> {
@@ -100,10 +103,10 @@ export async function DELETE({ locals, params }: APIContext): Promise<Response> 
   if (restaurant.ownerId !== user.id) return Response.json({ error: "Non autorizzato" }, { status: 403 });
 
   const now = nowItalyFormatted();
-  await db.update(restaurants).set({ deleted: 1, updatedAt: now }).where(eq(restaurants.id, id));
-
-  // Disable linked events when restaurant is deleted
-  await db.update(events).set({ active: 0, updatedAt: now }).where(eq(events.restaurantId, id));
+  await db.batch([
+    db.update(restaurants).set({ deleted: 1, updatedAt: now }).where(eq(restaurants.id, id)),
+    db.update(events).set({ active: 0, updatedAt: now }).where(eq(events.restaurantId, id)),
+  ]);
 
   return Response.json({ message: "Locale rimosso" });
 }

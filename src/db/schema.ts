@@ -35,14 +35,16 @@ export const restaurants = sqliteTable("restaurants", {
   approved: integer("approved").notNull().default(1),
   createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
   updatedAt: text("updated_at").notNull().default(sql`(datetime('now'))`),
-});
+}, (table) => [
+  index("idx_restaurants_owner").on(table.ownerId),
+]);
 
 // -- Promotions (unified: special | deal | news) --
 
 export const promotions = sqliteTable("promotions", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   restaurantId: integer("restaurant_id").notNull().references(() => restaurants.id, { onDelete: "cascade" }),
-  type: text("type").notNull(), // 'special' | 'deal' | 'news'
+  type: text("type").notNull(), // 'generale' | 'special' | 'deal' | 'news'
   title: text("title").notNull(),
   description: text("description"),
   price: real("price"),
@@ -51,6 +53,7 @@ export const promotions = sqliteTable("promotions", {
   timeStart: text("time_start"),
   timeEnd: text("time_end"),
   createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
+  renewedAt: text("renewed_at"),
 }, (table) => [
   index("idx_promotions_restaurant").on(table.restaurantId),
   index("idx_promotions_type").on(table.type),
@@ -115,7 +118,9 @@ export const stores = sqliteTable("stores", {
   approved: integer("approved").notNull().default(1),
   createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
   updatedAt: text("updated_at").notNull().default(sql`(datetime('now'))`),
-});
+}, (table) => [
+  index("idx_stores_owner").on(table.ownerId),
+]);
 
 // -- Store Promotions (generale | saldi | deal | news) --
 
@@ -131,6 +136,7 @@ export const storePromotions = sqliteTable("store_promotions", {
   timeStart: text("time_start"),
   timeEnd: text("time_end"),
   createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
+  renewedAt: text("renewed_at"),
 }, (table) => [
   index("idx_store_promotions_store").on(table.storeId),
   index("idx_store_promotions_type").on(table.type),
@@ -191,4 +197,5 @@ export const events = sqliteTable("events", {
   index("idx_events_category").on(table.category),
   index("idx_events_restaurant_id").on(table.restaurantId),
   index("idx_events_store_id").on(table.storeId),
+  index("idx_events_owner").on(table.ownerId),
 ]);

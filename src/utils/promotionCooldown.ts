@@ -16,10 +16,6 @@ export type CooldownSnapshot = {
   remainingMs: number | null;
 };
 
-export async function insertBump(db: Db, restaurantId: number, action: "create" | "renew") {
-  await db.insert(promotionBumps).values({ restaurantId, action });
-}
-
 async function countInWindow(db: Db, restaurantId: number) {
   const [row] = await db
     .select({ count: count() })

@@ -1,14 +1,20 @@
 import type { APIContext } from "astro";
-import { stores, storePromotions } from "../../../../db/schema";
+import { stores, storePromotions, storePromotionBumps } from "../../../../db/schema";
 import { eq, desc } from "drizzle-orm";
 import { getTodayISO } from "../../../../utils/date";
 import { PROMOTION_DURATION_DAYS, computeDateEnd } from "../../../../utils/promotions";
-import { buildStoreCooldownSnapshot, insertStoreBump, isStoreCooldownActive } from "../../../../utils/storePromotionCooldown";
+import { buildStoreCooldownSnapshot, isStoreCooldownActive } from "../../../../utils/storePromotionCooldown";
 
 const VALID_TYPES = ["generale", "saldi", "deal", "news"] as const;
+const TIME_REGEX = /^\d{2}:\d{2}$/;
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === "object" && v !== null && !Array.isArray(v);
+}
+
+function parseTime(value: unknown): string | null | "invalid" {
+  if (typeof value !== "string" || value.length === 0) return null;
+  return TIME_REGEX.test(value) ? value : "invalid";
 }
 
 export async function GET({ params, locals }: APIContext) {
@@ -97,26 +103,33 @@ export async function POST({ params, locals, request }: APIContext) {
     return Response.json({ error: "Titolo troppo lungo (max 150)" }, { status: 400 });
   }
 
-  const price = typeof raw.price === "number" ? raw.price : null;
-  const timeStart = typeof raw.timeStart === "string" && raw.timeStart.length <= 5 ? raw.timeStart : null;
-  const timeEnd = typeof raw.timeEnd === "string" && raw.timeEnd.length <= 5 ? raw.timeEnd : null;
+  const price = typeof raw.price === "number" && raw.price >= 0 ? raw.price : null;
+  const timeStart = parseTime(raw.timeStart);
+  const timeEnd = parseTime(raw.timeEnd);
+  if (timeStart === "invalid" || timeEnd === "invalid") {
+    return Response.json({ error: "Formato orario non valido" }, { status: 400 });
+  }
+  if (timeStart && timeEnd && timeEnd < timeStart) {
+    return Response.json({ error: "L'orario di fine non può essere precedente a quello di inizio" }, { status: 400 });
+  }
 
   const today = getTodayISO();
   const dateEnd = computeDateEnd(today, PROMOTION_DURATION_DAYS);
 
-  const [created] = await db.insert(storePromotions).values({
-    storeId,
-    type,
-    title,
-    description: null,
-    price,
-    dateStart: today,
-    dateEnd,
-    timeStart,
-    timeEnd,
-  }).returning();
+  const [createdRows] = await db.batch([
+    db.insert(storePromotions).values({
+      storeId,
+      type,
+      title,
+      description: null,
+      price,
+      dateStart: today,
+      dateEnd,
+      timeStart,
+      timeEnd,
+    }).returning(),
+    db.insert(storePromotionBumps).values({ storeId, action: "create" }),
+  ]);
 
-  await insertStoreBump(db, storeId, "create");
-
-  return Response.json(created, { status: 201 });
+  return Response.json(createdRows[0], { status: 201 });
 }

@@ -300,6 +300,9 @@ export const en: Translations = {
 
   // Day row (opening hours form)
   "dayRow.copyFrom": "Copy from {day}",
+  "dayRow.copyFromLabel": "Copy from",
+  "dayRow.openDay": "Open day",
+  "dayRow.closeDay": "Close day",
   "dayRow.removeSecondShift": "Remove second shift",
   "dayRow.addSecondShift": "Add second shift",
 
@@ -373,6 +376,15 @@ export const en: Translations = {
   "validation.titleTooLong": "Title too long (max {max})",
   "validation.connectionError": "Connection error",
   "validation.cooldownActive": "Limit reached. Next available in {time}.",
+  "validation.dateStartInPast": "Start date cannot be in the past",
+  "validation.dateEndBeforeStart": "End date cannot be before start date",
+  "validation.timeEndBeforeStart": "End time cannot be before start time",
+  "validation.invalidUrl": "Invalid URL",
+
+  "error.title": "Oops, a little spill",
+  "error.description": "A small mishap in the dining room. Reload the page or head back home.",
+  "error.reload": "Reload",
+  "error.backHome": "Back to home",
 
   // Theme
   "theme.system": "System",

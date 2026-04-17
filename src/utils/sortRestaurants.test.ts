@@ -16,6 +16,7 @@ function makePromotion(overrides: Partial<PromotionRow> = {}): PromotionRow {
     timeStart: null,
     timeEnd: null,
     createdAt: "2026-04-01T00:00:00",
+    renewedAt: null,
     ...overrides,
   };
 }

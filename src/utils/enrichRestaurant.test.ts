@@ -13,6 +13,7 @@ function makePromotion(overrides: Partial<PromotionRow> & { restaurantId: number
     timeStart: null,
     timeEnd: null,
     createdAt: "2026-03-28T00:00:00",
+    renewedAt: null,
     ...overrides,
   };
 }

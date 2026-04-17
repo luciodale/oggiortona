@@ -21,5 +21,7 @@ export async function GET({ locals, params }: APIContext): Promise<Response> {
     )
     .orderBy(asc(events.dateStart), asc(events.timeStart));
 
-  return Response.json({ events: linkedEvents });
+  const publicEvents = linkedEvents.map(({ ownerId: _, ...rest }) => rest);
+
+  return Response.json({ events: publicEvents });
 }

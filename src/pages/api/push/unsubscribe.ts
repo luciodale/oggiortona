@@ -1,6 +1,6 @@
 import type { APIContext } from "astro";
 import { pushSubscriptions } from "../../../db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, isNull, or } from "drizzle-orm";
 import { isValidScope } from "../../../utils/pushScope";
 
 export async function POST({ locals, request }: APIContext): Promise<Response> {
@@ -20,8 +20,22 @@ export async function POST({ locals, request }: APIContext): Promise<Response> {
     return Response.json({ error: "Scope non valido" }, { status: 400 });
   }
 
+  const user = locals.user;
+
+  if (body.scope !== "general" && !user) {
+    return Response.json({ error: "Non autenticato" }, { status: 401 });
+  }
+
+  const ownership = user
+    ? or(eq(pushSubscriptions.userId, user.id), isNull(pushSubscriptions.userId))
+    : isNull(pushSubscriptions.userId);
+
   await locals.db.delete(pushSubscriptions).where(
-    and(eq(pushSubscriptions.endpoint, body.endpoint), eq(pushSubscriptions.scope, body.scope)),
+    and(
+      eq(pushSubscriptions.endpoint, body.endpoint),
+      eq(pushSubscriptions.scope, body.scope),
+      ownership,
+    ),
   );
 
   return Response.json({ ok: true });

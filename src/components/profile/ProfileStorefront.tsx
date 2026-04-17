@@ -46,6 +46,7 @@ export function ProfileStorefront({ restaurantId }: ProfileStorefrontProps) {
     timeStart: form.timeStart || null,
     timeEnd: form.timeEnd || null,
     createdAt: today,
+    renewedAt: null,
   };
 
   if (loading) {

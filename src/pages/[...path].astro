@@ -72,26 +72,49 @@ function getThemeColor() {
       hidden
       style="position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--color-surface);padding:1.5rem;text-align:center;font-family:var(--font-family);"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--color-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:1.5rem;">
-        <circle cx="12" cy="12" r="10"/>
-        <path d="M8 15s1.5-2 4-2 4 2 4 2"/>
-        <line x1="9" y1="9" x2="9.01" y2="9"/>
-        <line x1="15" y1="9" x2="15.01" y2="9"/>
+      <svg width="160" height="96" viewBox="0 0 200 120" fill="var(--color-accent)" aria-hidden="true" style="margin-bottom:1.5rem;">
+        <g opacity="0.12" transform="translate(1.5, 1.5)">
+          <g transform="rotate(28 100 45)">
+            <path d="M62 10 L138 10 C148 28, 130 50, 103 55 L97 55 C70 50, 52 28, 62 10Z" />
+            <rect x="97" y="55" width="6" height="23" rx="2" />
+            <ellipse cx="100" cy="80" rx="24" ry="5" />
+          </g>
+          <ellipse cx="140" cy="108" rx="44" ry="6" />
+          <ellipse cx="128" cy="112" rx="16" ry="3" />
+        </g>
+        <g transform="rotate(28 100 45)">
+          <path d="M62 10 L138 10 C148 28, 130 50, 103 55 L97 55 C70 50, 52 28, 62 10Z" opacity="0.4" />
+          <path d="M72 24 L128 24 C138 40, 128 50, 103 55 L97 55 C72 50, 62 40, 72 24Z" opacity="0.25" />
+          <rect x="97" y="55" width="6" height="23" rx="2" opacity="0.5" />
+          <ellipse cx="100" cy="80" rx="24" ry="5" opacity="0.35" />
+        </g>
+        <ellipse cx="140" cy="108" rx="44" ry="6" opacity="0.22" />
+        <ellipse cx="128" cy="112" rx="16" ry="3" opacity="0.3" />
+        <circle cx="170" cy="100" r="2" opacity="0.35" />
+        <circle cx="96" cy="104" r="1.5" opacity="0.3" />
       </svg>
       <h1 id="app-error-title" style="font-family:'Playfair Display',Georgia,serif;font-size:1.5rem;font-weight:500;letter-spacing:-0.025em;color:var(--color-primary);margin:0;"></h1>
-      <p id="app-error-desc" style="margin-top:0.5rem;max-width:20rem;font-size:0.875rem;color:var(--color-muted);"></p>
-      <button
-        onclick="window.location.href='/'"
-        style="margin-top:2rem;padding:0.75rem 1.5rem;border:none;border-radius:0.75rem;background:var(--color-accent);color:white;font-size:0.875rem;font-weight:600;cursor:pointer;"
-        id="app-error-btn"
-      ></button>
+      <p id="app-error-desc" style="margin-top:0.5rem;max-width:22rem;font-size:0.875rem;color:var(--color-muted);"></p>
+      <div style="margin-top:2rem;display:flex;flex-wrap:wrap;gap:0.75rem;justify-content:center;">
+        <button
+          onclick="window.location.reload()"
+          style="padding:0.75rem 1.5rem;border:none;border-radius:0.75rem;background:var(--color-accent);color:white;font-size:0.875rem;font-weight:600;cursor:pointer;"
+          id="app-error-reload-btn"
+        ></button>
+        <button
+          onclick="window.location.href='/'"
+          style="padding:0.75rem 1.5rem;border:1px solid var(--color-border);border-radius:0.75rem;background:transparent;color:var(--color-primary);font-size:0.875rem;font-weight:600;cursor:pointer;"
+          id="app-error-btn"
+        ></button>
+      </div>
     </div>
 
     <script is:inline>
       (function() {
         var isIt = document.documentElement.lang === "it";
-        document.getElementById("app-error-title").textContent = isIt ? "Qualcosa non ha funzionato" : "Something went wrong";
-        document.getElementById("app-error-desc").textContent = isIt ? "Si è verificato un errore imprevisto. Riprova." : "An unexpected error occurred. Please try again.";
+        document.getElementById("app-error-title").textContent = isIt ? "Ops, qualcosa è caduto" : "Oops, a little spill";
+        document.getElementById("app-error-desc").textContent = isIt ? "Un piccolo imprevisto in sala. Ricarica la pagina o torna alla home." : "A small mishap in the dining room. Reload the page or head back home.";
+        document.getElementById("app-error-reload-btn").textContent = isIt ? "Ricarica" : "Reload";
         document.getElementById("app-error-btn").textContent = isIt ? "Torna alla home" : "Back to home";
 
         var shown = false;

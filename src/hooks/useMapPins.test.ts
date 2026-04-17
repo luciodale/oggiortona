@@ -87,6 +87,7 @@ describe("restaurantsToMapPins", () => {
         timeStart: null,
         timeEnd: null,
         createdAt: "2026-03-28",
+        renewedAt: null,
       },
       {
         id: 2,
@@ -100,6 +101,7 @@ describe("restaurantsToMapPins", () => {
         timeStart: null,
         timeEnd: null,
         createdAt: "2026-03-28",
+        renewedAt: null,
       },
     ];
     const pins = restaurantsToMapPins([

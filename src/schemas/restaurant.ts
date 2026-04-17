@@ -1,5 +1,12 @@
 import { z } from "zod";
 import type { TFn } from "../i18n/t";
+import { isSafeUrl } from "./url";
+import { isValidOpeningHoursJson } from "./openingHours";
+
+function isUrlFieldValid(value: string | null | undefined): boolean {
+  if (!value) return true;
+  return isSafeUrl(value);
+}
 
 function createDayFormSchema(t: TFn) {
   const timeString = z.string().regex(/^\d{2}:\d{2}$/, t("validation.invalidTime"));
@@ -35,12 +42,16 @@ export function createRestaurantFormSchema(t: TFn) {
     .refine((data) => data.latitude != null && data.longitude != null, {
       message: t("validation.selectMapPosition"),
       path: ["latitude"],
+    })
+    .refine((data) => isUrlFieldValid(data.menuUrl), {
+      message: t("validation.invalidUrl"),
+      path: ["menuUrl"],
     });
 }
 
 export type RestaurantFormValues = z.infer<ReturnType<typeof createRestaurantFormSchema>>;
 
-export const createRestaurantApiSchema = z.object({
+const baseRestaurantApiShape = z.object({
   name: z.string().trim().min(1, "Nome obbligatorio").max(100),
   description: z.string().trim().max(300).nullish(),
   type: z.string().trim().min(1, "Tipo obbligatorio"),
@@ -48,16 +59,25 @@ export const createRestaurantApiSchema = z.object({
   price_range: z.number().int().min(1).max(3),
   phone: z.string().nullish(),
   address: z.string().trim().min(1, "Indirizzo obbligatorio"),
-  opening_hours: z.string().min(1, "Orari obbligatori"),
+  opening_hours: z.string().min(1, "Orari obbligatori").refine(isValidOpeningHoursJson, "Orari non validi"),
   menu_url: z.string().nullish(),
   latitude: z.number(),
   longitude: z.number(),
 });
 
+export const createRestaurantApiSchema = baseRestaurantApiShape.refine(
+  (data) => isUrlFieldValid(data.menu_url),
+  { message: "URL del menu non valido", path: ["menu_url"] },
+);
+
 export type CreateRestaurantApiPayload = z.infer<typeof createRestaurantApiSchema>;
 
-export const updateRestaurantApiSchema = createRestaurantApiSchema
+export const updateRestaurantApiSchema = baseRestaurantApiShape
   .partial()
-  .required({ latitude: true, longitude: true });
+  .required({ latitude: true, longitude: true })
+  .refine((data) => isUrlFieldValid(data.menu_url), {
+    message: "URL del menu non valido",
+    path: ["menu_url"],
+  });
 
 export type UpdateRestaurantApiPayload = z.infer<typeof updateRestaurantApiSchema>;

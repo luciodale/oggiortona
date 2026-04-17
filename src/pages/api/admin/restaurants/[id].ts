@@ -20,17 +20,18 @@ export async function PUT({ locals, params }: APIContext): Promise<Response> {
   const newActive = restaurant.active === 1 ? 0 : 1;
   const now = nowItalyFormatted();
 
-  const [updated] = await db.update(restaurants)
-    .set({ active: newActive, approved: 1, updatedAt: now })
-    .where(eq(restaurants.id, id))
-    .returning();
+  const eventCascade = newActive === 0
+    ? db.update(events).set({ active: 0, updatedAt: now }).where(eq(events.restaurantId, id))
+    : db.update(events).set({ active: 1, updatedAt: now }).where(dbAnd(eq(events.restaurantId, id), eq(events.deleted, 0)));
 
-  // Cascade active status to linked events
-  if (newActive === 0) {
-    await db.update(events).set({ active: 0, updatedAt: now }).where(eq(events.restaurantId, id));
-  } else {
-    await db.update(events).set({ active: 1, updatedAt: now }).where(dbAnd(eq(events.restaurantId, id), eq(events.deleted, 0)));
-  }
+  const [updatedRows] = await db.batch([
+    db.update(restaurants)
+      .set({ active: newActive, approved: 1, updatedAt: now })
+      .where(eq(restaurants.id, id))
+      .returning(),
+    eventCascade,
+  ]);
+  const updated = updatedRows[0];
 
   if (wasPending && newActive === 1) {
     locals.runtime.ctx.waitUntil(

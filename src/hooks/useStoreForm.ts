@@ -97,13 +97,10 @@ export function useStoreForm(initial?: StoreFormInitialData, onSuccess?: () => v
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
-  function copyFromPrevious(day: ItalianDay) {
-    const days = getOrderedDays();
-    const idx = days.indexOf(day);
-    if (idx <= 0) return;
-    const prevDay = days[idx - 1]!;
-    const prevValues = form.getValues(`hours.${prevDay}`);
-    form.setValue(`hours.${day}`, { ...prevValues }, { shouldDirty: true });
+  function copyFrom(target: ItalianDay, source: ItalianDay) {
+    if (source === target) return;
+    const sourceValues = form.getValues(`hours.${source}`);
+    form.setValue(`hours.${target}`, { ...sourceValues }, { shouldDirty: true });
   }
 
   async function onSubmit(
@@ -159,7 +156,7 @@ export function useStoreForm(initial?: StoreFormInitialData, onSuccess?: () => v
 
   return {
     form,
-    copyFromPrevious,
+    copyFrom,
     onSubmit,
     submitState,
     errorMessage,

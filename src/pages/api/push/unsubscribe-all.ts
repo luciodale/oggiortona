@@ -1,6 +1,6 @@
 import type { APIContext } from "astro";
 import { pushSubscriptions } from "../../../db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and, isNull, or } from "drizzle-orm";
 
 export async function POST({ locals, request }: APIContext): Promise<Response> {
   let raw: unknown;
@@ -15,8 +15,14 @@ export async function POST({ locals, request }: APIContext): Promise<Response> {
     return Response.json({ error: "Endpoint mancante" }, { status: 400 });
   }
 
+  const user = locals.user;
+
+  const ownership = user
+    ? or(eq(pushSubscriptions.userId, user.id), isNull(pushSubscriptions.userId))
+    : isNull(pushSubscriptions.userId);
+
   await locals.db.delete(pushSubscriptions).where(
-    eq(pushSubscriptions.endpoint, body.endpoint),
+    and(eq(pushSubscriptions.endpoint, body.endpoint), ownership),
   );
 
   return Response.json({ ok: true });

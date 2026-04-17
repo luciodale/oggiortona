@@ -23,7 +23,7 @@ export function RestaurantForm({ restaurantId, initialData, onSuccess, onDirtyCh
   const {
     form,
     toggleCuisine,
-    copyFromPrevious,
+    copyFrom,
     onSubmit,
     submitState,
     errorMessage,
@@ -158,13 +158,12 @@ export function RestaurantForm({ restaurantId, initialData, onSuccess, onDirtyCh
           {t("restaurants.openingHours")}<span className="ml-0.5 text-danger" aria-hidden="true">*</span>
         </legend>
         <div className="rounded-xl border border-border bg-card px-3">
-          {orderedDays.map((day, i) => (
+          {orderedDays.map((day) => (
             <DayRow
               key={day}
               day={day}
-              dayIndex={i}
               form={form}
-              onCopyPrevious={() => copyFromPrevious(day)}
+              onCopyFrom={(source) => copyFrom(day, source)}
             />
           ))}
         </div>

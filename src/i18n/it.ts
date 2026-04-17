@@ -296,6 +296,9 @@ export const it = {
 
   // Day row (opening hours form)
   "dayRow.copyFrom": "Copia da {day}",
+  "dayRow.copyFromLabel": "Copia da",
+  "dayRow.openDay": "Apri giornata",
+  "dayRow.closeDay": "Chiudi giornata",
   "dayRow.removeSecondShift": "Rimuovi secondo turno",
   "dayRow.addSecondShift": "Aggiungi secondo turno",
 
@@ -369,6 +372,15 @@ export const it = {
   "validation.titleTooLong": "Titolo troppo lungo (max {max})",
   "validation.connectionError": "Errore di connessione",
   "validation.cooldownActive": "Limite raggiunto. Prossima disponibile tra {time}.",
+  "validation.dateStartInPast": "La data di inizio non può essere nel passato",
+  "validation.dateEndBeforeStart": "La data di fine non può essere precedente alla data di inizio",
+  "validation.timeEndBeforeStart": "L'orario di fine non può essere precedente a quello di inizio",
+  "validation.invalidUrl": "URL non valido",
+
+  "error.title": "Ops, qualcosa è caduto",
+  "error.description": "Un piccolo imprevisto in sala. Ricarica la pagina o torna alla home.",
+  "error.reload": "Ricarica",
+  "error.backHome": "Torna alla home",
 
   // Theme
   "theme.system": "Sistema",

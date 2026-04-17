@@ -1,6 +1,6 @@
 import type { DaySchedule, ItalianDay, OpeningHours } from "../types/database";
 import type { Locale } from "../types/domain";
-import { DAY_LABELS } from "../i18n/t";
+import { DAY_LABELS, DAY_LABELS_SHORT } from "../i18n/t";
 
 const DAY_MAP: Array<ItalianDay> = [
   "domenica",
@@ -21,6 +21,10 @@ export function getItalianDayName(date: Date): ItalianDay {
 
 export function getDayLabel(day: ItalianDay, locale: Locale) {
   return DAY_LABELS[locale][day];
+}
+
+export function getDayShortLabel(day: ItalianDay, locale: Locale) {
+  return DAY_LABELS_SHORT[locale][day];
 }
 
 export function getOrderedDays(): Array<ItalianDay> {

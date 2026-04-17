@@ -77,8 +77,6 @@ export async function PUT({ locals, params, request }: APIContext): Promise<Resp
   if (body.longitude !== undefined) updates.longitude = body.longitude;
   if (body.price !== undefined) updates.price = body.price ?? null;
   if (body.link !== undefined) updates.link = body.link?.trim() || null;
-  if (body.restaurant_id !== undefined) updates.restaurantId = body.restaurant_id ?? null;
-  if (body.store_id !== undefined) updates.storeId = body.store_id ?? null;
 
   if (Object.keys(updates).length === 0) {
     return Response.json({ error: "Nessun campo da aggiornare" }, { status: 400 });
@@ -87,8 +85,11 @@ export async function PUT({ locals, params, request }: APIContext): Promise<Resp
   updates.updatedAt = nowItalyFormatted();
 
   const [updated] = await db.update(events).set(updates).where(eq(events.id, id)).returning();
+  if (!updated) return Response.json({ error: "Non trovato" }, { status: 404 });
 
-  return Response.json({ event: updated });
+  const { ownerId: _, ...publicEvent } = updated;
+
+  return Response.json({ event: publicEvent });
 }
 
 export async function DELETE({ locals, params }: APIContext): Promise<Response> {

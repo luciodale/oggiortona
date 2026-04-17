@@ -25,11 +25,14 @@ export async function GET({ locals }: APIContext): Promise<Response> {
     .orderBy(desc(events.dateStart), desc(events.timeStart))
     .limit(PAST_EVENTS_LIMIT);
 
-  const pastEvents = rows.map(({ event, restaurantName, storeName }) => ({
-    ...event,
-    restaurantName: restaurantName ?? null,
-    storeName: storeName ?? null,
-  }));
+  const pastEvents = rows.map(({ event, restaurantName, storeName }) => {
+    const { ownerId: _, ...publicEvent } = event;
+    return {
+      ...publicEvent,
+      restaurantName: restaurantName ?? null,
+      storeName: storeName ?? null,
+    };
+  });
 
   return Response.json({ events: pastEvents });
 }

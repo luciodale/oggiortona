@@ -63,10 +63,25 @@ export function useStorePromotionForm(initial?: StorePromotionFormState) {
 
     if (!validateTitle(form.title)) return null;
 
+    let price: number | undefined;
+    if (form.price) {
+      const parsed = Number(form.price);
+      if (!Number.isFinite(parsed) || parsed < 0) {
+        setErrorMessage(t("validation.invalidPrice"));
+        return null;
+      }
+      price = parsed;
+    }
+
+    if (form.timeStart && form.timeEnd && form.timeEnd < form.timeStart) {
+      setErrorMessage(t("validation.timeEndBeforeStart"));
+      return null;
+    }
+
     return {
       type: form.type,
       title: form.title.trim(),
-      ...(form.price ? { price: Number(form.price) } : {}),
+      ...(price !== undefined ? { price } : {}),
       ...(form.timeStart ? { timeStart: form.timeStart } : {}),
       ...(form.timeEnd ? { timeEnd: form.timeEnd } : {}),
     };

@@ -46,6 +46,7 @@ export function ProfileStoreStorefront({ storeId }: ProfileStoreStorefrontProps)
     timeStart: form.timeStart || null,
     timeEnd: form.timeEnd || null,
     createdAt: today,
+    renewedAt: null,
   };
 
   if (loading) {
