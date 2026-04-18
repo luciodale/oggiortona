@@ -3,7 +3,10 @@ import { executeD1 } from "../lib/d1.js";
 import type { EventInput } from "../lib/types.js";
 import { eventFieldsSchema, buildInsertSQL } from "./insert-event.js";
 
-const eventSchema = z.object(eventFieldsSchema);
+const eventSchema = z.object(eventFieldsSchema).refine(
+  (data) => !data.dateEnd || data.dateEnd >= data.dateStart,
+  { message: "dateEnd must be >= dateStart", path: ["dateEnd"] },
+);
 
 export const insertEventsSchema = {
   events: z

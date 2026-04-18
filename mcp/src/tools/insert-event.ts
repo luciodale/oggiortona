@@ -5,6 +5,24 @@ import type { EventInput } from "../lib/types.js";
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 const timeRegex = /^\d{2}:\d{2}$/;
 
+function todayIso(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function maxAllowedIso(): string {
+  const d = new Date();
+  d.setUTCFullYear(d.getUTCFullYear() + 2);
+  return d.toISOString().slice(0, 10);
+}
+
+function isNotPast(value: string): boolean {
+  return value >= todayIso();
+}
+
+function isNotTooFar(value: string): boolean {
+  return value <= maxAllowedIso();
+}
+
 export const eventFieldsSchema = {
   title: z.string().min(1).describe("Event title"),
   description: z
@@ -16,10 +34,13 @@ export const eventFieldsSchema = {
   dateStart: z
     .string()
     .regex(dateRegex, "Must be YYYY-MM-DD")
-    .describe("Start date in YYYY-MM-DD format"),
+    .refine(isNotPast, "dateStart must be today or in the future — past events are rejected")
+    .refine(isNotTooFar, "dateStart must be within 2 years from today — likely wrong year")
+    .describe("Start date in YYYY-MM-DD format (must be today or future, within 2 years)"),
   dateEnd: z
     .string()
     .regex(dateRegex, "Must be YYYY-MM-DD")
+    .refine(isNotTooFar, "dateEnd must be within 2 years from today")
     .nullable()
     .default(null)
     .describe("End date in YYYY-MM-DD format (null for single-day events)"),

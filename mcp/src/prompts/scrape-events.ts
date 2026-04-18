@@ -49,6 +49,12 @@ You MUST insert at least 10 new events per session. This is non-negotiable. If a
    - Must be in or very near Ortona, Italy
    - Must be a real, upcoming event (not past, not generic info)
    - Must have a verifiable source link
+   - **DATE VALIDATION (critical — past failures here):**
+     - Before accepting ANY event, locate the explicit year on the source page. Do NOT infer it from context.
+     - Reject immediately if the year is not the current year or next year. Many sources show archived posts, recurring event templates, or old articles re-surfaced by search. A month/day without a year is NOT acceptable — find the year or skip the event.
+     - If the page shows a date like "5 agosto" with no year, cross-check the article publication date, the URL slug, or the page header. If the year still cannot be confirmed, skip the event.
+     - Run this sanity check: is dateStart >= today and <= today + 2 years? If not, skip. The server will reject it anyway, but you must catch it during assessment to avoid wasted inserts.
+     - If the source describes a past edition of a recurring festival (e.g. "Sagra del Pesce 2016"), do NOT insert it as if it were upcoming. Only insert when the current or next edition is explicitly announced with a confirmed future date.
 4. **Deduplicate (critical):** Compare every scraped event against the existing events from step 1. Two events are the same if they refer to the same real-world happening, even when titles differ across sources (e.g. "Sagra del Pesce" vs "Grande Sagra del Pesce al Porto"). Consider dates, venue, and description to judge semantic equivalence. Skip any event that already exists. When in doubt, skip it.
 5. **Balance:** Aim for a balanced mix of categories. Do not let one category dominate. Prioritize city-wide events, traditional festivals, and folklore above all others.
 6. **Insert:** Call insert_event for each new, qualifying event. **Minimum 10, maximum 20 new events per session.**

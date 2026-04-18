@@ -42,14 +42,17 @@ export function AdminDashboard() {
     [stores, search, reviewFilter],
   );
 
-  const filteredEvents = useMemo(
-    () => filterBySearch(events, search, (e) => e.title).filter((e) => {
+  const filteredEvents = useMemo(() => {
+    const filtered = filterBySearch(events, search, (e) => e.title).filter((e) => {
       if (reviewFilter === "ai_scraper") return e.ownerId === "ai_scraper" && e.approved === 0;
       if (reviewFilter === "pending") return e.ownerId !== "ai_scraper" && e.approved === 0;
       return e.approved === 1;
-    }),
-    [events, search, reviewFilter],
-  );
+    });
+    if (reviewFilter === "ai_scraper") {
+      return [...filtered].sort((a, b) => a.dateStart.localeCompare(b.dateStart));
+    }
+    return filtered;
+  }, [events, search, reviewFilter]);
 
   const loading = loadingRestaurants || loadingEvents || loadingStores;
 
