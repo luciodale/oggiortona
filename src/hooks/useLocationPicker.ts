@@ -22,6 +22,7 @@ export function useLocationPicker({
 }: LocationPickerOptions) {
   const mapRef = useRef<L.Map | null>(null);
   const markerRef = useRef<L.Marker | null>(null);
+  const tokenRef = useRef(0);
   const onMoveRef = useRef(onMove);
   onMoveRef.current = onMove;
   const latRef = useRef(latitude);
@@ -36,9 +37,18 @@ export function useLocationPicker({
       markerRef.current = null;
     }
 
-    if (!node) return;
+    if (!node) {
+      tokenRef.current++;
+      return;
+    }
+
+    const token = ++tokenRef.current;
 
     import("leaflet").then((leaflet) => {
+      // Stale: another callback ref invocation superseded this load,
+      // or the node was detached before Leaflet finished loading.
+      if (token !== tokenRef.current || !document.body.contains(node)) return;
+
       const Leaflet = leaflet.default;
       import("leaflet/dist/leaflet.css");
 

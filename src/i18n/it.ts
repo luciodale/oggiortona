@@ -38,6 +38,7 @@ export const it = {
   "common.link": "Link",
   "common.phonePlaceholder": "+39 085 906 1234",
 
+  "common.cancel": "Annulla",
   "common.untilDate": "fino al {date}",
   "common.skipToContent": "Vai al contenuto",
   "common.siteName": "Oggi a Ortona",
@@ -105,7 +106,7 @@ export const it = {
   "events.titlePlaceholder": "Es: Sagra del pesce",
   "events.descPlaceholder": "Descrivi l'evento...",
   "events.category": "Categoria",
-  "events.otherCategory": "Altra categoria (es: sagra, mercato...)",
+  "events.otherCategory": "Altra categoria (es: festa, concerto...)",
   "events.dateStart": "Data evento",
   "events.dateEnd": "Data fine (più giorni)",
   "events.optional": "Facoltativa",
@@ -215,6 +216,12 @@ export const it = {
   "profile.confirmDeleteEvent": "Sei sicuro di voler eliminare questo evento?",
   "profile.pendingApproval": "In attesa di approvazione",
   "profile.disabledByAdmin": "Disabilitato",
+  "profile.exportData": "Esporta dati",
+  "profile.deleteAccount": "Elimina account",
+  "profile.deleteConfirm": "Eliminare definitivamente il tuo account? Locali, negozi ed eventi futuri verranno cancellati. Gli eventi passati resteranno come archivio anonimo.",
+  "profile.deleteConfirmAction": "Elimina",
+  "profile.deleteSuccess": "Account eliminato",
+  "profile.deleteError": "Errore durante l'eliminazione",
 
   // Storefront
   "storefront.generale": "Generale",
@@ -262,9 +269,11 @@ export const it = {
   "auth.verify": "Verifica",
   "auth.verifying": "Verifica...",
   "auth.changeEmail": "Cambia email",
-  "auth.termsNotice": "Accedendo, accetti i {terms}.",
+  "auth.termsNotice": "Accedendo, accetti i {terms} e l'{privacy}.",
   "auth.termsLink": "Termini di Servizio",
+  "auth.privacyLink": "Informativa sulla Privacy",
   "auth.terms": "Termini di Servizio",
+  "auth.privacy": "Privacy",
   "auth.notLoaded": "Servizio di autenticazione non caricato. Ricarica la pagina.",
   "auth.notInitialized": "Sessione non inizializzata. Ricarica la pagina.",
   "auth.genericError": "Errore di accesso",
@@ -280,6 +289,10 @@ export const it = {
   "pwa.iosStep2detail": "con l'icona del quadrato con la freccia",
   "pwa.iosStep3": "Scorri e seleziona \"Aggiungi alla schermata Home\"",
   "pwa.gotIt": "Ho capito",
+  "pwa.safariRequiredTitle": "Apri in Safari",
+  "pwa.safariRequiredBody": "Su iPhone solo Safari può installare questa app sulla schermata Home. Copia il link e incollalo in Safari per continuare.",
+  "pwa.copyLink": "Copia link",
+  "pwa.linkCopied": "Link copiato",
 
   // UI Components
   "ui.view": "Vista",
@@ -322,12 +335,10 @@ export const it = {
 
   // Categories
 
-  "eventCategory.sagra": "Sagra",
-  "eventCategory.musica": "Musica",
-  "eventCategory.mercato": "Mercato",
   "eventCategory.cultura": "Cultura",
   "eventCategory.sport": "Sport",
   "eventCategory.cibo": "Cibo",
+  "eventCategory.altro": "Altro",
 
   // Push notifications
   "push.promptTitle": "Resta aggiornato",

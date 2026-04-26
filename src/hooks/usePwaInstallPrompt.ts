@@ -21,15 +21,27 @@ function isIos() {
   return /iPad|iPhone|iPod/.test(navigator.userAgent) && !("MSStream" in window);
 }
 
+// Apple forces all iOS browsers onto WebKit, but only Safari exposes
+// "Add to Home Screen". Chrome/Firefox/Edge/Opera on iOS cannot install PWAs.
+function isNonSafariOnIos() {
+  return isIos() && /CriOS|FxiOS|EdgiOS|OPiOS/.test(navigator.userAgent);
+}
+
 export function usePwaInstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
   const [ready, setReady] = useState(false);
   const [showIos, setShowIos] = useState(false);
+  const [showSafariRequired, setShowSafariRequired] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
     if (isStandalone() || isDismissedThisSession()) return;
+
+    if (isNonSafariOnIos()) {
+      timerRef.current = setTimeout(() => setShowSafariRequired(true), 7_000);
+      return () => clearTimeout(timerRef.current);
+    }
 
     if (isIos()) {
       timerRef.current = setTimeout(() => setShowIos(true), 7_000);
@@ -68,12 +80,14 @@ export function usePwaInstallPrompt() {
     sessionStorage.setItem(DISMISS_KEY, "1");
     setReady(false);
     setShowIos(false);
+    setShowSafariRequired(false);
     setDeferredPrompt(null);
   }
 
   return {
     canInstall: ready && deferredPrompt !== null,
     showIos,
+    showSafariRequired,
     handleInstall,
     handleDismiss,
   };

@@ -42,6 +42,7 @@ export const en: Translations = {
   "common.link": "Link",
   "common.phonePlaceholder": "+39 085 906 1234",
 
+  "common.cancel": "Cancel",
   "common.untilDate": "until {date}",
   "common.skipToContent": "Skip to content",
   "common.siteName": "Oggi a Ortona",
@@ -109,7 +110,7 @@ export const en: Translations = {
   "events.titlePlaceholder": "E.g. Fish festival",
   "events.descPlaceholder": "Describe the event...",
   "events.category": "Category",
-  "events.otherCategory": "Other category (e.g. festival, market...)",
+  "events.otherCategory": "Other category (e.g. party, concert...)",
   "events.dateStart": "Event date",
   "events.dateEnd": "End date (multi-day)",
   "events.optional": "Optional",
@@ -219,6 +220,12 @@ export const en: Translations = {
   "profile.confirmDeleteEvent": "Are you sure you want to delete this event?",
   "profile.pendingApproval": "Pending approval",
   "profile.disabledByAdmin": "Disabled",
+  "profile.exportData": "Export data",
+  "profile.deleteAccount": "Delete account",
+  "profile.deleteConfirm": "Permanently delete your account? Venues, stores and future events will be removed. Past events will remain as anonymous archive.",
+  "profile.deleteConfirmAction": "Delete",
+  "profile.deleteSuccess": "Account deleted",
+  "profile.deleteError": "Error during deletion",
 
   // Storefront
   "storefront.generale": "General",
@@ -266,9 +273,11 @@ export const en: Translations = {
   "auth.verify": "Verify",
   "auth.verifying": "Verifying...",
   "auth.changeEmail": "Change email",
-  "auth.termsNotice": "By signing in, you agree to the {terms}.",
+  "auth.termsNotice": "By signing in, you agree to the {terms} and {privacy}.",
   "auth.termsLink": "Terms of Service",
+  "auth.privacyLink": "Privacy Policy",
   "auth.terms": "Terms of Service",
+  "auth.privacy": "Privacy",
   "auth.notLoaded": "Authentication service not loaded. Reload the page.",
   "auth.notInitialized": "Session not initialized. Reload the page.",
   "auth.genericError": "Sign in error",
@@ -284,6 +293,10 @@ export const en: Translations = {
   "pwa.iosStep2detail": "the square with an arrow icon",
   "pwa.iosStep3": "Scroll down and select \"Add to Home Screen\"",
   "pwa.gotIt": "Got it",
+  "pwa.safariRequiredTitle": "Open in Safari",
+  "pwa.safariRequiredBody": "On iPhone only Safari can install this app to your Home Screen. Copy the link and paste it into Safari to continue.",
+  "pwa.copyLink": "Copy link",
+  "pwa.linkCopied": "Link copied",
 
   // UI Components
   "ui.view": "View",
@@ -326,12 +339,10 @@ export const en: Translations = {
 
   // Categories
 
-  "eventCategory.sagra": "Festival",
-  "eventCategory.musica": "Music",
-  "eventCategory.mercato": "Market",
   "eventCategory.cultura": "Culture",
   "eventCategory.sport": "Sport",
   "eventCategory.cibo": "Food",
+  "eventCategory.altro": "Other",
 
   // Push notifications
   "push.promptTitle": "Stay updated",

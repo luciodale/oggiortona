@@ -7,8 +7,9 @@ import { DetailBottomSheet, LinkedDetailBottomSheet } from "../components/shared
 import { NotificationPrompt } from "../components/shared/NotificationPrompt";
 import { PwaInstallPrompt } from "../components/shared/PwaInstallPrompt";
 import { useThemeColor } from "../hooks/useThemeColor";
+import { importWithReload } from "../utils/importWithReload";
 
-const FormBottomSheet = lazy(() => import("../components/shared/FormBottomSheet").then((m) => ({ default: m.FormBottomSheet })));
+const FormBottomSheet = lazy(() => importWithReload(() => import("../components/shared/FormBottomSheet")).then((m) => ({ default: m.FormBottomSheet })));
 
 function MainContent() {
   const { isBottomOpen } = useSwipeBarContext();

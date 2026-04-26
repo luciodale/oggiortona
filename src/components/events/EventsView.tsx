@@ -1,6 +1,7 @@
 import { useSwipeBarContext } from "@luciodale/swipe-bar";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { lazy, Suspense, useCallback, useState } from "react";
+import { importWithReload } from "../../utils/importWithReload";
 import { eventCategoryLabels, eventFilterCategories } from "../../config/categories";
 import type { TimeFilter } from "../../hooks/useEventFilters";
 import { useEventFilters } from "../../hooks/useEventFilters";
@@ -15,7 +16,7 @@ import { ListHeader } from "../shared/ListHeader";
 import { Pill } from "../ui/Pill";
 import { EventList } from "./EventList";
 
-const MapView = lazy(() => import("../shared/MapView").then((m) => ({ default: m.MapView })));
+const MapView = lazy(() => importWithReload(() => import("../shared/MapView")).then((m) => ({ default: m.MapView })));
 
 type EventsViewProps = {
   events: Array<EventWithRestaurant>;

@@ -1,29 +1,15 @@
 import { createRouter, createRoute, createRootRoute, Outlet, RouterProvider, lazyRouteComponent } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { compareVersions } from "compare-versions";
 import { useHydrateAtoms } from "jotai/utils";
 import { localeAtom } from "./i18n/useLocale";
 import { authAtom } from "./hooks/useSpaAuth";
-import { APP_VERSION } from "./config/version";
 import { ErrorBoundary } from "./components/shared/ErrorBoundary";
 import { RootLayout } from "./layouts/RootLayout";
+import { importWithReload } from "./utils/importWithReload";
 import type { Locale } from "./types/domain";
 
 function lazyWithReload<T extends Record<string, unknown>>(loader: () => Promise<T>, exportName: string) {
-  return lazyRouteComponent(
-    () => loader().catch(async (err) => {
-      const res = await fetch("/api/version").catch(() => null);
-      if (res?.ok) {
-        const data = (await res.json()) as { version: string };
-        if (compareVersions(data.version, APP_VERSION) !== 0) {
-          window.location.reload();
-          return new Promise<T>(() => {});
-        }
-      }
-      throw err;
-    }),
-    exportName,
-  );
+  return lazyRouteComponent(() => importWithReload(loader), exportName);
 }
 
 const queryClient = new QueryClient({

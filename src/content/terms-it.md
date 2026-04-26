@@ -16,46 +16,11 @@ Ci riserviamo il diritto di rimuovere qualsiasi contenuto senza preavviso e di s
 
 L'app e fornita "cosi com'e", senza garanzie di alcun tipo. Non garantiamo l'accuratezza delle informazioni pubblicate (orari, prezzi, disponibilita). Non siamo responsabili per interazioni, transazioni o controversie tra utenti o tra utenti e locali.
 
-## Privacy e dati raccolti
+## Privacy
 
-Quando accedi tramite Google o email, raccogliamo:
+Il trattamento dei tuoi dati personali è descritto nell'[Informativa sulla Privacy](/privacy), che include i dati raccolti, le basi giuridiche, i tuoi diritti e come esercitarli.
 
-- Indirizzo email
-- Nome e cognome (se disponibili)
-- Immagine del profilo (se disponibile)
-
-Questi dati servono esclusivamente per identificarti all'interno dell'app.
-
-I dati personali sono utilizzati per:
-
-- Consentire l'accesso e l'autenticazione
-- Personalizzare l'esperienza utente
-- Inviare notifiche push (solo se autorizzate)
-
-Non vendiamo ne condividiamo i tuoi dati personali con terze parti, ad eccezione dei servizi tecnici necessari al funzionamento dell'app:
-
-- **Clerk** — autenticazione
-- **Cloudflare** — hosting e distribuzione
-
-## Eliminazione dei dati
-
-Puoi richiedere l'eliminazione completa dei tuoi dati in qualsiasi momento inviando una email a **privacy@oggiaortona.com** con oggetto "Eliminazione dati".
-
-Verra eliminato:
-
-- Il tuo profilo utente (nome, email, immagine)
-- Le tue iscrizioni alle notifiche push
-- Qualsiasi dato associato al tuo account
-
-La richiesta verra elaborata entro **30 giorni**.
-
-## Diritti dell'utente
-
-Hai diritto di:
-
-- Accedere ai tuoi dati personali
-- Richiedere la rettifica o la cancellazione dei dati
-- Revocare il consenso in qualsiasi momento
+Puoi scaricare i tuoi dati o eliminare il tuo account in qualsiasi momento dalla pagina del profilo.
 
 ## Modifiche ai termini
 

@@ -11,10 +11,7 @@ export function eventCategoryLabels(locale: Locale): Record<string, string> {
 }
 
 export const eventCategoryColors: Record<string, string> = {
-  sagra: "bg-cat-sagra-bg text-cat-sagra",
   cibo: "bg-cat-cibo-bg text-cat-cibo",
-  musica: "bg-cat-musica-bg text-cat-musica",
-  mercato: "bg-cat-mercato-bg text-cat-mercato",
   cultura: "bg-cat-cultura-bg text-cat-cultura",
   sport: "bg-cat-sport-bg text-cat-sport",
   altro: "bg-cat-altro-bg text-cat-altro",
@@ -32,12 +29,12 @@ export const eventFilterCategories = [
   "sport",
   "cibo",
   "cultura",
+  "altro",
 ];
 
 export const eventCategories = [
   "sport",
   "cibo",
-  "musica",
   "cultura",
   "altro",
 ];

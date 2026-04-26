@@ -11,8 +11,9 @@ import { useStoreFilters } from "../../hooks/useStoreFilters";
 import { usePinnedStores } from "../../hooks/usePinnedStores";
 import { ContentLoader } from "../shared/ContentLoader";
 import { useLocale } from "../../i18n/useLocale";
+import { importWithReload } from "../../utils/importWithReload";
 
-const MapView = lazy(() => import("../shared/MapView").then((m) => ({ default: m.MapView })));
+const MapView = lazy(() => importWithReload(() => import("../shared/MapView")).then((m) => ({ default: m.MapView })));
 
 type StoresViewProps = {
   stores: Array<StoreWithStatus>;

@@ -10,13 +10,17 @@ type EventGroups = {
   past: Array<EventWithRestaurant>;
 };
 
+const MAIN_CATEGORIES = ["sport", "cibo", "cultura"];
+
 function eventCategories(event: EventWithRestaurant): Array<string> {
   return event.category.split(",").map((c) => c.trim());
 }
 
 function matchesCategory(event: EventWithRestaurant, filter: string): boolean {
   if (filter === "all") return true;
-  return eventCategories(event).includes(filter);
+  const cats = eventCategories(event);
+  if (filter === "altro") return !cats.some((c) => MAIN_CATEGORIES.includes(c));
+  return cats.includes(filter);
 }
 
 function matchesTime(event: EventWithRestaurant, filter: TimeFilter): boolean {

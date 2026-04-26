@@ -53,14 +53,8 @@
   --color-promo-saldi-bg: #fdeee6;
 
   /* Event categories */
-  --color-cat-sagra: #8a6d20;
-  --color-cat-sagra-bg: #fdf6e8;
   --color-cat-cibo: #a05530;
   --color-cat-cibo-bg: #fdf2ed;
-  --color-cat-musica: #7a4068;
-  --color-cat-musica-bg: #f5eef3;
-  --color-cat-mercato: #4a6e3a;
-  --color-cat-mercato-bg: #f0f5ee;
   --color-cat-cultura: #3d6b8e;
   --color-cat-cultura-bg: #edf4f8;
   --color-cat-sport: #a04030;
@@ -113,7 +107,7 @@ html,
 body {
   margin: 0;
   padding: 0;
-  height: 100%;
+  height: 100dvh;
   overflow: hidden;
   overscroll-behavior: none;
 }
@@ -173,7 +167,7 @@ body {
 }
 
 .layout-bottom-padding {
-  padding-bottom: calc(var(--bottomnav-padding-bottom) + var(--height-bottomnav));
+  padding-bottom: calc(var(--bottomnav-padding-bottom) + var(--height-bottomnav) + 2.5rem);
 }
 
 /* ==============================
@@ -250,14 +244,8 @@ html.dark {
   --color-promo-saldi-bg: #241812;
 
   /* Event categories */
-  --color-cat-sagra: #d4b060;
-  --color-cat-sagra-bg: #201c14;
   --color-cat-cibo: #d08050;
   --color-cat-cibo-bg: #201612;
-  --color-cat-musica: #c48ab0;
-  --color-cat-musica-bg: #241c22;
-  --color-cat-mercato: #7ab870;
-  --color-cat-mercato-bg: #162014;
   --color-cat-cultura: #5a90b8;
   --color-cat-cultura-bg: #14191f;
   --color-cat-sport: #d47060;

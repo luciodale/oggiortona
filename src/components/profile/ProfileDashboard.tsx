@@ -1,5 +1,6 @@
 import { useSetAtom } from "jotai";
 import { useEffect, useMemo, useState } from "react";
+import { useDeleteAccount } from "../../hooks/useDeleteAccount";
 import { useFormSheet } from "../../hooks/useFormSheet";
 import { useSpaAuth } from "../../hooks/useSpaAuth";
 import { useUserEvents } from "../../hooks/useUserEvents";
@@ -57,6 +58,7 @@ export function ProfileDashboard() {
   }, []);
 
   const { openRestaurantForm, openStoreForm, openEventForm } = useFormSheet();
+  const { confirmDelete, loading: deleting } = useDeleteAccount();
   const loading = loadingRestaurants || loadingStores || loadingEvents;
 
   const { activeEvents, pastEvents } = useMemo(() => {
@@ -194,10 +196,30 @@ export function ProfileDashboard() {
         </>
       )}
 
-      <div className="border-t border-border-light pt-4 text-center">
-        <a href="/terms" className="text-[11px] text-muted hover:text-primary transition-colors">
+      <div className="border-t border-border-light pt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] text-muted">
+        <a
+          href="/api/profile/export"
+          className="hover:text-primary transition-colors"
+        >
+          {t("profile.exportData")}
+        </a>
+        <span aria-hidden="true">·</span>
+        <a href="/terms" className="hover:text-primary transition-colors">
           {t("auth.terms")}
         </a>
+        <span aria-hidden="true">·</span>
+        <a href="/privacy" className="hover:text-primary transition-colors">
+          {t("auth.privacy")}
+        </a>
+        <span aria-hidden="true">·</span>
+        <button
+          type="button"
+          onClick={confirmDelete}
+          disabled={deleting}
+          className="text-danger hover:text-danger/80 transition-colors disabled:opacity-50"
+        >
+          {t("profile.deleteAccount")}
+        </button>
       </div>
     </div>
   );

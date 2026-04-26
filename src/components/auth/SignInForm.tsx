@@ -7,15 +7,18 @@ import { GoogleIcon } from "../../icons/GoogleIcon";
 
 function TermsNotice() {
   const { t } = useLocale();
-  const linkText = t("auth.termsLink");
-  const full = t("auth.termsNotice", { terms: `{{LINK}}` });
-  const [before, after] = full.split("{{LINK}}");
+  const termsText = t("auth.termsLink");
+  const privacyText = t("auth.privacyLink");
+  const full = t("auth.termsNotice", { terms: `{{TERMS}}`, privacy: `{{PRIVACY}}` });
+  const parts = full.split(/\{\{TERMS\}\}|\{\{PRIVACY\}\}/);
 
   return (
     <p className="text-center text-[11px] text-muted leading-relaxed">
-      {before}
-      <a href="/terms" className="underline hover:text-primary transition-colors">{linkText}</a>
-      {after}
+      {parts[0]}
+      <a href="/terms" className="underline hover:text-primary transition-colors">{termsText}</a>
+      {parts[1]}
+      <a href="/privacy" className="underline hover:text-primary transition-colors">{privacyText}</a>
+      {parts[2]}
     </p>
   );
 }

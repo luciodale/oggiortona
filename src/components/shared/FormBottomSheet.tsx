@@ -1,5 +1,6 @@
-import { useRef, useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SwipeBarBottom, useSwipeBarContext } from "@luciodale/swipe-bar";
+import { toast } from "sonner";
 import { XIcon } from "../../icons/XIcon";
 import { isFormSheetMeta } from "../../types/domain";
 import { useFormSheet } from "../../hooks/useFormSheet";
@@ -26,18 +27,37 @@ function getTitle(meta: ReturnType<typeof useSwipeBarContext>["bottomSidebars"][
 }
 
 export function FormBottomSheet() {
-  const sheetHeight = window.innerHeight;
+  const [sheetHeight, setSheetHeight] = useState(() => window.innerHeight);
   const { bottomSidebars } = useSwipeBarContext();
   const { closeForm } = useFormSheet();
   const isDirtyRef = useRef(false);
+
+  useEffect(function trackViewportHeight() {
+    function onResize() {
+      setSheetHeight(window.innerHeight);
+    }
+    window.addEventListener("resize", onResize);
+    window.addEventListener("orientationchange", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onResize);
+    };
+  }, []);
 
   const meta = bottomSidebars.form?.meta;
   const validMeta = isFormSheetMeta(meta) ? meta : null;
   const isFormKind = validMeta?.kind === "restaurant-form" || validMeta?.kind === "store-form" || validMeta?.kind === "event-form";
 
   function handleClose() {
-    if (isFormKind && isDirtyRef.current && !window.confirm("Hai modifiche non salvate. Vuoi chiudere?")) return;
-    closeForm();
+    if (!isFormKind || !isDirtyRef.current) {
+      closeForm();
+      return;
+    }
+    toast("Hai modifiche non salvate. Vuoi chiudere?", {
+      duration: Infinity,
+      action: { label: "Chiudi", onClick: () => closeForm() },
+      cancel: { label: "Annulla", onClick: () => {} },
+    });
   }
 
   const handleDirtyChange = useCallback(function handleDirtyChange(dirty: boolean) {

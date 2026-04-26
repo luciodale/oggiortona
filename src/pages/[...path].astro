@@ -102,29 +102,41 @@ function getThemeColor() {
         document.getElementById("app-error-btn").textContent = isIt ? "Torna alla home" : "Back to home";
 
         var shown = false;
+        function loaderActive() {
+          var loader = document.getElementById("app-loader");
+          return loader && loader.style.opacity !== "0";
+        }
         function showError() {
           if (shown) return;
           shown = true;
           var loader = document.getElementById("app-loader");
           if (loader) loader.style.display = "none";
           document.getElementById("app-error").hidden = false;
+          window.removeEventListener("error", onResourceError, true);
+          window.removeEventListener("unhandledrejection", onRejection);
         }
 
-        // Catch resource load failures (script/link/img)
-        window.addEventListener("error", function(e) {
-          if (e.target !== window && e.target.tagName) showError();
-        }, true);
-
-        // Catch any unhandled promise rejection
-        window.addEventListener("unhandledrejection", function() {
+        // Only treat as fatal if a critical script fails BEFORE React mounts.
+        // Image/link errors and post-mount rejections are handled by ErrorBoundary
+        // or are non-fatal (e.g. broken event photo).
+        function onResourceError(e) {
+          if (!loaderActive()) return;
+          var target = e.target;
+          if (!target || target === window) return;
+          if (target.tagName === "SCRIPT") showError();
+        }
+        function onRejection() {
+          if (!loaderActive()) return;
           showError();
-        });
+        }
 
-        // Fallback: if app-loader is still visible after 15s, something failed silently
+        window.addEventListener("error", onResourceError, true);
+        window.addEventListener("unhandledrejection", onRejection);
+
+        // Fallback: if app-loader is still visible after 30s, something failed silently
         setTimeout(function() {
-          var loader = document.getElementById("app-loader");
-          if (loader && loader.style.opacity !== "0") showError();
-        }, 15000);
+          if (loaderActive()) showError();
+        }, 30000);
       })();
     </script>
 

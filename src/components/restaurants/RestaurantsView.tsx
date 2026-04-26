@@ -12,8 +12,9 @@ import { usePinnedRestaurants } from "../../hooks/usePinnedRestaurants";
 import { ContentLoader } from "../shared/ContentLoader";
 import { useLocale } from "../../i18n/useLocale";
 import { restaurantCuisines, restaurantCuisineLabels } from "../../config/cuisines";
+import { importWithReload } from "../../utils/importWithReload";
 
-const MapView = lazy(() => import("../shared/MapView").then((m) => ({ default: m.MapView })));
+const MapView = lazy(() => importWithReload(() => import("../shared/MapView")).then((m) => ({ default: m.MapView })));
 
 type RestaurantsViewProps = {
   restaurants: Array<RestaurantWithStatus>;

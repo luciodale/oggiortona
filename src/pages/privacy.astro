@@ -1,0 +1,37 @@
+---
+import AppHead from "../building-blocks/AppHead.astro";
+import "../styles/global.css";
+import PrivacyIt from "../content/privacy-it.md";
+import PrivacyEn from "../content/privacy-en.md";
+
+const locale = Astro.locals.locale;
+const title = locale === "en" ? "Privacy Policy" : "Informativa sulla Privacy";
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <AppHead
+      title={title}
+      description={title}
+    />
+  </head>
+  <body class="bg-surface">
+    <div class="h-screen overflow-y-auto scroll-hide">
+    <div class="mx-auto max-w-xl px-6 py-16">
+      <a href="/" class="inline-flex items-center gap-2 mb-10 text-sm text-muted hover:text-accent transition-colors">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5" /><path d="m12 19-7-7 7-7" />
+        </svg>
+        Oggi a Ortona
+      </a>
+      <article class="prose prose-neutral prose-headings:font-display prose-headings:text-primary prose-h1:text-3xl prose-h1:mb-2 prose-h2:text-lg prose-h2:mt-10 prose-h2:mb-3 prose-p:text-primary/80 prose-p:leading-relaxed prose-li:text-primary/80 prose-strong:text-primary prose-a:text-accent prose-a:no-underline hover:prose-a:underline">
+        {locale === "en" ? <PrivacyEn /> : <PrivacyIt />}
+      </article>
+      <div class="mt-16 pt-6 border-t border-border-light text-xs text-muted">
+        Oggi a Ortona
+      </div>
+    </div>
+    </div>
+  </body>
+</html>

@@ -8,11 +8,12 @@ import { useLocale } from "../../i18n/useLocale";
 
 export function PwaInstallPrompt() {
   const { t } = useLocale();
-  const { canInstall, showIos, handleInstall, handleDismiss } =
+  const { canInstall, showIos, showSafariRequired, handleInstall, handleDismiss } =
     usePwaInstallPrompt();
 
   const androidShown = useRef(false);
   const iosShown = useRef(false);
+  const safariRequiredShown = useRef(false);
 
   useEffect(() => {
     if (!canInstall || androidShown.current) return;
@@ -123,6 +124,63 @@ export function PwaInstallPrompt() {
       { duration: Infinity },
     );
   }, [showIos, handleDismiss, t]);
+
+  useEffect(() => {
+    if (!showSafariRequired || safariRequiredShown.current) return;
+    safariRequiredShown.current = true;
+
+    async function copyLink() {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        toast.success(t("pwa.linkCopied"));
+      } catch {
+        // Clipboard API can fail (permissions, http context). Silent.
+      }
+    }
+
+    toast.custom(
+      (id) => (
+        <div className="w-full rounded-2xl bg-card p-4 shadow-lg ring-1 ring-border/50">
+          <div className="flex items-center gap-3">
+            <img
+              src="/icon-192.png"
+              alt=""
+              aria-hidden="true"
+              className="h-12 w-12 shrink-0 rounded-xl shadow-sm"
+            />
+            <div className="min-w-0 flex-1">
+              <p className="font-family-display text-[15px] font-semibold text-primary">
+                {t("pwa.safariRequiredTitle")}
+              </p>
+              <p className="mt-0.5 text-[12px] leading-snug text-muted">
+                {t("pwa.safariRequiredBody")}
+              </p>
+            </div>
+          </div>
+          <div className="mt-3 flex gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                handleDismiss();
+                toast.dismiss(id);
+              }}
+              className="flex-1 rounded-xl bg-surface-alt px-3 py-2.5 text-[12px] font-medium text-muted transition-colors hover:text-primary"
+            >
+              {t("pwa.gotIt")}
+            </button>
+            <button
+              type="button"
+              onClick={copyLink}
+              className="flex-1 rounded-xl bg-accent px-3 py-2.5 text-[12px] font-semibold text-white transition-colors hover:bg-accent-hover"
+            >
+              {t("pwa.copyLink")}
+            </button>
+          </div>
+        </div>
+      ),
+      { duration: Infinity },
+    );
+  }, [showSafariRequired, handleDismiss, t]);
 
   return null;
 }

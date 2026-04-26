@@ -72,7 +72,7 @@ function makeEventRow(overrides: Partial<EventRow> = {}): EventRow {
     phone: "+39 085 906 5678",
     latitude: 42.35,
     longitude: 14.40,
-    category: "cibo,sagra",
+    category: "cibo,festa",
     price: 10,
     link: "https://example.com/event",
     ownerId: "user_1",
@@ -276,7 +276,7 @@ describe("eventToFormData", () => {
 
     expect(result.title).toBe("Sagra del Pesce");
     expect(result.description).toBe("Annual fish festival");
-    expect(result.category).toBe("cibo,sagra");
+    expect(result.category).toBe("cibo,festa");
     expect(result.dateStart).toBe("2026-04-10");
     expect(result.dateEnd).toBe("2026-04-12");
     expect(result.timeStart).toBe("18:00");
@@ -351,11 +351,11 @@ describe("buildEventPayload", () => {
     const payload = buildEventPayload(
       makeEventFormValues({
         categories: ["cibo", "cultura"],
-        customCategory: "Sagra, FESTA",
+        customCategory: "Festa, CONCERTO",
       }),
     );
 
-    expect(payload.category).toBe("cibo,cultura,sagra,festa");
+    expect(payload.category).toBe("cibo,cultura,festa,concerto");
   });
 
   // Regression: clearing optional inputs in edit mode used to send `undefined`,
