@@ -1,6 +1,5 @@
 import { TagIcon } from "../../icons/TagIcon";
 import type { StorePromotionRow } from "../../types/database";
-import { DateRange } from "../restaurants/DateRange";
 import { TimeRange } from "../restaurants/TimeRange";
 
 type SaldiEntryProps = {
@@ -8,8 +7,7 @@ type SaldiEntryProps = {
 };
 
 export function SaldiEntry({ saldi }: SaldiEntryProps) {
-  const hasTimeDateInfo =
-    saldi.timeStart || saldi.timeEnd || saldi.dateStart !== saldi.dateEnd;
+  const hasTimeDateInfo = saldi.timeStart || saldi.timeEnd;
 
   return (
     <div className="mt-3 flex items-start gap-2 rounded-xl bg-promo-saldi-bg px-3 py-2.5">
@@ -29,11 +27,6 @@ export function SaldiEntry({ saldi }: SaldiEntryProps) {
         {hasTimeDateInfo && (
           <div className="mt-1 flex flex-wrap items-center gap-x-2 text-[11px] text-muted">
             <TimeRange timeStart={saldi.timeStart} timeEnd={saldi.timeEnd} />
-            <DateRange
-              dateStart={saldi.dateStart}
-              dateEnd={saldi.dateEnd}
-              className="text-[10px] text-promo-saldi"
-            />
           </div>
         )}
       </div>

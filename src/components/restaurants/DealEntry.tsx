@@ -1,6 +1,5 @@
 import { ZapIcon } from "../../icons/ZapIcon";
 import type { PromotionRow, StorePromotionRow } from "../../types/database";
-import { DateRange } from "./DateRange";
 import { TimeRange } from "./TimeRange";
 
 type DealEntryProps = {
@@ -8,8 +7,7 @@ type DealEntryProps = {
 };
 
 export function DealEntry({ deal }: DealEntryProps) {
-  const hasTimeDateInfo =
-    deal.timeStart || deal.timeEnd || deal.dateStart !== deal.dateEnd;
+  const hasTimeDateInfo = deal.timeStart || deal.timeEnd;
 
   return (
     <div className="mt-3 flex items-start gap-2 rounded-xl bg-promo-deal-bg px-3 py-2.5">
@@ -29,11 +27,6 @@ export function DealEntry({ deal }: DealEntryProps) {
         {hasTimeDateInfo && (
           <div className="mt-1 flex flex-wrap items-center gap-x-2 text-[11px] text-muted">
             <TimeRange timeStart={deal.timeStart} timeEnd={deal.timeEnd} />
-            <DateRange
-              dateStart={deal.dateStart}
-              dateEnd={deal.dateEnd}
-              className="text-[10px] text-promo-deal/70"
-            />
           </div>
         )}
       </div>

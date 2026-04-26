@@ -1,6 +1,5 @@
 import { StarIcon } from "../../icons/StarIcon";
 import type { PromotionRow } from "../../types/database";
-import { DateRange } from "./DateRange";
 import { TimeRange } from "./TimeRange";
 
 type SpecialEntryProps = {
@@ -8,8 +7,7 @@ type SpecialEntryProps = {
 };
 
 export function SpecialEntry({ special }: SpecialEntryProps) {
-  const hasTimeDateInfo =
-    special.timeStart || special.timeEnd || special.dateStart !== special.dateEnd;
+  const hasTimeDateInfo = special.timeStart || special.timeEnd;
 
   return (
     <div className="mt-3 flex items-start gap-2 rounded-xl bg-mangiare-light px-3 py-2.5">
@@ -29,11 +27,6 @@ export function SpecialEntry({ special }: SpecialEntryProps) {
         {hasTimeDateInfo && (
           <div className="mt-1 flex flex-wrap items-center gap-x-2 text-[11px] text-muted">
             <TimeRange timeStart={special.timeStart} timeEnd={special.timeEnd} />
-            <DateRange
-              dateStart={special.dateStart}
-              dateEnd={special.dateEnd}
-              className="text-[10px] text-mangiare"
-            />
           </div>
         )}
       </div>

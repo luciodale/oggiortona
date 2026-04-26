@@ -1,6 +1,5 @@
 import { StarIcon } from "../../icons/StarIcon";
 import type { StorePromotionRow } from "../../types/database";
-import { DateRange } from "../restaurants/DateRange";
 import { TimeRange } from "../restaurants/TimeRange";
 
 type StoreNewsEntryProps = {
@@ -8,8 +7,7 @@ type StoreNewsEntryProps = {
 };
 
 export function StoreNewsEntry({ news }: StoreNewsEntryProps) {
-  const hasMetadata =
-    news.price != null || news.timeStart || news.timeEnd || news.dateStart !== news.dateEnd;
+  const hasMetadata = news.price != null || news.timeStart || news.timeEnd;
 
   return (
     <div className="mt-3 flex items-start gap-2 rounded-xl bg-promo-news-bg px-3 py-2.5">
@@ -34,11 +32,6 @@ export function StoreNewsEntry({ news }: StoreNewsEntryProps) {
               </span>
             )}
             <TimeRange timeStart={news.timeStart} timeEnd={news.timeEnd} />
-            <DateRange
-              dateStart={news.dateStart}
-              dateEnd={news.dateEnd}
-              className="text-[10px] text-promo-news/70"
-            />
           </div>
         )}
       </div>

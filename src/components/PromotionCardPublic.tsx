@@ -1,12 +1,10 @@
 import { useLocale } from "../i18n/useLocale";
 import type { PromotionRow } from "../types/database";
-import { formatDateShort } from "../utils/date";
 
 type Style = { bg: string; label: string; labelColor: string };
 
 export function PromotionCardPublic({ item }: { item: PromotionRow }) {
-  const { t, locale } = useLocale();
-  const isMultiDay = item.dateStart !== item.dateEnd;
+  const { t } = useLocale();
 
   const fallback: Style = { bg: "bg-promo-generale-bg", label: t("promo.generale"), labelColor: "text-promo-generale" };
   const styleMap: Record<string, Style> = {
@@ -36,9 +34,6 @@ export function PromotionCardPublic({ item }: { item: PromotionRow }) {
         )}
         {item.timeStart && item.timeEnd && (
           <span>{item.timeStart} &ndash; {item.timeEnd}</span>
-        )}
-        {isMultiDay && (
-          <span>{t("common.untilDate", { date: formatDateShort(item.dateEnd, locale) })}</span>
         )}
       </div>
     </div>

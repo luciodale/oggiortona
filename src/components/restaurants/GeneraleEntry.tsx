@@ -1,6 +1,5 @@
 import { MessageIcon } from "../../icons/MessageIcon";
 import type { PromotionRow, StorePromotionRow } from "../../types/database";
-import { DateRange } from "./DateRange";
 import { TimeRange } from "./TimeRange";
 
 type GeneraleEntryProps = {
@@ -8,8 +7,7 @@ type GeneraleEntryProps = {
 };
 
 export function GeneraleEntry({ item }: GeneraleEntryProps) {
-  const hasMetadata =
-    item.price != null || item.timeStart || item.timeEnd || item.dateStart !== item.dateEnd;
+  const hasMetadata = item.price != null || item.timeStart || item.timeEnd;
 
   return (
     <div className="mt-3 flex items-start gap-2 rounded-xl bg-promo-generale-bg px-3 py-2.5">
@@ -34,11 +32,6 @@ export function GeneraleEntry({ item }: GeneraleEntryProps) {
               </span>
             )}
             <TimeRange timeStart={item.timeStart} timeEnd={item.timeEnd} />
-            <DateRange
-              dateStart={item.dateStart}
-              dateEnd={item.dateEnd}
-              className="text-[10px] text-promo-generale/70"
-            />
           </div>
         )}
       </div>
