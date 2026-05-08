@@ -31,7 +31,7 @@ export async function DELETE({ params, locals }: APIContext) {
     .where(eq(stores.id, storeId))
     .limit(1);
 
-  if (!store || store.ownerId !== user.id) {
+  if (!store || (store.ownerId !== user.id && !locals.isAdmin)) {
     return Response.json({ error: "Non autorizzato" }, { status: 403 });
   }
 
@@ -57,7 +57,7 @@ export async function PUT({ params, locals }: APIContext) {
     .where(eq(stores.id, storeId))
     .limit(1);
 
-  if (!store || store.ownerId !== user.id) {
+  if (!store || (store.ownerId !== user.id && !locals.isAdmin)) {
     return Response.json({ error: "Non autorizzato" }, { status: 403 });
   }
 
@@ -107,7 +107,7 @@ export async function PATCH({ params, locals, request }: APIContext) {
     .where(eq(stores.id, storeId))
     .limit(1);
 
-  if (!store || store.ownerId !== user.id) {
+  if (!store || (store.ownerId !== user.id && !locals.isAdmin)) {
     return Response.json({ error: "Non autorizzato" }, { status: 403 });
   }
 
