@@ -14,3 +14,5 @@ dist/
 .env
 .env.prod
 .dev.vars
+
+.DS_Store
