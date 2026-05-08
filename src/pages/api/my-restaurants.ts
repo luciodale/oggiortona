@@ -13,7 +13,11 @@ export async function GET({ locals }: APIContext): Promise<Response> {
   const today = getTodayISO();
 
   const [userRestaurants, allPromotions, expiredCounts, eventCounts] = await Promise.all([
-    db.select().from(restaurants).where(dbAnd(eq(restaurants.ownerId, user.id), eq(restaurants.deleted, 0))),
+    db.select().from(restaurants).where(
+      locals.isAdmin
+        ? eq(restaurants.deleted, 0)
+        : dbAnd(eq(restaurants.ownerId, user.id), eq(restaurants.deleted, 0)),
+    ),
     db.select().from(promotions).where(dbAnd(lte(promotions.dateStart, today), gte(promotions.dateEnd, today))),
     db.select({ restaurantId: promotions.restaurantId, count: count() })
       .from(promotions)

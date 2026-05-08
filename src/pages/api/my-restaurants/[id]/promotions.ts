@@ -30,7 +30,7 @@ export async function GET({ params, locals }: APIContext) {
     .where(eq(restaurants.id, restaurantId))
     .limit(1);
 
-  if (!restaurant || restaurant.ownerId !== user.id) {
+  if (!restaurant || (restaurant.ownerId !== user.id && !locals.isAdmin)) {
     return Response.json({ error: "Non autorizzato" }, { status: 403 });
   }
 
@@ -61,7 +61,7 @@ export async function POST({ params, locals, request }: APIContext) {
     .where(eq(restaurants.id, restaurantId))
     .limit(1);
 
-  if (!restaurant || restaurant.ownerId !== user.id) {
+  if (!restaurant || (restaurant.ownerId !== user.id && !locals.isAdmin)) {
     return Response.json({ error: "Non autorizzato" }, { status: 403 });
   }
 
