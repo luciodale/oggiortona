@@ -11,6 +11,7 @@ export const restaurantCuisines = [
   "dolci",
   "aperitivo",
   "caffe",
+  "asian",
 ] as const;
 
 export type RestaurantCuisine = typeof restaurantCuisines[number];
@@ -24,6 +25,7 @@ export const restaurantCuisineColors: Record<string, string> = {
   dolci: "bg-cuisine-sweet-bg text-cuisine-sweet",
   aperitivo: "bg-cuisine-drink-bg text-cuisine-drink",
   caffe: "bg-cuisine-coffee-bg text-cuisine-coffee",
+  asian: "bg-cuisine-asian-bg text-cuisine-asian",
 };
 
 export function restaurantCuisineLabels(locale: Locale): Record<string, string> {

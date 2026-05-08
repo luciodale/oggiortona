@@ -103,7 +103,7 @@ export const it = {
   "events.addEvent": "Aggiungi evento",
   "events.addEventDesc": "Aggiungi un evento su Oggi a Ortona",
   "events.fillDetails": "Compila i dati dell'evento. Apparira su Oggi a Ortona.",
-  "events.titlePlaceholder": "Es: Sagra del pesce",
+  "events.titlePlaceholder": "Es: Serata in Jazz",
   "events.descPlaceholder": "Descrivi l'evento...",
   "events.category": "Categoria",
   "events.otherCategory": "Altra categoria (es: festa, concerto...)",
@@ -164,6 +164,7 @@ export const it = {
   "cuisine.dolci": "Dolci",
   "cuisine.aperitivo": "Aperitivo",
   "cuisine.caffe": "Caff\u00e8",
+  "cuisine.asian": "Asiatico",
 
   // Stores
   "stores.pageTitle": "Negozi",

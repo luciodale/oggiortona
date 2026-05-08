@@ -107,7 +107,7 @@ export const en: Translations = {
   "events.addEvent": "Add event",
   "events.addEventDesc": "Add an event on Oggi a Ortona",
   "events.fillDetails": "Fill in the event details. It will appear on Oggi a Ortona.",
-  "events.titlePlaceholder": "E.g. Fish festival",
+  "events.titlePlaceholder": "E.g. Jazz night",
   "events.descPlaceholder": "Describe the event...",
   "events.category": "Category",
   "events.otherCategory": "Other category (e.g. party, concert...)",
@@ -168,6 +168,7 @@ export const en: Translations = {
   "cuisine.dolci": "Desserts",
   "cuisine.aperitivo": "Aperitivo",
   "cuisine.caffe": "Coffee",
+  "cuisine.asian": "Asian",
 
   // Stores
   "stores.pageTitle": "Shops",

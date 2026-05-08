@@ -27,6 +27,35 @@ function createPinIcon(color: string, variant: PinVariant, stroke: string) {
     });
   }
 
+  if (variant === "event") {
+    return L.divIcon({
+      html: `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
+        <circle cx="18" cy="18" r="16" fill="${color}" stroke="${stroke}" stroke-width="2.5"/>
+        <path d="M18,8 L20.1,14.2 L26.7,14.2 L21.3,18.1 L23.4,24.3 L18,20.4 L12.6,24.3 L14.7,18.1 L9.3,14.2 L15.9,14.2 Z" fill="${stroke}" opacity="0.95"/>
+      </svg>`,
+      className: "custom-pin",
+      iconSize: [36, 36],
+      iconAnchor: [18, 18],
+      popupAnchor: [0, -20],
+    });
+  }
+
+  if (variant === "store") {
+    return L.divIcon({
+      html: `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
+        <circle cx="18" cy="18" r="16" fill="${color}" stroke="${stroke}" stroke-width="2.5"/>
+        <g transform="translate(18,18)" stroke="${stroke}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none">
+          <rect x="-6" y="-3" width="12" height="10" rx="1"/>
+          <path d="M-3,-3 L-3,-6 Q-3,-8 0,-8 Q3,-8 3,-6 L3,-3"/>
+        </g>
+      </svg>`,
+      className: "custom-pin",
+      iconSize: [36, 36],
+      iconAnchor: [18, 18],
+      popupAnchor: [0, -20],
+    });
+  }
+
   return L.divIcon({
     html: `<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
       <circle cx="15" cy="15" r="13" fill="${color}" stroke="${stroke}" stroke-width="2.5"/>

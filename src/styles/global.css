@@ -79,6 +79,8 @@
   --color-cuisine-drink-bg: #f0ebf8;
   --color-cuisine-coffee: #6b4e2d;
   --color-cuisine-coffee-bg: #f5ede0;
+  --color-cuisine-asian: #b8860b;
+  --color-cuisine-asian-bg: #fdf5e6;
 
   /* Status */
   --color-status-pending: #8a6d20;
@@ -270,6 +272,8 @@ html.dark {
   --color-cuisine-drink-bg: #1a1820;
   --color-cuisine-coffee: #a08468;
   --color-cuisine-coffee-bg: #1c1814;
+  --color-cuisine-asian: #d4a840;
+  --color-cuisine-asian-bg: #201c14;
 
   /* Status */
   --color-status-pending: #d4b060;
